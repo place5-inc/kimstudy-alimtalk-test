@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>김과외 테스트 툴</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f5f5f3; color: #1a1a1a; }
+  .tab-header { background: #fff; border-bottom: 0.5px solid #ddd; padding: 0 1.5rem; display: flex; overflow-x: auto; }
+  .tab-btn { padding: 14px 16px; font-size: 13px; font-weight: 500; color: #888; border: none; background: none; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; margin-bottom: -0.5px; }
+  .tab-btn:hover { color: #534AB7; }
+  .tab-btn.active { color: #3C3489; border-bottom-color: #3C3489; }
+  .tab-content { display: none; padding: 1.5rem; }
+  .tab-content.active { display: block; }
+  .page-title { font-size: 18px; font-weight: 500; margin-bottom: 4px; }
+  .page-subtitle { font-size: 13px; color: #888; margin-bottom: 1.25rem; }
+  .section { background: #fff; border: 0.5px solid #ddd; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+  .section-title { font-size: 13px; font-weight: 500; color: #666; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .badge { font-size: 11px; background: #eaf3de; color: #3B6D11; border-radius: 4px; padding: 2px 7px; font-weight: 400; }
+  label { font-size: 13px; color: #666; display: block; margin-bottom: 4px; }
+  input[type=text] { width: 100%; padding: 8px 10px; border: 0.5px solid #ccc; border-radius: 8px; font-size: 14px; outline: none; }
+  input[type=text]:focus { border-color: #534AB7; box-shadow: 0 0 0 2px rgba(83,74,183,0.15); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .field { margin-bottom: 12px; }
+  .hint { font-size: 11px; color: #aaa; margin-top: 4px; }
+  .btn { width: 100%; padding: 10px; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; border: none; margin-top: 4px; }
+  .btn-send { background: #3C3489; color: #EEEDFE; }
+  .btn-send:hover { background: #534AB7; }
+  .btn-pending { background: #854F0B; color: #FAEEDA; }
+  .btn-pending:hover { background: #BA7517; }
+  .btn-done { background: #3C3489; color: #EEEDFE; }
+  .btn-done:hover { background: #534AB7; }
+  .btn-reset { background: #f0f0ee; color: #333; border: 0.5px solid #ccc; }
+  .btn-reset:hover { background: #e5e5e2; }
+  .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+  .result-box { margin-top: 12px; padding: 10px 12px; border-radius: 8px; font-size: 13px; display: none; }
+  .result-success { background: #eaf3de; color: #3B6D11; border: 0.5px solid #97C459; }
+  .result-error { background: #fcebeb; color: #A32D2D; border: 0.5px solid #F09595; }
+  .toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); background: #1a1a1a; color: #fff; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 500; opacity: 0; transition: opacity 0.3s; pointer-events: none; z-index: 9999; }
+  .toast.show { opacity: 1; }
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast">처리가 완료되었습니다</div>
+
+<div class="tab-header">
+  <button class="tab-btn active" onclick="switchTab(0)">1. 성사누락</button>
+  <button class="tab-btn" onclick="switchTab(1)">2. 시범전환</button>
+  <button class="tab-btn" onclick="switchTab(2)">3. 휴면전환</button>
+  <button class="tab-btn" onclick="switchTab(3)">4. 과외구함 팝업</button>
+  <button class="tab-btn" onclick="switchTab(4)">5. 이탈복구</button>
+  <button class="tab-btn" onclick="switchTab(5)">6. 리뷰알림</button>
+  <button class="tab-btn" onclick="switchTab(6)">7. FOMO</button>
+  <button class="tab-btn" onclick="switchTab(7)">8. 간편답변 초기화</button>
+</div>
+
+<!-- 1. 성사누락 -->
+<div class="tab-content active" id="tab-0">
+  <p class="page-title">성사누락 알림톡</p>
+  <p class="page-subtitle">매출향상 프로젝트</p>
+  <div class="section">
+    <p class="section-title">📤 알림톡 발송 <span class="badge">check_matching</span></p>
+    <div class="field">
+      <label>nickname <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="m_sendNickname" placeholder="닉네임 입력" />
+    </div>
+    <button class="btn btn-send" id="m_btnSend" onclick="matchingSend()">알림톡 발송</button>
+    <div class="result-box" id="m_sendResult"></div>
+  </div>
+  <div class="section">
+    <p class="section-title">🔄 응답 및 발송 이력 초기화</p>
+    <div class="field">
+      <label>nickname <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="m_resetNickname" placeholder="닉네임 입력" />
+    </div>
+    <button class="btn btn-reset" id="m_btnReset" onclick="matchingReset()">초기화</button>
+    <div class="result-box" id="m_resetResult"></div>
+  </div>
+</div>
+
+<!-- 2. 시범전환 -->
+<div class="tab-content" id="tab-1">
+  <p class="page-title">시범전환 알림톡</p>
+  <p class="page-subtitle">매출향상 프로젝트</p>
+  <div class="section">
+    <p class="section-title">📤 알림톡 발송 <span class="badge">demo_change</span></p>
+    <div class="field">
+      <label>nickname <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="d_sendNickname" placeholder="닉네임 입력" />
+    </div>
+    <button class="btn btn-send" id="d_btnSend" onclick="demoSend()">알림톡 발송</button>
+    <div class="result-box" id="d_sendResult"></div>
+  </div>
+  <div class="section">
+    <p class="section-title">🔄 응답 및 발송 이력 초기화</p>
+    <div class="field">
+      <label>nickname <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="d_resetNickname" placeholder="닉네임 입력" />
+    </div>
+    <button class="btn btn-reset" id="d_btnReset" onclick="demoReset()">초기화</button>
+    <div class="result-box" id="d_resetResult"></div>
+  </div>
+</div>
+
+<!-- 3. 휴면전환 -->
+<div class="tab-content" id="tab-2">
+  <p class="page-title">휴면전환</p>
+  <p class="page-subtitle">&nbsp;</p>
+  <div class="section">
+    <p class="section-title">📋 휴면 예정 처리</p>
+    <div class="field">
+      <label>nickname <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="dr_pendingNickname" placeholder="닉네임 입력" />
+    </div>
+    <button class="btn btn-pending" id="dr_btnPending" onclick="dormantApi('pending')">휴면 예정 처리</button>
+    <div class="result-box" id="dr_pendingResult"></div>
+  </div>
+  <div class="section">
+    <p class="section-title">😴 휴면 처리</p>
+    <div class="field">
+      <label>nickname <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="dr_doneNickname" placeholder="닉네임 입력" />
+    </div>
+    <button class="btn btn-done" id="dr_btnDone" onclick="dormantApi('done')">휴면 처리</button>
+    <div class="result-box" id="dr_doneResult"></div>
+  </div>
+  <div class="section">
+    <p class="section-title">🔄 휴면 초기화</p>
+    <div class="field">
+      <label>nickname <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="dr_resetNickname" placeholder="닉네임 입력" />
+    </div>
+    <button class="btn btn-reset" id="dr_btnReset" onclick="dormantApi('reset')">초기화</button>
+    <div class="result-box" id="dr_resetResult"></div>
+  </div>
+</div>
+
+<!-- 4. 과외구함 팝업 -->
+<div class="tab-content" id="tab-3">
+  <p class="page-title">과외구함 팝업 리셋</p>
+  <p class="page-subtitle">과외구함 상태 변경 팝업 바로 뜰 수 있도록 관련 값 리셋</p>
+  <div class="section">
+    <p class="section-title">🔄 팝업 관련 값 리셋</p>
+    <div class="field">
+      <label>nickname <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="ep_nickname" placeholder="닉네임 입력" />
+    </div>
+    <button class="btn btn-reset" id="ep_btnReset" onclick="engageReset()">리셋</button>
+    <div class="result-box" id="ep_result"></div>
+  </div>
+</div>
+
+<!-- 5. 이탈복구 -->
+<div class="tab-content" id="tab-4">
+  <p class="page-title">이탈복구 푸시</p>
+  <p class="page-subtitle">작성하시던 공고를 완성해주세요!</p>
+  <div class="section">
+    <p class="section-title">📤 이탈복구 푸시 발송</p>
+    <div class="field">
+      <label>nickname <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="rc_sendNickname" placeholder="닉네임 입력" />
+    </div>
+    <button class="btn btn-send" id="rc_btnSend" onclick="recoveryApi('send')">푸시 발송</button>
+    <div class="result-box" id="rc_sendResult"></div>
+  </div>
+  <div class="section">
+    <p class="section-title">🔄 이탈 기록 초기화</p>
+    <div class="field">
+      <label>nickname <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="rc_resetNickname" placeholder="닉네임 입력" />
+    </div>
+    <button class="btn btn-reset" id="rc_btnReset" onclick="recoveryApi('reset')">초기화</button>
+    <div class="result-box" id="rc_resetResult"></div>
+  </div>
+</div>
+
+<!-- 6. 리뷰알림 -->
+<div class="tab-content" id="tab-5">
+  <p class="page-title">리뷰알림 푸시</p>
+  <p class="page-subtitle">고민중인 선생님이 만점 후기를 받았어요</p>
+  <div class="section">
+    <p class="section-title">📤 리뷰알림 푸시 발송</p>
+    <div class="field">
+      <div class="row">
+        <div>
+          <label>tutorNickname <span style="color:#A32D2D">*</span></label>
+          <input type="text" id="rv_tutorNickname" placeholder="튜터 닉네임" />
+        </div>
+        <div>
+          <label>tuteeNickname <span style="color:#A32D2D">*</span></label>
+          <input type="text" id="rv_tuteeNickname" placeholder="학생 닉네임" />
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-send" id="rv_btnSend" onclick="reviewSend()">푸시 발송</button>
+    <div class="result-box" id="rv_sendResult"></div>
+  </div>
+  <div class="section">
+    <p class="section-title">🔄 리뷰알림 푸시 초기화</p>
+    <div class="field">
+      <label>phoneNumber</label>
+      <input type="text" id="rv_phoneNumber" placeholder="01000000000 (dash 없이)" maxlength="11" />
+      <p class="hint">입력하지 않으면 전체 초기화</p>
+    </div>
+    <button class="btn btn-reset" id="rv_btnReset" onclick="reviewReset()">초기화</button>
+    <div class="result-box" id="rv_resetResult"></div>
+  </div>
+</div>
+
+<!-- 7. FOMO -->
+<div class="tab-content" id="tab-6">
+  <p class="page-title">FOMO 푸시</p>
+  <p class="page-subtitle">고민중인 선생님의 새 수업이 성사됐어요</p>
+  <div class="section">
+    <p class="section-title">📤 푸시 발송</p>
+    <div class="field">
+      <div class="row">
+        <div>
+          <label>tutorNickname <span style="color:#A32D2D">*</span></label>
+          <input type="text" id="fo_tutorNickname" placeholder="튜터 닉네임" />
+        </div>
+        <div>
+          <label>tuteeNickname <span style="color:#A32D2D">*</span></label>
+          <input type="text" id="fo_tuteeNickname" placeholder="학생 닉네임" />
+        </div>
+      </div>
+    </div>
+    <button class="btn btn-send" id="fo_btnSend" onclick="fomoSend()">푸시 발송</button>
+    <div class="result-box" id="fo_sendResult"></div>
+  </div>
+  <div class="section">
+    <p class="section-title">🔄 푸시 초기화</p>
+    <div class="field">
+      <label>phoneNumber</label>
+      <input type="text" id="fo_phoneNumber" placeholder="01000000000 (dash 없이)" maxlength="11" />
+      <p class="hint">입력하지 않으면 전체 초기화</p>
+    </div>
+    <button class="btn btn-reset" id="fo_btnReset" onclick="fomoReset()">초기화</button>
+    <div class="result-box" id="fo_resetResult"></div>
+  </div>
+</div>
+
+<!-- 8. 간편답변 초기화 -->
+<div class="tab-content" id="tab-7">
+  <p class="page-title">간편답변 초기화</p>
+  <p class="page-subtitle">간편하게 답변해보세요 사용 하기 전 상태로 초기화</p>
+  <div class="section">
+    <p class="section-title">🔄 간편답변 초기화</p>
+    <div class="field">
+      <label>roomId <span style="color:#A32D2D">*</span></label>
+      <input type="text" id="qr_roomId" placeholder="roomId 입력" />
+    </div>
+    <button class="btn btn-reset" id="qr_btnReset" onclick="quickReplyReset()">초기화</button>
+    <div class="result-box" id="qr_result"></div>
+  </div>
+</div>
+
+<script>
+const BASE = 'https://dev-admin-api-cycndteybqbvbzc4.koreacentral-01.azurewebsites.net';
+
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-content').forEach((c, i) => c.classList.toggle('active', i === idx));
+}
+
+function showResult(id, ok, msg) {
+  const el = document.getElementById(id);
+  el.style.display = 'block';
+  el.className = 'result-box ' + (ok ? 'result-success' : 'result-error');
+  el.textContent = msg;
+}
+
+function clearIds(...ids) {
+  ids.forEach(id => { const el = document.getElementById(id); if (el) el.value = ''; });
+}
+
+function setBtn(id, disabled, text) {
+  const btn = document.getElementById(id);
+  btn.disabled = disabled;
+  btn.textContent = text;
+}
+
+function numOnly(id) {
+  document.getElementById(id).addEventListener('input', function() {
+    this.value = this.value.replace(/[^0-9]/g, '');
+  });
+}
+numOnly('rv_phoneNumber');
+numOnly('fo_phoneNumber');
+
+function showToast() {
+  const t = document.getElementById('toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+async function request(url, btnId, btnLabel, clearInputIds, resultId) {
+  setBtn(btnId, true, '처리 중...');
+  try {
+    const res = await fetch(url);
+    const text = await res.text();
+    if (res.ok) showResult(resultId, true, `성공 (${res.status}) ${text}`);
+    else showResult(resultId, false, `실패 (${res.status}) ${text}`);
+  } catch(e) { /* silent */ }
+  finally {
+    setBtn(btnId, false, btnLabel);
+    showToast();
+  }
+}
+
+// 1. 성사누락
+async function matchingSend() {
+  const nickname = document.getElementById('m_sendNickname').value.trim();
+  if (!nickname) { showResult('m_sendResult', false, 'nickname은 필수입니다.'); return; }
+  await request(
+    `${BASE}/api/admin/test/matching/scheduler?${new URLSearchParams({ type: 'check_matching', nickname })}`,
+    'm_btnSend', '알림톡 발송', ['m_sendNickname'], 'm_sendResult'
+  );
+}
+async function matchingReset() {
+  const nickname = document.getElementById('m_resetNickname').value.trim();
+  if (!nickname) { showResult('m_resetResult', false, 'nickname은 필수입니다.'); return; }
+  await request(
+    `${BASE}/api/admin/test/reset/chat/respond?${new URLSearchParams({ nickname })}`,
+    'm_btnReset', '초기화', ['m_resetNickname'], 'm_resetResult'
+  );
+}
+
+// 2. 시범전환
+async function demoSend() {
+  const nickname = document.getElementById('d_sendNickname').value.trim();
+  if (!nickname) { showResult('d_sendResult', false, 'nickname은 필수입니다.'); return; }
+  await request(
+    `${BASE}/api/admin/test/matching/scheduler?${new URLSearchParams({ type: 'demo_change', nickname })}`,
+    'd_btnSend', '알림톡 발송', ['d_sendNickname'], 'd_sendResult'
+  );
+}
+async function demoReset() {
+  const nickname = document.getElementById('d_resetNickname').value.trim();
+  if (!nickname) { showResult('d_resetResult', false, 'nickname은 필수입니다.'); return; }
+  await request(
+    `${BASE}/api/admin/test/reset/demo/respond?${new URLSearchParams({ nickname })}`,
+    'd_btnReset', '초기화', ['d_resetNickname'], 'd_resetResult'
+  );
+}
+
+// 3. 휴면전환
+const dormantConfig = {
+  pending: { inputId: 'dr_pendingNickname', resultId: 'dr_pendingResult', btnId: 'dr_btnPending', label: '휴면 예정 처리', path: '/api/admin/test/dormant/pending' },
+  done:    { inputId: 'dr_doneNickname',    resultId: 'dr_doneResult',    btnId: 'dr_btnDone',    label: '휴면 처리',    path: '/api/admin/test/dormant/done' },
+  reset:   { inputId: 'dr_resetNickname',   resultId: 'dr_resetResult',   btnId: 'dr_btnReset',   label: '초기화',       path: '/api/admin/test/dormant/reset' },
+};
+async function dormantApi(type) {
+  const c = dormantConfig[type];
+  const nickname = document.getElementById(c.inputId).value.trim();
+  if (!nickname) { showResult(c.resultId, false, 'nickname은 필수입니다.'); return; }
+  await request(
+    `${BASE}${c.path}?${new URLSearchParams({ nickname })}`,
+    c.btnId, c.label, [c.inputId], c.resultId
+  );
+}
+
+// 4. 과외구함 팝업
+async function engageReset() {
+  const nickname = document.getElementById('ep_nickname').value.trim();
+  if (!nickname) { showResult('ep_result', false, 'nickname은 필수입니다.'); return; }
+  await request(
+    `${BASE}/api/admin/test/reset/engagePopup?${new URLSearchParams({ nickname })}`,
+    'ep_btnReset', '리셋', ['ep_nickname'], 'ep_result'
+  );
+}
+
+// 5. 이탈복구
+const recoveryConfig = {
+  send:  { inputId: 'rc_sendNickname',  resultId: 'rc_sendResult',  btnId: 'rc_btnSend',  label: '푸시 발송', path: '/api/admin/test/push/recovery' },
+  reset: { inputId: 'rc_resetNickname', resultId: 'rc_resetResult', btnId: 'rc_btnReset', label: '초기화',    path: '/api/admin/test/reset/recovery' },
+};
+async function recoveryApi(type) {
+  const c = recoveryConfig[type];
+  const nickname = document.getElementById(c.inputId).value.trim();
+  if (!nickname) { showResult(c.resultId, false, 'nickname은 필수입니다.'); return; }
+  await request(
+    `${BASE}${c.path}?${new URLSearchParams({ nickname })}`,
+    c.btnId, c.label, [c.inputId], c.resultId
+  );
+}
+
+// 6. 리뷰알림
+async function reviewSend() {
+  const tutorNickname = document.getElementById('rv_tutorNickname').value.trim();
+  const tuteeNickname = document.getElementById('rv_tuteeNickname').value.trim();
+  if (!tutorNickname || !tuteeNickname) { showResult('rv_sendResult', false, 'tutorNickname, tuteeNickname 모두 필수입니다.'); return; }
+  await request(
+    `${BASE}/api/admin/test/push/review?${new URLSearchParams({ tutorNickname, tuteeNickname })}`,
+    'rv_btnSend', '푸시 발송', ['rv_tutorNickname', 'rv_tuteeNickname'], 'rv_sendResult'
+  );
+}
+async function reviewReset() {
+  const phoneNumber = document.getElementById('rv_phoneNumber').value.trim();
+  const params = new URLSearchParams();
+  if (phoneNumber) params.append('phoneNumber', phoneNumber);
+  await request(
+    `${BASE}/api/admin/test/reset/review/push${params.toString() ? '?' + params : ''}`,
+    'rv_btnReset', '초기화', ['rv_phoneNumber'], 'rv_resetResult'
+  );
+}
+
+// 7. FOMO
+async function fomoSend() {
+  const tutorNickname = document.getElementById('fo_tutorNickname').value.trim();
+  const tuteeNickname = document.getElementById('fo_tuteeNickname').value.trim();
+  if (!tutorNickname || !tuteeNickname) { showResult('fo_sendResult', false, 'tutorNickname, tuteeNickname 모두 필수입니다.'); return; }
+  await request(
+    `${BASE}/api/admin/test/push/fomo?${new URLSearchParams({ tutorNickname, tuteeNickname })}`,
+    'fo_btnSend', '푸시 발송', ['fo_tutorNickname', 'fo_tuteeNickname'], 'fo_sendResult'
+  );
+}
+async function fomoReset() {
+  const phoneNumber = document.getElementById('fo_phoneNumber').value.trim();
+  const params = new URLSearchParams();
+  if (phoneNumber) params.append('phoneNumber', phoneNumber);
+  await request(
+    `${BASE}/api/admin/test/reset/fomo/push${params.toString() ? '?' + params : ''}`,
+    'fo_btnReset', '초기화', ['fo_phoneNumber'], 'fo_resetResult'
+  );
+}
+// 8. 간편답변 초기화
+async function quickReplyReset() {
+  const roomId = document.getElementById('qr_roomId').value.trim();
+  if (!roomId) { showResult('qr_result', false, 'roomId는 필수입니다.'); return; }
+  await request(
+    `${BASE}/api/admin/test/lesson/quickReply/reset?${new URLSearchParams({ roomId })}`,
+    'qr_btnReset', '초기화', ['qr_roomId'], 'qr_result'
+  );
+}
+</script>
+</body>
+</html>
