@@ -1,0 +1,375 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: #f5f5f3;
+  color: #1a1a1a;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+}
+
+input {
+  font: inherit;
+}
+
+a {
+  color: #3c3489;
+  text-decoration: none;
+}
+
+/* ---- App layout ---- */
+
+.app-shell {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-header {
+  background: #fff;
+  border-bottom: 0.5px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  height: 48px;
+}
+
+.app-brand {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a1a1a;
+}
+
+.app-logout {
+  background: none;
+  border: none;
+  color: #888;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.app-logout:hover {
+  color: #3c3489;
+}
+
+/* ---- Tabs ---- */
+
+.tab-header {
+  background: #fff;
+  border-bottom: 0.5px solid #ddd;
+  padding: 0 1.5rem;
+  display: flex;
+  overflow-x: auto;
+}
+
+.tab-btn {
+  padding: 14px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #888;
+  border: none;
+  background: none;
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -0.5px;
+}
+
+.tab-btn:hover {
+  color: #534ab7;
+}
+
+.tab-btn.active {
+  color: #3c3489;
+  border-bottom-color: #3c3489;
+}
+
+.tab-content {
+  padding: 1.5rem;
+}
+
+.page-title {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.page-subtitle {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 1.25rem;
+}
+
+/* ---- Section/cards ---- */
+
+.section {
+  background: #fff;
+  border: 0.5px solid #ddd;
+  border-radius: 12px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: #666;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.badge {
+  font-size: 11px;
+  background: #eaf3de;
+  color: #3b6d11;
+  border-radius: 4px;
+  padding: 2px 7px;
+  font-weight: 400;
+}
+
+label {
+  font-size: 13px;
+  color: #666;
+  display: block;
+  margin-bottom: 4px;
+}
+
+label .required {
+  color: #a32d2d;
+}
+
+input[type='text'],
+input[type='password'] {
+  width: 100%;
+  padding: 8px 10px;
+  border: 0.5px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+}
+
+input[type='text']:focus,
+input[type='password']:focus {
+  border-color: #534ab7;
+  box-shadow: 0 0 0 2px rgba(83, 74, 183, 0.15);
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.hint {
+  font-size: 11px;
+  color: #aaa;
+  margin-top: 4px;
+}
+
+/* ---- Buttons ---- */
+
+.btn {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  margin-top: 4px;
+  transition: background 0.1s;
+}
+
+.btn-send {
+  background: #3c3489;
+  color: #eeedfe;
+}
+
+.btn-send:hover:not(:disabled) {
+  background: #534ab7;
+}
+
+.btn-pending {
+  background: #854f0b;
+  color: #faeeda;
+}
+
+.btn-pending:hover:not(:disabled) {
+  background: #ba7517;
+}
+
+.btn-done {
+  background: #3c3489;
+  color: #eeedfe;
+}
+
+.btn-done:hover:not(:disabled) {
+  background: #534ab7;
+}
+
+.btn-reset {
+  background: #f0f0ee;
+  color: #333;
+  border: 0.5px solid #ccc;
+}
+
+.btn-reset:hover:not(:disabled) {
+  background: #e5e5e2;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: #666;
+  border: 0.5px solid #ccc;
+}
+
+.btn-ghost:hover:not(:disabled) {
+  background: #f5f5f3;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ---- Result box & toast ---- */
+
+.result-box {
+  margin-top: 12px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+.result-success {
+  background: #eaf3de;
+  color: #3b6d11;
+  border: 0.5px solid #97c459;
+}
+
+.result-error {
+  background: #fcebeb;
+  color: #a32d2d;
+  border: 0.5px solid #f09595;
+}
+
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1a1a1a;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0;
+  transition: opacity 0.3s;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.toast.show {
+  opacity: 1;
+}
+
+/* ---- Login page ---- */
+
+.login-shell {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+  background: #fff;
+  border: 0.5px solid #ddd;
+  border-radius: 12px;
+  padding: 2rem;
+}
+
+.login-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.login-subtitle {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 1.5rem;
+}
+
+/* ---- Modal ---- */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  z-index: 1000;
+}
+
+.modal {
+  background: #fff;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 360px;
+  padding: 1.5rem;
+}
+
+.modal-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.modal-body {
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 1.25rem;
+  line-height: 1.5;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.modal-actions .btn {
+  margin-top: 0;
+}

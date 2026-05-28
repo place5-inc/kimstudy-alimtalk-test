@@ -1,0 +1,19 @@
+node_modules
+dist
+.DS_Store
+*.log
+.vite
+
+# env files (NEVER commit secrets)
+.env
+.env.local
+.env.*.local
+.env.production
+
+# IDE
+.vscode
+.idea
+.cursor
+
+# Vercel
+.vercel
