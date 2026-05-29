@@ -1,19 +1,23 @@
-import { useCallback, useState } from 'react';
-import type { ReactNode } from 'react';
-import { z, type ZodSchema } from 'zod';
-import { ResultBox, type ResultState } from './ResultBox';
-import { ConfirmModal } from './ConfirmModal';
-import { useToast } from './Toast';
-import { callProxy, fetchConfirmToken, UnauthenticatedError } from '../api/client';
-import { useAuth } from '../auth/AuthProvider';
+import { useCallback, useState } from "react";
+import type { ReactNode } from "react";
+import { z, type ZodSchema } from "zod";
+import { ResultBox, type ResultState } from "./ResultBox";
+import { ConfirmModal } from "./ConfirmModal";
+import { useToast } from "./Toast";
+import {
+  callProxy,
+  fetchConfirmToken,
+  UnauthenticatedError,
+} from "../api/client";
+import { useAuth } from "../auth/AuthProvider";
 
-export type ActionVariant = 'send' | 'pending' | 'done' | 'reset';
+export type ActionVariant = "send" | "pending" | "done" | "reset";
 
 const variantClass: Record<ActionVariant, string> = {
-  send: 'btn-send',
-  pending: 'btn-pending',
-  done: 'btn-done',
-  reset: 'btn-reset',
+  send: "btn-send",
+  pending: "btn-pending",
+  done: "btn-done",
+  reset: "btn-reset",
 };
 
 export interface ActionFormProps<T extends Record<string, string>> {
@@ -30,7 +34,9 @@ export interface ActionFormProps<T extends Record<string, string>> {
   confirmBody?: string;
   resetAfterSuccess?: boolean;
   children: (api: {
-    register: <K extends keyof T>(field: K) => {
+    register: <K extends keyof T>(
+      field: K,
+    ) => {
       value: string;
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
       name: string;
@@ -68,7 +74,7 @@ export function ActionForm<T extends Record<string, string>>({
 
   const register = useCallback(
     <K extends keyof T>(field: K) => ({
-      value: (values[field] as string | undefined) ?? '',
+      value: (values[field] as string | undefined) ?? "",
       name: String(field),
       onChange: (e: React.ChangeEvent<HTMLInputElement>) =>
         setField(field, e.target.value),
@@ -104,10 +110,18 @@ export function ActionForm<T extends Record<string, string>>({
         });
       } finally {
         setBusy(false);
-        showToast('처리가 완료되었습니다');
+        showToast("처리가 완료되었습니다");
       }
     },
-    [action, backendPath, buildParams, dangerous, logout, resetAfterSuccess, showToast],
+    [
+      action,
+      backendPath,
+      buildParams,
+      dangerous,
+      logout,
+      resetAfterSuccess,
+      showToast,
+    ],
   );
 
   const handleSubmit = useCallback(
@@ -118,7 +132,7 @@ export function ActionForm<T extends Record<string, string>>({
         const first = parsed.error.issues[0];
         setResult({
           ok: false,
-          message: first?.message ?? '입력값을 확인해주세요.',
+          message: first?.message ?? "입력값을 확인해주세요.",
         });
         return;
       }
@@ -149,13 +163,13 @@ export function ActionForm<T extends Record<string, string>>({
         className={`btn ${variantClass[variant]}`}
         disabled={busy}
       >
-        {busy ? '처리 중...' : buttonLabel}
+        {busy ? "처리 중..." : buttonLabel}
       </button>
       <ResultBox result={result} />
       <ConfirmModal
         open={confirmOpen}
-        title={confirmTitle ?? '실행하시겠습니까?'}
-        body={confirmBody ?? '이 작업은 실제 발송/처리됩니다.'}
+        title={confirmTitle ?? "실행하시겠습니까?"}
+        body={confirmBody ?? "이 작업은 실제 발송/처리됩니다."}
         confirmLabel="실행"
         onConfirm={onConfirm}
         onCancel={() => setConfirmOpen(false)}
@@ -165,12 +179,9 @@ export function ActionForm<T extends Record<string, string>>({
   );
 }
 
-export const requiredText = z
-  .string()
-  .trim()
-  .min(1, '필수 항목입니다.');
+export const requiredText = z.string().trim().min(1, "필수 항목입니다.");
 
 export const optionalPhone = z
   .string()
   .trim()
-  .regex(/^(\d{10,11})?$/, '전화번호는 10~11자리 숫자여야 합니다.');
+  .regex(/^(\d{10,11})?$/, "전화번호는 10~11자리 숫자여야 합니다.");
