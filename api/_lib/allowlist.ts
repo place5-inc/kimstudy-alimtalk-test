@@ -105,7 +105,7 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
   },
   {
     action: 'authPhone:check',
-    path: /^\/api\/admin\/test\/auth\/phone$/,
+    path: /^\/admin\/test\/auth\/phone$/,
     method: 'GET',
     dangerous: false,
   },

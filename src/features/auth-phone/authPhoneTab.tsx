@@ -36,7 +36,7 @@ export function AuthPhoneTab() {
       setAuthCode(null);
 
       try {
-        const r = await callProxy("/api/admin/test/auth/phone", { phoneNumber });
+        const r = await callProxy("/admin/test/auth/phone", { phoneNumber });
         if (r.ok) {
           try {
             const data = JSON.parse(r.body) as AuthPhoneResponse;
