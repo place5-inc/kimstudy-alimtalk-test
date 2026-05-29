@@ -16,7 +16,7 @@ export function DemoTab() {
         buttonLabel="알림톡 발송"
         variant="send"
         schema={sendSchema}
-        backendPath="/api/admin/test/matching/scheduler"
+        backendPath="/admin/test/matching/scheduler"
         buildParams={(v) => ({ type: 'demo_change', nickname: v.nickname })}
         action="matching:send"
         dangerous
@@ -44,7 +44,7 @@ export function DemoTab() {
         buttonLabel="초기화"
         variant="reset"
         schema={resetSchema}
-        backendPath="/api/admin/test/reset/demo/respond"
+        backendPath="/admin/test/reset/demo/respond"
         buildParams={(v) => ({ nickname: v.nickname })}
         action="demo:reset"
         dangerous={false}

@@ -1,11 +1,15 @@
 /**
  * 백엔드(Azure) API 경로 화이트리스트.
- * 새 어드민 기능을 추가할 때 여기에 등록하지 않으면 프록시가 403을 반환합니다.
  *
- * 각 엔트리:
- *  - path: 정규식. 백엔드의 path 부분만 매칭 (querystring 제외)
- *  - method: 허용 HTTP 메서드
- *  - dangerous: true면 위험 액션 → confirm 토큰 필수
+ * 중요: 여기의 `path`는 백엔드의 `/api` prefix를 제외한 부분입니다.
+ *   - 실제 백엔드 URL: https://...azurewebsites.net/api/admin/test/...
+ *   - allowlist의 path: /admin/test/...
+ * 이유: 클라이언트가 보내는 URL(/api/proxy/...)에 /api가 두 번 들어가면
+ *       Vercel 라우팅이 catch-all로 보내지 못하고 자체 404를 냅니다.
+ *       그래서 클라/프록시 사이에서는 /api를 빼고, 백엔드 호출 시
+ *       `backend.ts`가 자동으로 /api를 붙입니다.
+ *
+ * 새 어드민 기능을 추가할 때 여기에 등록하지 않으면 프록시가 403을 반환합니다.
  */
 export interface AllowlistEntry {
   path: RegExp;
@@ -17,85 +21,85 @@ export interface AllowlistEntry {
 export const ALLOWLIST: readonly AllowlistEntry[] = [
   {
     action: 'matching:send',
-    path: /^\/api\/admin\/test\/matching\/scheduler$/,
+    path: /^\/admin\/test\/matching\/scheduler$/,
     method: 'GET',
     dangerous: true,
   },
   {
     action: 'matching:reset',
-    path: /^\/api\/admin\/test\/reset\/chat\/respond$/,
+    path: /^\/admin\/test\/reset\/chat\/respond$/,
     method: 'GET',
     dangerous: false,
   },
   {
     action: 'demo:reset',
-    path: /^\/api\/admin\/test\/reset\/demo\/respond$/,
+    path: /^\/admin\/test\/reset\/demo\/respond$/,
     method: 'GET',
     dangerous: false,
   },
   {
     action: 'dormant:pending',
-    path: /^\/api\/admin\/test\/dormant\/pending$/,
+    path: /^\/admin\/test\/dormant\/pending$/,
     method: 'GET',
     dangerous: true,
   },
   {
     action: 'dormant:done',
-    path: /^\/api\/admin\/test\/dormant\/done$/,
+    path: /^\/admin\/test\/dormant\/done$/,
     method: 'GET',
     dangerous: true,
   },
   {
     action: 'dormant:reset',
-    path: /^\/api\/admin\/test\/dormant\/reset$/,
+    path: /^\/admin\/test\/dormant\/reset$/,
     method: 'GET',
     dangerous: false,
   },
   {
     action: 'engagePopup:reset',
-    path: /^\/api\/admin\/test\/reset\/engagePopup$/,
+    path: /^\/admin\/test\/reset\/engagePopup$/,
     method: 'GET',
     dangerous: false,
   },
   {
     action: 'recovery:send',
-    path: /^\/api\/admin\/test\/push\/recovery$/,
+    path: /^\/admin\/test\/push\/recovery$/,
     method: 'GET',
     dangerous: true,
   },
   {
     action: 'recovery:reset',
-    path: /^\/api\/admin\/test\/reset\/recovery$/,
+    path: /^\/admin\/test\/reset\/recovery$/,
     method: 'GET',
     dangerous: false,
   },
   {
     action: 'review:send',
-    path: /^\/api\/admin\/test\/push\/review$/,
+    path: /^\/admin\/test\/push\/review$/,
     method: 'GET',
     dangerous: true,
   },
   {
     action: 'review:reset',
-    path: /^\/api\/admin\/test\/reset\/review\/push$/,
+    path: /^\/admin\/test\/reset\/review\/push$/,
     method: 'GET',
     dangerous: false,
   },
   {
     action: 'fomo:send',
-    path: /^\/api\/admin\/test\/push\/fomo$/,
+    path: /^\/admin\/test\/push\/fomo$/,
     method: 'GET',
     dangerous: true,
   },
   {
     action: 'fomo:reset',
-    path: /^\/api\/admin\/test\/reset\/fomo\/push$/,
+    path: /^\/admin\/test\/reset\/fomo\/push$/,
     method: 'GET',
     dangerous: false,
   },
   {
     action: 'quickReply:reset',
-    path: /^\/api\/admin\/test\/lesson\/quickReply\/reset$/,
+    path: /^\/admin\/test\/lesson\/quickReply\/reset$/,
     method: 'GET',
     dangerous: false,
   },

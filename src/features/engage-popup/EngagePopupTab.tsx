@@ -14,7 +14,7 @@ export function EngagePopupTab() {
         buttonLabel="리셋"
         variant="reset"
         schema={schema}
-        backendPath="/api/admin/test/reset/engagePopup"
+        backendPath="/admin/test/reset/engagePopup"
         buildParams={(v) => ({ nickname: v.nickname })}
         action="engagePopup:reset"
         dangerous={false}

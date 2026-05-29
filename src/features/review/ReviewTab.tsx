@@ -18,7 +18,7 @@ export function ReviewTab() {
         buttonLabel="푸시 발송"
         variant="send"
         schema={sendSchema}
-        backendPath="/api/admin/test/push/review"
+        backendPath="/admin/test/push/review"
         buildParams={(v) => ({
           tutorNickname: v.tutorNickname,
           tuteeNickname: v.tuteeNickname,
@@ -65,7 +65,7 @@ export function ReviewTab() {
         buttonLabel="초기화"
         variant="reset"
         schema={resetSchema}
-        backendPath="/api/admin/test/reset/review/push"
+        backendPath="/admin/test/reset/review/push"
         buildParams={(v) => {
           const out: Record<string, string> = {};
           if (v.phoneNumber) out.phoneNumber = v.phoneNumber;

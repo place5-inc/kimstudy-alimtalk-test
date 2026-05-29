@@ -14,7 +14,9 @@ export async function callBackend(
 ): Promise<BackendResponse> {
   const { AZURE_API_BASE, BACKEND_SHARED_SECRET } = getEnv();
   const qs = query.toString();
-  const url = `${AZURE_API_BASE}${path}${qs ? `?${qs}` : ''}`;
+  // path는 /admin/test/... 형태. 백엔드 호출 시 /api prefix를 붙임.
+  // 이유: 클라/프록시 URL에 /api가 두 번 들어가면 Vercel 라우팅이 깨짐.
+  const url = `${AZURE_API_BASE}/api${path}${qs ? `?${qs}` : ''}`;
 
   const init: RequestInit = {
     method,

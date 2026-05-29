@@ -14,7 +14,7 @@ export function QuickReplyTab() {
         buttonLabel="초기화"
         variant="reset"
         schema={schema}
-        backendPath="/api/admin/test/lesson/quickReply/reset"
+        backendPath="/admin/test/lesson/quickReply/reset"
         buildParams={(v) => ({ roomId: v.roomId })}
         action="quickReply:reset"
         dangerous={false}

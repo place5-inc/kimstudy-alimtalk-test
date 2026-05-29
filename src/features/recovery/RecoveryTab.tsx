@@ -14,7 +14,7 @@ export function RecoveryTab() {
         buttonLabel="푸시 발송"
         variant="send"
         schema={schema}
-        backendPath="/api/admin/test/push/recovery"
+        backendPath="/admin/test/push/recovery"
         buildParams={(v) => ({ nickname: v.nickname })}
         action="recovery:send"
         dangerous
@@ -42,7 +42,7 @@ export function RecoveryTab() {
         buttonLabel="초기화"
         variant="reset"
         schema={schema}
-        backendPath="/api/admin/test/reset/recovery"
+        backendPath="/admin/test/reset/recovery"
         buildParams={(v) => ({ nickname: v.nickname })}
         action="recovery:reset"
         dangerous={false}

@@ -14,7 +14,7 @@ export function DormantTab() {
         buttonLabel="휴면 예정 처리"
         variant="pending"
         schema={schema}
-        backendPath="/api/admin/test/dormant/pending"
+        backendPath="/admin/test/dormant/pending"
         buildParams={(v) => ({ nickname: v.nickname })}
         action="dormant:pending"
         dangerous
@@ -42,7 +42,7 @@ export function DormantTab() {
         buttonLabel="휴면 처리"
         variant="done"
         schema={schema}
-        backendPath="/api/admin/test/dormant/done"
+        backendPath="/admin/test/dormant/done"
         buildParams={(v) => ({ nickname: v.nickname })}
         action="dormant:done"
         dangerous
@@ -70,7 +70,7 @@ export function DormantTab() {
         buttonLabel="초기화"
         variant="reset"
         schema={schema}
-        backendPath="/api/admin/test/dormant/reset"
+        backendPath="/admin/test/dormant/reset"
         buildParams={(v) => ({ nickname: v.nickname })}
         action="dormant:reset"
         dangerous={false}
