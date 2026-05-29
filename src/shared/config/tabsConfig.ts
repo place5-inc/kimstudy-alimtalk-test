@@ -7,6 +7,7 @@ import { RecoveryTab } from '../../features/recovery/RecoveryTab';
 import { ReviewTab } from '../../features/review/ReviewTab';
 import { FomoTab } from '../../features/fomo/FomoTab';
 import { QuickReplyTab } from '../../features/quick-reply/QuickReplyTab';
+import { AuthPhoneTab } from '../../features/auth-phone/authPhoneTab';
 
 export interface TabConfig {
   id: string;
@@ -29,4 +30,5 @@ export const TABS: readonly TabConfig[] = [
   { id: 'review', label: '6. 리뷰알림', component: ReviewTab },
   { id: 'fomo', label: '7. FOMO', component: FomoTab },
   { id: 'quick-reply', label: '8. 간편답변 초기화', component: QuickReplyTab },
+  { id: 'auth-phone', label: '9. 인증번호 확인', component: AuthPhoneTab },
 ];
