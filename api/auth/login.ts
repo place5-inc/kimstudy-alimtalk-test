@@ -15,7 +15,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     getEnv();
   } catch (e) {
-    res.status(500).json({ error: 'server_misconfigured', detail: String(e) });
+    console.error('[auth/login] server_misconfigured', e);
+    res.status(500).json({ error: 'server_misconfigured' });
     return;
   }
 
@@ -27,7 +28,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!verifyOrigin(req, res)) return;
 
   const ip = getClientIp(req);
-  const limit = rateLimit(`login:${ip}`, 10, 300);
+  const limit = rateLimit(`login:${ip}`, 30, 300);
   if (!limit.allowed) {
     res.setHeader('Retry-After', String(limit.retryAfterSec));
     res.status(429).json({ error: 'too_many_attempts', retryAfter: limit.retryAfterSec });

@@ -26,8 +26,10 @@ export async function callBackend(
     ...(body && method !== 'GET' ? { body } : {}),
   };
 
+  console.log(`[backend] ${method} ${url}`);
   const res = await fetch(url, init);
   const text = await res.text();
+  console.log(`[backend] response ${res.status}`);
   return {
     status: res.status,
     body: text,

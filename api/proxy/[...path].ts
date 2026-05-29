@@ -12,7 +12,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     getEnv();
   } catch (e) {
-    res.status(500).json({ error: 'server_misconfigured', detail: String(e) });
+    console.error('[proxy] server_misconfigured', e);
+    res.status(500).json({ error: 'server_misconfigured' });
     return;
   }
 
@@ -62,12 +63,15 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  const incomingUrl = new URL(req.url ?? '/', 'http://localhost');
+  // Vercel populates req.query with both the dynamic [...path] segments
+  // and the original querystring params. We need to exclude `path` so it
+  // doesn't get forwarded to the backend as a stray query parameter.
   const query = new URLSearchParams();
-  for (const [k, v] of incomingUrl.searchParams) {
+  for (const [k, v] of Object.entries(req.query)) {
+    if (k === 'path') continue;
     if (Array.isArray(v)) {
       for (const x of v) query.append(k, x);
-    } else {
+    } else if (typeof v === 'string') {
       query.append(k, v);
     }
   }
@@ -83,6 +87,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     res.setHeader('Cache-Control', 'no-store');
     res.status(upstream.status).send(upstream.body);
   } catch (e) {
-    res.status(502).json({ error: 'upstream_unreachable', detail: String(e) });
+    console.error('[proxy] upstream_unreachable', e);
+    res.status(502).json({ error: 'upstream_unreachable' });
   }
 }

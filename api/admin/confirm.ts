@@ -14,7 +14,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     getEnv();
   } catch (e) {
-    res.status(500).json({ error: 'server_misconfigured', detail: String(e) });
+    console.error('[admin/confirm] server_misconfigured', e);
+    res.status(500).json({ error: 'server_misconfigured' });
     return;
   }
   if (req.method !== 'POST') {
