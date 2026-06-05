@@ -8,6 +8,8 @@ import { ReviewTab } from '../../features/review/ReviewTab';
 import { FomoTab } from '../../features/fomo/FomoTab';
 import { QuickReplyTab } from '../../features/quick-reply/QuickReplyTab';
 import { AuthPhoneTab } from '../../features/auth-phone/authPhoneTab';
+import { AlimtalkTab } from '../../features/alimtalk/AlimtalkTab';
+import { CheckinAlimtalkTab } from '../../features/checkin-alimtalk/CheckinAlimtalkTab';
 
 export interface TabConfig {
   id: string;
@@ -31,4 +33,6 @@ export const TABS: readonly TabConfig[] = [
   { id: 'fomo', label: '7. FOMO', component: FomoTab },
   { id: 'quick-reply', label: '8. 간편답변 초기화', component: QuickReplyTab },
   { id: 'auth-phone', label: '9. 인증번호 확인', component: AuthPhoneTab },
+  { id: 'alimtalk', label: '10. 알림톡 발송', component: AlimtalkTab },
+  { id: 'checkin-alimtalk', label: '11. 체크인 알림톡 발송', component: CheckinAlimtalkTab },
 ];

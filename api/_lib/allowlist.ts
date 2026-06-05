@@ -109,6 +109,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'alimtalk:send',
+    path: /^\/admin\/kakao\/test\/send$/,
+    method: 'GET',
+    dangerous: true,
+  },
 ];
 
 export function matchAllowlist(
