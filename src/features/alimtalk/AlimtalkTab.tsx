@@ -235,8 +235,8 @@ const schema = z
   .object({
     templateCode: requiredText,
     receiverNickname: requiredText,
-    chatRoomId: z.string().trim(),
-    matchingKey: z.string().trim(),
+    chatRoomId: z.string().trim().default(''),
+    matchingKey: z.string().trim().default(''),
   })
   .superRefine((data, ctx) => {
     if (CHAT_ROOM_CODES.has(data.templateCode) && !data.chatRoomId) {
