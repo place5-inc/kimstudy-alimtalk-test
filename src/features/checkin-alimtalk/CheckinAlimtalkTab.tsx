@@ -159,53 +159,67 @@ export function CheckinAlimtalkTab() {
           return (
             <div className="field">
               <div className="row">
+                {/* 좌측: 템플릿 선택 + 미리보기 */}
                 <div>
                   <label htmlFor="ci_templateCode">
                     템플릿 코드 <span className="required">*</span>
                   </label>
-                  <select
-                    id="ci_templateCode"
-                    value={selected}
-                    onChange={(e) => setField('templateCode', e.target.value)}
-                  >
-                    <option value="">-- 템플릿 선택 --</option>
-                    {TEMPLATE_CODES.map((code) => (
-                      <option key={code} value={code}>
-                        {code}
-                      </option>
-                    ))}
-                  </select>
+                  <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+                    <select
+                      id="ci_templateCode"
+                      value={selected}
+                      onChange={(e) => setField('templateCode', e.target.value)}
+                      style={{ flex: 1 }}
+                    >
+                      <option value="">-- 템플릿 선택 --</option>
+                      {TEMPLATE_CODES.map((code) => (
+                        <option key={code} value={code}>
+                          {code}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      className="btn btn-ghost"
+                      style={{ width: 'auto', padding: '8px 12px', whiteSpace: 'nowrap', marginTop: 0 }}
+                      disabled={!selected}
+                      onClick={() => selected && navigator.clipboard.writeText(selected)}
+                    >
+                      복사
+                    </button>
+                  </div>
+                  <AlimtalkPreview templateCode={selected} />
                 </div>
-                <div>
-                  <label htmlFor="ci_receiverNickname">
-                    {nicknameLabel} <span className="required">*</span>
-                  </label>
-                  <input
-                    id="ci_receiverNickname"
-                    type="text"
-                    placeholder="닉네임 입력"
-                    autoComplete="off"
-                    value={(values.receiverNickname as string | undefined) ?? ''}
-                    onChange={(e) => setField('receiverNickname', e.target.value)}
-                  />
+                {/* 우측: 닉네임 + matchingKey */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div>
+                    <label htmlFor="ci_receiverNickname">
+                      {nicknameLabel} <span className="required">*</span>
+                    </label>
+                    <input
+                      id="ci_receiverNickname"
+                      type="text"
+                      placeholder="닉네임 입력"
+                      autoComplete="off"
+                      value={(values.receiverNickname as string | undefined) ?? ''}
+                      onChange={(e) => setField('receiverNickname', e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="ci_matchingKey">
+                      matchingKey <span className="required">*</span>
+                    </label>
+                    <input
+                      id="ci_matchingKey"
+                      type="text"
+                      placeholder="매칭 키 입력"
+                      autoComplete="off"
+                      value={(values.matchingKey as string | undefined) ?? ''}
+                      onChange={(e) => setField('matchingKey', e.target.value)}
+                    />
+                  </div>
                 </div>
               </div>
-              <div className="row">
-                <div>
-                  <label htmlFor="ci_matchingKey">
-                    matchingKey <span className="required">*</span>
-                  </label>
-                  <input
-                    id="ci_matchingKey"
-                    type="text"
-                    placeholder="매칭 키 입력"
-                    autoComplete="off"
-                    value={(values.matchingKey as string | undefined) ?? ''}
-                    onChange={(e) => setField('matchingKey', e.target.value)}
-                  />
-                </div>
-              </div>
-              <AlimtalkPreview templateCode={selected} />
             </div>
           );
         }}
