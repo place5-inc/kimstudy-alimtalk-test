@@ -33,8 +33,8 @@ const TUTOR_CODES = new Set([
 ]);
 
 function getNicknameLabel(templateCode: string): string {
-  if (PARENT_CODES.has(templateCode)) return '학부모 닉네임';
-  if (TUTOR_CODES.has(templateCode)) return '선생님 닉네임';
+  if (PARENT_CODES.has(templateCode)) return '알림톡을 받을 학부모 닉네임 (이 계정의 연락처로 알림톡이 발송됩니다)';
+  if (TUTOR_CODES.has(templateCode)) return '알림톡을 받을 선생님 닉네임 (이 계정의 연락처로 알림톡이 발송됩니다)';
   return '알림톡 수신받을 계정의 닉네임';
 }
 
