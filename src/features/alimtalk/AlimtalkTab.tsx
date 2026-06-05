@@ -280,6 +280,7 @@ export function AlimtalkTab() {
         dangerous
         confirmTitle="알림톡을 발송하시겠습니까?"
         confirmBody="해당 계정에 실제 알림톡이 발송됩니다."
+        resetAfterSuccess={false}
       >
         {({ setField, values }) => {
           const selected = (values.templateCode as string | undefined) ?? '';
