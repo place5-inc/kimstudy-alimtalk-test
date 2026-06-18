@@ -80,10 +80,14 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     }
   }
 
-  // _p 외의 query 파라미터들을 backend로 forward
+  // _env: 환경 선택 (test / prod)
+  const rawEnv = req.query._env;
+  const env = Array.isArray(rawEnv) ? rawEnv[0] : rawEnv;
+
+  // _p, _env 외의 query 파라미터들을 backend로 forward
   const query = new URLSearchParams();
   for (const [k, v] of Object.entries(req.query)) {
-    if (k === '_p') continue;
+    if (k === '_p' || k === '_env') continue;
     if (Array.isArray(v)) {
       for (const x of v) query.append(k, x);
     } else if (typeof v === 'string') {
@@ -97,7 +101,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const upstream = await callBackend(method, path, query, body);
+    const upstream = await callBackend(method, path, query, body, env);
     res.setHeader('Content-Type', upstream.contentType);
     res.setHeader('Cache-Control', 'no-store');
     res.status(upstream.status).send(upstream.body);

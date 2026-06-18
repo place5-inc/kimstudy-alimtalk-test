@@ -10,6 +10,7 @@ import {
   UnauthenticatedError,
 } from "../api/client";
 import { useAuth } from "../auth/AuthProvider";
+import { useEnv } from "../config/EnvContext";
 
 export type ActionVariant = "send" | "pending" | "done" | "reset";
 
@@ -67,6 +68,7 @@ export function ActionForm<T extends Record<string, string>>({
   const [confirmOpen, setConfirmOpen] = useState(false);
   const { show: showToast } = useToast();
   const { logout } = useAuth();
+  const { env } = useEnv();
 
   const setField = useCallback(<K extends keyof T>(field: K, value: string) => {
     setValues((prev) => ({ ...prev, [field]: value }));
@@ -92,7 +94,7 @@ export function ActionForm<T extends Record<string, string>>({
           confirmToken = await fetchConfirmToken(action);
         }
         const params = buildParams(validated);
-        const r = await callProxy(backendPath, params, { confirmToken });
+        const r = await callProxy(backendPath, params, { confirmToken, env });
         if (r.ok) {
           setResult({ ok: true, message: `성공 (${r.status}) ${r.body}` });
           if (resetAfterSuccess) setValues({});

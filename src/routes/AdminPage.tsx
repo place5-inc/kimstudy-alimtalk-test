@@ -1,8 +1,35 @@
 import { useState } from 'react';
 import { useAuth } from '../shared/auth/AuthProvider';
 import { TABS } from '../shared/config/tabsConfig';
+import { EnvProvider, useEnv, type AppEnv } from '../shared/config/EnvContext';
 
-export function AdminPage() {
+function EnvToggle() {
+  const { env, setEnv } = useEnv();
+  return (
+    <div className="env-toggle-wrap">
+      <span className="env-toggle-label">
+        {env === 'test' ? '🟡 테스트 환경' : '🟢 운영 환경'}
+      </span>
+      <button
+        type="button"
+        className={`env-toggle-btn ${env === 'prod' ? 'env-toggle-btn--prod' : ''}`}
+        onClick={() => setEnv((env === 'test' ? 'prod' : 'test') as AppEnv)}
+        title={
+          env === 'test'
+            ? `현재: 테스트 (${new URL('https://dev-admin-api-cycndteybqbvbzc4.koreacentral-01.azurewebsites.net').host}) — 클릭하면 운영으로 전환`
+            : `현재: 운영 (${new URL('https://adminapi.place5.com').host}) — 클릭하면 테스트로 전환`
+        }
+      >
+        <span className="env-toggle-track">
+          <span className="env-toggle-thumb" />
+        </span>
+        <span className="env-toggle-text">{env === 'test' ? '테스트' : '운영'}</span>
+      </button>
+    </div>
+  );
+}
+
+function AdminPageInner() {
   const { logout } = useAuth();
   const [activeId, setActiveId] = useState<string>(TABS[0]?.id ?? '');
 
@@ -13,6 +40,7 @@ export function AdminPage() {
     <div className="app-shell">
       <header className="app-header">
         <span className="app-brand">김과외 어드민</span>
+        <EnvToggle />
         <button
           type="button"
           className="app-logout"
@@ -41,5 +69,13 @@ export function AdminPage() {
 
       <div className="tab-content">{ActiveComponent && <ActiveComponent />}</div>
     </div>
+  );
+}
+
+export function AdminPage() {
+  return (
+    <EnvProvider>
+      <AdminPageInner />
+    </EnvProvider>
   );
 }

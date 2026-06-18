@@ -115,6 +115,18 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: true,
   },
+  {
+    action: 'reviewCampaign:send',
+    path: /^\/admin\/test\/review\/test\/kakao\/resend-missing$/,
+    method: 'GET',
+    dangerous: true,
+  },
+  {
+    action: 'reviewCampaign:reset',
+    path: /^\/admin\/test\/review\/test\/reset\/resend-missing$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(

@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import { ReviewCampaignTab } from '../../features/review-campaign/ReviewCampaignTab';
 import { MatchingTab } from '../../features/matching/MatchingTab';
 import { DemoTab } from '../../features/matching/DemoTab';
 import { DormantTab } from '../../features/dormant/DormantTab';
@@ -24,15 +25,16 @@ export interface TabConfig {
  *   3. api/_lib/allowlist.ts 에 백엔드 경로 정규식 등록
  */
 export const TABS: readonly TabConfig[] = [
-  { id: 'matching', label: '1. 성사누락', component: MatchingTab },
-  { id: 'demo', label: '2. 시범전환', component: DemoTab },
-  { id: 'dormant', label: '3. 휴면전환', component: DormantTab },
-  { id: 'engage-popup', label: '4. 과외구함 팝업', component: EngagePopupTab },
-  { id: 'recovery', label: '5. 이탈복구', component: RecoveryTab },
-  { id: 'review', label: '6. 리뷰알림', component: ReviewTab },
-  { id: 'fomo', label: '7. FOMO', component: FomoTab },
-  { id: 'quick-reply', label: '8. 간편답변 초기화', component: QuickReplyTab },
-  { id: 'auth-phone', label: '9. 인증번호 확인', component: AuthPhoneTab },
-  { id: 'alimtalk', label: '10. 알림톡 발송', component: AlimtalkTab },
-  { id: 'checkin-alimtalk', label: '11. 체크인 알림톡 발송', component: CheckinAlimtalkTab },
+  { id: 'review-campaign', label: '1. 후기확보캠페인', component: ReviewCampaignTab },
+  { id: 'matching', label: '2. 성사누락', component: MatchingTab },
+  { id: 'demo', label: '3. 시범전환', component: DemoTab },
+  { id: 'dormant', label: '4. 휴면전환', component: DormantTab },
+  { id: 'engage-popup', label: '5. 과외구함 팝업', component: EngagePopupTab },
+  { id: 'recovery', label: '6. 이탈복구', component: RecoveryTab },
+  { id: 'review', label: '7. 리뷰알림', component: ReviewTab },
+  { id: 'fomo', label: '8. FOMO', component: FomoTab },
+  { id: 'quick-reply', label: '9. 간편답변 초기화', component: QuickReplyTab },
+  { id: 'auth-phone', label: '10. 인증번호 확인', component: AuthPhoneTab },
+  { id: 'alimtalk', label: '11. 알림톡 발송', component: AlimtalkTab },
+  { id: 'checkin-alimtalk', label: '12. 체크인 알림톡 발송', component: CheckinAlimtalkTab },
 ];

@@ -51,11 +51,13 @@ export async function fetchJson<T>(input: string, init: RequestInit = {}): Promi
 export async function callProxy(
   backendPath: string,
   params: Record<string, string>,
-  options: { confirmToken?: string } = {},
+  options: { confirmToken?: string; env?: string } = {},
 ): Promise<ProxyCallResult> {
   // 백엔드 path는 query string의 _p로 전달 (URL path 안에 넣으면
   // Vercel 엣지 catch-all 라우팅이 다중 세그먼트에서 404를 냄).
-  const search = new URLSearchParams({ _p: backendPath, ...params });
+  const baseParams: Record<string, string> = { _p: backendPath, ...params };
+  if (options.env) baseParams._env = options.env;
+  const search = new URLSearchParams(baseParams);
   const url = `/api/proxy?${search.toString()}`;
   const headers: Record<string, string> = {
     Accept: 'text/plain, application/json, */*',
