@@ -112,7 +112,7 @@ export function ActionForm<T extends Record<string, string>>({
         });
       } finally {
         setBusy(false);
-        showToast("처리가 완료되었습니다");
+        showToast("완료되었습니다");
       }
     },
     [

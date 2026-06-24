@@ -27,7 +27,10 @@ export function AuthPhoneTab() {
       e.preventDefault();
       const parsed = schema.safeParse({ phoneNumber });
       if (!parsed.success) {
-        setResult({ ok: false, message: parsed.error.issues[0]?.message ?? "입력값을 확인해주세요." });
+        setResult({
+          ok: false,
+          message: parsed.error.issues[0]?.message ?? "입력값을 확인해주세요.",
+        });
         return;
       }
 
@@ -74,7 +77,7 @@ export function AuthPhoneTab() {
         });
       } finally {
         setBusy(false);
-        showToast("처리가 완료되었습니다");
+        showToast("완료되었습니다");
       }
     },
     [phoneNumber, logout, showToast],
@@ -87,7 +90,11 @@ export function AuthPhoneTab() {
         로그인, 회원가입을 위한 인증번호 4자리를 확인할 수 있어요.
       </p>
 
-      <form className="section" onSubmit={(e) => void handleSubmit(e)} noValidate>
+      <form
+        className="section"
+        onSubmit={(e) => void handleSubmit(e)}
+        noValidate
+      >
         <p className="section-title">인증번호 확인</p>
 
         <div className="field">
@@ -119,7 +126,14 @@ export function AuthPhoneTab() {
               textAlign: "center",
             }}
           >
-            <p style={{ margin: 0, fontSize: "13px", color: "#0369a1", marginBottom: "6px" }}>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "13px",
+                color: "#0369a1",
+                marginBottom: "6px",
+              }}
+            >
               인증번호
             </p>
             <p

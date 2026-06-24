@@ -133,6 +133,30 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'sincerityDemotion:check',
+    path: /^\/admin\/test\/check\/degradeBlack$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'sincerityDemotion:set',
+    path: /^\/admin\/test\/set\/degradeBlack\/nickname$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'sincerityDemotion:clearByNick',
+    path: /^\/admin\/test\/clear\/degradeBlack\/nickname$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'sincerityDemotion:clearByPhone',
+    path: /^\/admin\/test\/clear\/degradeBlack\/phone$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
