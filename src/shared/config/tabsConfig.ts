@@ -6,6 +6,7 @@ import { Patch2606Tab } from '../../features/patch-2606/Patch2606Tab';
 import { AuthPhoneTab } from '../../features/auth-phone/authPhoneTab';
 import { AlimtalkTab } from '../../features/alimtalk/AlimtalkTab';
 import { CheckinAlimtalkTab } from '../../features/checkin-alimtalk/CheckinAlimtalkTab';
+import { KimInstructorTestTab } from '../../features/kim-instructor-test/KimInstructorTestTab';
 
 export interface TabConfig {
   id: string;
@@ -27,4 +28,5 @@ export const TABS: readonly TabConfig[] = [
   { id: 'auth-phone', label: '5. 인증번호 확인', component: AuthPhoneTab },
   { id: 'alimtalk', label: '6. 알림톡 발송', component: AlimtalkTab },
   { id: 'checkin-alimtalk', label: '7. 체크인 알림톡 발송', component: CheckinAlimtalkTab },
+  { id: 'kim-instructor-test', label: '8. 김강사(테스트)', component: KimInstructorTestTab },
 ];

@@ -157,6 +157,30 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'kimInstructor:joinHistoryReset',
+    path: /^\/admin\/academy\/consulting\/reset\/kimacademy\/phoneNumber$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'kimInstructor:postDelete',
+    path: /^\/admin\/academy\/consulting\/delete\/kimacademy\/jobOffer$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'kimInstructor:accountRecovery',
+    path: /^\/admin\/academy\/consulting\/revoke\/kimacademy\/account$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'kimInstructor:passAuth',
+    path: /^\/admin\/academy\/consulting\/accept\/kimacademy\/pass$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
