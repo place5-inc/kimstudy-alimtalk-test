@@ -582,3 +582,122 @@ input[type="password"]:focus {
   color: #666;
   line-height: 1.8;
 }
+
+/* ---- Boost debug ---- */
+
+.boost-wrap {
+  max-width: 960px;
+}
+
+/* 신호 칩 (라벨별 색은 인라인 style로 주입) */
+.sigchip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  border-radius: 5px;
+  padding: 2px 8px;
+  font-weight: 500;
+  line-height: 1.6;
+  white-space: nowrap;
+}
+
+.sigchip-count {
+  margin-left: 6px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.sig-dist {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* 결과 요약 한 줄 배치 */
+.boost-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 28px;
+  font-size: 13px;
+}
+
+.boost-summary > span {
+  color: #888;
+}
+
+.boost-summary b {
+  color: #1a1a1a;
+}
+
+/* 프로필 라벨/값 그리드 */
+.kv-grid {
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  row-gap: 9px;
+  column-gap: 14px;
+  align-items: center;
+  font-size: 13px;
+}
+
+.kv-grid dt {
+  color: #888;
+}
+
+.kv-grid dd {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  color: #1a1a1a;
+  min-width: 0;
+}
+
+/* 추천 과목 표 */
+.boost-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+  font-size: 13px;
+  border: 0.5px solid #e3e3e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.boost-table th {
+  text-align: left;
+  background: #f7f7f5;
+  color: #666;
+  font-weight: 500;
+  padding: 9px 12px;
+  border-bottom: 0.5px solid #e3e3e0;
+}
+
+.boost-table td {
+  padding: 8px 12px;
+  border-bottom: 0.5px solid #efefec;
+  vertical-align: middle;
+}
+
+.boost-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.boost-table tbody tr:nth-child(even) {
+  background: #fafafa;
+}
+
+.boost-table tbody tr:hover {
+  background: #f3f1fb;
+}
+
+.boost-table .col-subject {
+  font-weight: 500;
+  color: #1a1a1a;
+  width: 42%;
+}
+
+.boost-table .col-signal > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
