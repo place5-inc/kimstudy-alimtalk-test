@@ -28,7 +28,12 @@
 /api/admin/test/push/fomo                    (GET)
 /api/admin/test/reset/fomo/push              (GET)
 /api/admin/test/lesson/quickReply/reset      (GET)
+/api/admin/test/boost/search                 (GET)   # 선생님 부스트 디버그 - 유저검색
+/api/admin/test/boost/debug                  (GET)   # 선생님 부스트 디버그 - 신호/결과 진단
+/api/admin/test/boost/reset                  (GET)   # 선생님 부스트 디버그 - 30일 쿨다운 초기화
 ```
+
+> 참고: `boost/*` 3종은 백엔드(AdminApiServer `TestController`)에 이미 `[AdminBearerAuth]`로 구현됨.
 
 가장 간단한 방법은 `/api/admin/test/**` 전체에 미들웨어/필터를 거는 것입니다.
 

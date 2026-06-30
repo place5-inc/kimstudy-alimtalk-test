@@ -181,6 +181,25 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  // 선생님 부스트 디버그
+  {
+    action: 'boost:search',
+    path: /^\/admin\/test\/boost\/search$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'boost:debug',
+    path: /^\/admin\/test\/boost\/debug$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'boost:reset',
+    path: /^\/admin\/test\/boost\/reset$/,
+    method: 'GET',
+    dangerous: true,
+  },
 ];
 
 export function matchAllowlist(
