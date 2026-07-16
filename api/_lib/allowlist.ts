@@ -200,6 +200,18 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: true,
   },
+  {
+    action: 'patch2607:budgetPopupReset',
+    path: /^\/admin\/test\/request\/add\/reset$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'patch2607:passPredictAlimtalk',
+    path: /^\/admin\/pass-predictor\/test\/kakao$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
