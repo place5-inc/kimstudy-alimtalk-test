@@ -212,6 +212,18 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'patch2607:tutorReturnAlimtalk',
+    path: /^\/admin\/test\/kakao\/tutor\/reactivation$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'patch2607:noti99V2Alimtalk',
+    path: /^\/admin\/test\/kakao\/tutor\/reactivation$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
