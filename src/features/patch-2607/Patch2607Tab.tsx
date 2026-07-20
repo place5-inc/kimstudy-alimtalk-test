@@ -3,12 +3,14 @@ import { PassPredictAlimtalkTab } from "./PassPredictAlimtalkTab";
 import { BudgetPopupResetTab } from "./BudgetPopupResetTab";
 import { TutorReturnAlimtalkTab } from "./TutorReturnAlimtalkTab";
 import { Noti99V2AlimtalkTab } from "./Noti99V2AlimtalkTab";
+import { AcademyRequirementResetTab } from "./AcademyRequirementResetTab";
 
 const SUB_TABS = [
   { id: "pass-predict-alimtalk", label: "합격예측기 알림톡 발송", component: PassPredictAlimtalkTab },
   { id: "budget-popup-reset", label: "예산상향팝업응답초기화", component: BudgetPopupResetTab },
   { id: "tutor-return-alimtalk", label: "이탈선생님복귀유도알림톡 발송", component: TutorReturnAlimtalkTab },
   { id: "noti99-v2-alimtalk", label: "noti99_v2알림톡 발송", component: Noti99V2AlimtalkTab },
+  { id: "academy-requirement-reset", label: "김강사 채용제안 응답팝업 초기화", component: AcademyRequirementResetTab },
 ] as const;
 
 export function Patch2607Tab() {
