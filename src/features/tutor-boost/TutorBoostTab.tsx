@@ -124,7 +124,7 @@ export function TutorBoostTab() {
       return;
     }
     setResult(null);
-    const r = await callProxy('/admin/test/boost/search', { keyword: keyword.trim() });
+    const r = await callProxy('/admin/test/boost/search', { keyword: keyword.trim() }, { env: 'test' });
     const j = parseBody<{ isSuccess: boolean; systemMessage?: string; list: Candidate[] }>(r.body);
     if (j?.isSuccess) {
       setCandidates(j.list ?? []);
@@ -144,7 +144,7 @@ export function TutorBoostTab() {
     setDebug(null);
     setResult(null);
     try {
-      const r = await callProxy('/admin/test/boost/debug', { userId: uid });
+      const r = await callProxy('/admin/test/boost/debug', { userId: uid }, { env: 'test' });
       const j = parseBody<{ isSuccess: boolean; systemMessage?: string; debug: DebugVO }>(r.body);
       if (j?.isSuccess) setDebug(j.debug);
       else setResult({ ok: false, message: j?.systemMessage ?? `조회 실패 (${r.status})` });
@@ -165,7 +165,7 @@ export function TutorBoostTab() {
     if (!window.confirm('이 선생님의 30일 노출 쿨다운을 초기화할까요?')) return;
     try {
       const token = await fetchConfirmToken('boost:reset');
-      const r = await callProxy('/admin/test/boost/reset', { userId: uid }, { confirmToken: token });
+      const r = await callProxy('/admin/test/boost/reset', { userId: uid }, { confirmToken: token, env: 'test' });
       const j = parseBody<{ isSuccess: boolean; systemMessage?: string; deletedCount: number }>(r.body);
       if (j?.isSuccess) {
         setResult({ ok: true, message: `쿨다운 초기화 완료 (${j.deletedCount}건 삭제)` });

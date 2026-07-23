@@ -5,7 +5,6 @@ const envSchema = z.object({
   PW_VERSION: z.coerce.number().int().min(1),
   JWT_SIGNING_SECRET: z.string().min(32, 'JWT_SIGNING_SECRET은 32자 이상이어야 함'),
   BACKEND_SHARED_SECRET: z.string().min(32, 'BACKEND_SHARED_SECRET은 32자 이상이어야 함'),
-  AZURE_API_BASE: z.string().url(),
   SESSION_COOKIE_NAME: z.string().min(1).default('ka_admin_sid'),
   ALLOWED_ORIGIN: z.string().url(),
   NODE_ENV: z.string().optional(),

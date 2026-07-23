@@ -3,6 +3,7 @@ import { z } from "zod";
 import { requiredText } from "../../shared/ui/ActionForm";
 import { callProxy, UnauthenticatedError } from "../../shared/api/client";
 import { useAuth } from "../../shared/auth/AuthProvider";
+import { useEnv } from "../../shared/config/EnvContext";
 import { useToast } from "../../shared/ui/Toast";
 import { ResultBox, type ResultState } from "../../shared/ui/ResultBox";
 
@@ -21,6 +22,7 @@ export function AuthPhoneTab() {
   const [authCode, setAuthCode] = useState<string | null>(null);
   const { logout } = useAuth();
   const { show: showToast } = useToast();
+  const { env } = useEnv();
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -39,7 +41,7 @@ export function AuthPhoneTab() {
       setAuthCode(null);
 
       try {
-        const r = await callProxy("/admin/test/auth/phone", { phoneNumber });
+        const r = await callProxy("/admin/test/auth/phone", { phoneNumber }, { env });
         if (r.ok) {
           try {
             const data = JSON.parse(r.body) as AuthPhoneResponse;
@@ -80,7 +82,7 @@ export function AuthPhoneTab() {
         showToast("완료되었습니다");
       }
     },
-    [phoneNumber, logout, showToast],
+    [phoneNumber, env, logout, showToast],
   );
 
   return (

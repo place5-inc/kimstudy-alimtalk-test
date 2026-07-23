@@ -120,6 +120,7 @@ export function ActionForm<T extends Record<string, string>>({
       backendPath,
       buildParams,
       dangerous,
+      env,
       logout,
       resetAfterSuccess,
       showToast,
