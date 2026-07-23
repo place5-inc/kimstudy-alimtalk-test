@@ -101,7 +101,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   try {
-    const upstream = await callBackend(method, path, query, body, env);
+    const upstream = await callBackend(method, path, query, body, env, entry.baseUrl);
     res.setHeader('Content-Type', upstream.contentType);
     res.setHeader('Cache-Control', 'no-store');
     res.status(upstream.status).send(upstream.body);

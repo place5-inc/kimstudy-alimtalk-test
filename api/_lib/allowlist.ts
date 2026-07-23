@@ -16,6 +16,8 @@ export interface AllowlistEntry {
   method: 'GET' | 'POST';
   dangerous: boolean;
   action: string;
+  /** 기본 백엔드 호스트 대신 사용할 URL (host + 경로 prefix 포함). 지정 시 /api prefix 자동 추가 안 함. */
+  baseUrl?: string;
 }
 
 export const ALLOWLIST: readonly AllowlistEntry[] = [
@@ -229,6 +231,13 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     path: /^\/admin\/test\/reset\/academyRequirement$/,
     method: 'GET',
     dangerous: false,
+  },
+  {
+    action: 'patch2607:applyChatReset',
+    path: /^\/admin\/test\/reset\/applyChat$/,
+    method: 'GET',
+    dangerous: false,
+    baseUrl: 'https://dev-academy-api-test-hacsavgwcpgxh2fc.koreacentral-01.azurewebsites.net/api',
   },
 ];
 
