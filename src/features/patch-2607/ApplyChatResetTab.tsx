@@ -26,6 +26,7 @@ export function ApplyChatResetTab() {
         })}
         action="patch2607:applyChatReset"
         dangerous={false}
+        resetAfterSuccess={false}
       >
         {({ register }) => (
           <>
