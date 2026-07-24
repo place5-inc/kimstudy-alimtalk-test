@@ -237,7 +237,7 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     path: /^\/admin\/test\/reset\/applyChat$/,
     method: 'GET',
     dangerous: false,
-    baseUrl: 'https://dev-academy-api-test-hacsavgwcpgxh2fc.koreacentral-01.azurewebsites.net/api',
+    baseUrl: 'https://dev-academy-api-test-hacsavgwcpgxh2fc.koreacentral-01.azurewebsites.net',
   },
 ];
 

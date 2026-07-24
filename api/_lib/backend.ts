@@ -19,8 +19,8 @@ export async function callBackend(
 ): Promise<BackendResponse> {
   const { BACKEND_SHARED_SECRET } = getEnv();
   const qs = query.toString();
-  // overrideBaseUrl 지정 시: 해당 URL + path 그대로 사용 (/api prefix 이미 포함됨).
-  // 미지정 시: 환경별 기본 호스트 + /api prefix 붙임.
+  // overrideBaseUrl 지정 시: 해당 호스트 + path (외부 서버는 /api prefix 없음).
+  // 미지정 시: 환경별 기본 호스트 + /api prefix + path.
   const url = overrideBaseUrl
     ? `${overrideBaseUrl}${path}${qs ? `?${qs}` : ''}`
     : `${env === 'prod' ? PROD_API_BASE : TEST_API_BASE}/api${path}${qs ? `?${qs}` : ''}`;
