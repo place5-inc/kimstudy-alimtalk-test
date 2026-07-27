@@ -239,6 +239,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
     baseUrl: 'https://dev-academy-api-test-hacsavgwcpgxh2fc.koreacentral-01.azurewebsites.net',
   },
+  {
+    action: 'patch2607:passPredictorReset',
+    path: /^\/admin\/test\/reset\/pass-predictor\/data$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
