@@ -245,6 +245,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'patch2607:passPredictorUpdateDay',
+    path: /^\/admin\/test\/update\/pass-predictor\/updateDay$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
