@@ -257,6 +257,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'patch2607:academyLawPopup',
+    path: /^\/admin\/test\/academy\/request\/set$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
