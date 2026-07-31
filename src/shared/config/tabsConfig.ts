@@ -9,6 +9,7 @@ import { AlimtalkTab } from '../../features/alimtalk/AlimtalkTab';
 import { CheckinAlimtalkTab } from '../../features/checkin-alimtalk/CheckinAlimtalkTab';
 import { KimInstructorTestTab } from '../../features/kim-instructor-test/KimInstructorTestTab';
 import { TutorBoostTab } from '../../features/tutor-boost/TutorBoostTab';
+import { AlimtalkButtonUrlTab } from '../../features/alimtalk-button-url/AlimtalkButtonUrlTab';
 
 export interface TabConfig {
   id: string;
@@ -33,4 +34,5 @@ export const TABS: readonly TabConfig[] = [
   { id: 'checkin-alimtalk', label: '7. 체크인 알림톡 발송', component: CheckinAlimtalkTab },
   { id: 'kim-instructor-test', label: '8. 김강사(테스트)', component: KimInstructorTestTab },
   { id: 'tutor-boost', label: '9. 선생님 부스트 디버그', component: TutorBoostTab },
+  { id: 'alimtalk-button-url', label: '10. 알림톡 버튼 URL 확인', component: AlimtalkButtonUrlTab },
 ];
