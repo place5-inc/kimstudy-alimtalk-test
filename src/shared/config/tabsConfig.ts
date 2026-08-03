@@ -10,6 +10,7 @@ import { CheckinAlimtalkTab } from '../../features/checkin-alimtalk/CheckinAlimt
 import { KimInstructorTestTab } from '../../features/kim-instructor-test/KimInstructorTestTab';
 import { TutorBoostTab } from '../../features/tutor-boost/TutorBoostTab';
 import { AlimtalkButtonUrlTab } from '../../features/alimtalk-button-url/AlimtalkButtonUrlTab';
+import { BannerStatusTab } from '../../features/banner-status/BannerStatusTab';
 
 export interface TabConfig {
   id: string;
@@ -35,4 +36,5 @@ export const TABS: readonly TabConfig[] = [
   { id: 'kim-instructor-test', label: '8. 김강사(테스트)', component: KimInstructorTestTab },
   { id: 'tutor-boost', label: '9. 선생님 부스트 디버그', component: TutorBoostTab },
   { id: 'alimtalk-button-url', label: '10. 알림톡 버튼 URL 확인', component: AlimtalkButtonUrlTab },
+  { id: 'banner-status', label: '11. 배너 노출현황', component: BannerStatusTab },
 ];
