@@ -10,6 +10,7 @@ import { PassPredictorUpdateDayTab } from "./PassPredictorUpdateDayTab";
 import { CloneRequestTab } from "./CloneRequestTab";
 import { AcademyLawPopupTab } from "./AcademyLawPopupTab";
 import { PassPredictorCouponTab } from "./PassPredictorCouponTab";
+import { LessonRequestDateTab } from "./LessonRequestDateTab";
 
 const SUB_TABS = [
   { id: "pass-predict-alimtalk", label: "합격예측기 알림톡 발송", component: PassPredictAlimtalkTab },
@@ -23,6 +24,7 @@ const SUB_TABS = [
   { id: "clone-request", label: "모집공고 복제생성", component: CloneRequestTab },
   { id: "academy-law-popup", label: "학원법 팝업 관련 세팅", component: AcademyLawPopupTab },
   { id: "pass-predictor-coupon", label: "합격예측기 쿠폰 추가", component: PassPredictorCouponTab },
+  { id: "lesson-request-date", label: "모집공고 조회 및 날짜 수정", component: LessonRequestDateTab },
 ] as const;
 
 export function Patch2607Tab() {
