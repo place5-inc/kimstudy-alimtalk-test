@@ -41,7 +41,7 @@ export function AuthPhoneTab() {
       setAuthCode(null);
 
       try {
-        const r = await callProxy("/admin/test/auth/phone", { phoneNumber }, { env });
+        const r = await callProxy("/admin/test/auth/phone", { phoneNumber: phoneNumber.replace(/-/g, "") }, { env });
         if (r.ok) {
           try {
             const data = JSON.parse(r.body) as AuthPhoneResponse;
@@ -106,7 +106,7 @@ export function AuthPhoneTab() {
           <input
             id="ap_phone"
             type="text"
-            placeholder="휴대폰 번호 입력 (예: 01012345678)"
+            placeholder="휴대폰 번호 입력 (예: 01012345678, 010-1234-5678)"
             autoComplete="off"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
