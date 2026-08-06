@@ -34,7 +34,7 @@ export function AlimtalkButtonUrlTab() {
       try {
         const r = await callProxy(
           "/admin/test/get/button/url",
-          { phoneNumber: phoneNumber.trim() },
+          { phoneNumber: phoneNumber.trim().replace(/-/g, "") },
           { env },
         );
 
@@ -92,7 +92,7 @@ export function AlimtalkButtonUrlTab() {
           <input
             id="alimtalk_phone"
             type="text"
-            placeholder="예) 01012345678"
+            placeholder="휴대폰 번호 입력 (예: 01012345678, 010-1234-5678)"
             autoComplete="off"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}

@@ -99,7 +99,7 @@ export function SincerityDemotionTab() {
         variant="reset"
         schema={phoneSchema}
         backendPath="/admin/test/clear/degradeBlack/phone"
-        buildParams={(v) => ({ phoneNumber: v.phoneNumber })}
+        buildParams={(v) => ({ phoneNumber: v.phoneNumber.replace(/-/g, "") })}
         action="sincerityDemotion:clearByPhone"
         dangerous={false}
       >
@@ -111,7 +111,7 @@ export function SincerityDemotionTab() {
             <input
               id="sd_clear_phone"
               type="text"
-              placeholder="휴대폰 번호 입력"
+              placeholder="휴대폰 번호 입력 (예: 01012345678, 010-1234-5678)"
               autoComplete="off"
               {...register("phoneNumber")}
             />
