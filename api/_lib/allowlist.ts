@@ -293,6 +293,18 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'patch2608:membershipGet',
+    path: /^\/admin\/test\/get\/membership\/level$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'patch2608:membershipSet',
+    path: /^\/admin\/test\/set\/membership\/level$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
