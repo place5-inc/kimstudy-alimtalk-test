@@ -305,6 +305,18 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'patch2608:genderGet',
+    path: /^\/admin\/test\/get\/user\/gender$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'patch2608:genderSet',
+    path: /^\/admin\/test\/set\/user\/gender$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
