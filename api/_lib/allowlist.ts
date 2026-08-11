@@ -323,6 +323,18 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'patch2608:childBenefitSet',
+    path: /^\/admin\/test\/set\/child\/benefit$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'patch2608:childBenefitReset',
+    path: /^\/admin\/test\/reset\/child\/benefit$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(

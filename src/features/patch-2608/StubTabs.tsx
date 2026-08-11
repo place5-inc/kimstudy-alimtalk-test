@@ -11,9 +11,6 @@ function ComingSoon({ title }: { title: string }) {
 
 
 
-export function ChildBonusResetTab() {
-  return <ComingSoon title="자녀 보너스 혜택 대상 초기화" />;
-}
 
 export function IntroCompleteQueueTab() {
   return <ComingSoon title="소개서 완성 큐" />;

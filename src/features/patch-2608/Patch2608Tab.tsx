@@ -2,13 +2,14 @@ import { useState } from "react";
 import { MembershipLevelTab } from "./MembershipLevelTab";
 import { GenderChangeTab } from "./GenderChangeTab";
 import { RecommendSubjectTab } from "./RecommendSubjectTab";
-import { ChildBonusResetTab, IntroCompleteQueueTab } from "./StubTabs";
+import { ChildBonusResetTab } from "./ChildBonusResetTab";
+import { IntroCompleteQueueTab } from "./StubTabs";
 
 const SUB_TABS = [
   { id: "membership-level", label: "멤버십 레벨 확인 및 수정", component: MembershipLevelTab },
   { id: "gender-change", label: "성별 변경", component: GenderChangeTab },
   { id: "recommend-subject", label: "추천 과목 확인", component: RecommendSubjectTab },
-  { id: "child-bonus-reset", label: "자녀 보너스 혜택 대상 초기화", component: ChildBonusResetTab },
+  { id: "child-bonus-reset", label: "자녀 보너스 혜택 관련", component: ChildBonusResetTab },
   { id: "intro-complete-queue", label: "소개서 완성 큐", component: IntroCompleteQueueTab },
 ] as const;
 
