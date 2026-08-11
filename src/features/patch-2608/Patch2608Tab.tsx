@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { MembershipLevelTab } from "./MembershipLevelTab";
 import { GenderChangeTab } from "./GenderChangeTab";
-import { RecommendSubjectTab, ChildBonusResetTab, IntroCompleteQueueTab } from "./StubTabs";
+import { RecommendSubjectTab } from "./RecommendSubjectTab";
+import { ChildBonusResetTab, IntroCompleteQueueTab } from "./StubTabs";
 
 const SUB_TABS = [
   { id: "membership-level", label: "멤버십 레벨 확인 및 수정", component: MembershipLevelTab },

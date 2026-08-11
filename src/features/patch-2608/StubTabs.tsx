@@ -10,9 +10,6 @@ function ComingSoon({ title }: { title: string }) {
 }
 
 
-export function RecommendSubjectTab() {
-  return <ComingSoon title="추천 과목 확인" />;
-}
 
 export function ChildBonusResetTab() {
   return <ComingSoon title="자녀 보너스 혜택 대상 초기화" />;
