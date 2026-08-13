@@ -35,7 +35,7 @@ interface CompletionStatus {
   waitingQueues: WaitingQueueVO[] | null;
 }
 
-interface WaitingQueueVO {
+interface WaitingQueueItemFields {
   name?: string | null;
   homeTitle?: string | null;
   homeSubTitle?: string | null;
@@ -47,23 +47,20 @@ interface WaitingQueueVO {
   popupTitle?: string | null;
   popupSubTitle?: string | null;
   popupButton?: string | null;
-  item?: {
-    name?: string | null;
-    homeTitle?: string | null;
-    homeSubTitle?: string | null;
-    chatTitle?: string | null;
-    chatSubTitle?: string | null;
-    requestsTitle?: string | null;
-    requestsSubTitle?: string | null;
-    profileCardTitle?: string | null;
-    popupTitle?: string | null;
-    popupSubTitle?: string | null;
-    popupButton?: string | null;
-  };
+  allowNa?: boolean | null;
 }
 
-function getField(q: WaitingQueueVO, key: keyof Omit<WaitingQueueVO, "item">): string | null | undefined {
+interface WaitingQueueVO extends WaitingQueueItemFields {
+  item?: WaitingQueueItemFields;
+}
+
+function getField(q: WaitingQueueVO, key: keyof WaitingQueueItemFields): string | null | undefined {
   return (q[key] as string | null | undefined) ?? (q.item?.[key] as string | null | undefined);
+}
+
+function getBool(q: WaitingQueueVO, key: keyof WaitingQueueItemFields): boolean {
+  const v = (q[key] as boolean | null | undefined) ?? (q.item?.[key] as boolean | null | undefined);
+  return v === true;
 }
 
 // ── 헬퍼 UI ──────────────────────────────────────────────────────────────────
@@ -368,8 +365,15 @@ export function IntroCompleteQueueTab() {
                         {getField(q, "popupTitle") && <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "#1a202c" }}>{getField(q, "popupTitle")}</p>}
                         {getField(q, "popupSubTitle") && <p style={{ margin: 0, fontSize: 11, color: "#4a5568" }}>{getField(q, "popupSubTitle")}</p>}
                         {getField(q, "popupButton") && (
-                          <div style={{ marginTop: 6, background: "#4fd1c5", color: "#fff", fontWeight: 700, fontSize: 12, borderRadius: 8, padding: "7px 16px", width: "100%", boxSizing: "border-box" }}>
-                            {getField(q, "popupButton")}
+                          <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 6, marginTop: 6 }}>
+                            <div style={{ background: "#4fd1c5", color: "#fff", fontWeight: 700, fontSize: 12, borderRadius: 8, padding: "7px 16px", boxSizing: "border-box" }}>
+                              {getField(q, "popupButton")}
+                            </div>
+                            {getBool(q, "allowNa") && (
+                              <div style={{ background: "#e2e8f0", color: "#718096", fontWeight: 600, fontSize: 12, borderRadius: 8, padding: "7px 16px", boxSizing: "border-box" }}>
+                                해당사항이 없어요
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
