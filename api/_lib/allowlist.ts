@@ -335,6 +335,30 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'patch2608:introQueueGet',
+    path: /^\/admin\/test\/get\/tutor\/completion$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'patch2608:introQueueSetting',
+    path: /^\/admin\/test\/setting\/tutor\/completion$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'patch2608:introQueueReset',
+    path: /^\/admin\/test\/reset\/tutor\/completion$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'patch2608:introQueueLogReset',
+    path: /^\/admin\/test\/reset\/tutor\/completion\/log$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(

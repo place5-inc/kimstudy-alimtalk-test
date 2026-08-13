@@ -3,7 +3,7 @@ import { MembershipLevelTab } from "./MembershipLevelTab";
 import { GenderChangeTab } from "./GenderChangeTab";
 import { RecommendSubjectTab } from "./RecommendSubjectTab";
 import { ChildBonusResetTab } from "./ChildBonusResetTab";
-import { IntroCompleteQueueTab } from "./StubTabs";
+import { IntroCompleteQueueTab } from "./IntroCompleteQueueTab";
 
 const SUB_TABS = [
   { id: "membership-level", label: "멤버십 레벨 확인 및 수정", component: MembershipLevelTab },
