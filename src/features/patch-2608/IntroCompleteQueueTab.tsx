@@ -33,6 +33,7 @@ interface CompletionStatus {
   incompleteCount: number;
   tiers: Tier[] | null;
   waitingQueues: WaitingQueueVO[] | null;
+  waitingPopupQueues: WaitingQueueVO[] | null;
 }
 
 interface WaitingQueueItemFields {
@@ -296,11 +297,63 @@ export function IntroCompleteQueueTab() {
               </div>
             );
 
-            const sectionLabel = (label: string, count: number) => (
+            const sectionLabel = (label: string, count: number, unit: "상위" | "최대" = "상위") => (
               <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 700, color: "#718096", letterSpacing: 1 }}>
-                {label} <span style={{ fontWeight: 400 }}>(상위 {count}개)</span>
+                {label} <span style={{ fontWeight: 400 }}>({unit} {count}개)</span>
               </p>
             );
+
+            const HIGH_DIFFICULTY_NAMES = new Set([
+              "tutor_video", "tutor_simple_introduction", "tutor_achievement",
+              "tutor_subject_description", "tutor_session_plan", "tutor_differentiation",
+              "tutor_appeal", "tutor_university_passnote", "tutor_tip",
+              "tutor_experience", "tutor_business_doc", "tutor_academy_career",
+              "tutor_etc_career",
+            ]);
+
+            const DifficultyBadge = ({ q }: { q: WaitingQueueVO }) => {
+              const name = getField(q, "name");
+              const isHigh = name ? HIGH_DIFFICULTY_NAMES.has(name) : false;
+              return (
+                <span style={{
+                  fontSize: 10, fontWeight: 700,
+                  color: isHigh ? "#c53030" : "#276749",
+                  background: isHigh ? "rgba(197,48,48,0.08)" : "rgba(39,103,73,0.08)",
+                  borderRadius: 4, padding: "1px 6px",
+                }}>
+                  난이도 : {isHigh ? "상" : "하"}
+                </span>
+              );
+            };
+
+            const TIER_COLORS: Record<number, { bg: string; color: string }> = {
+              1: { bg: "#e9d8fd", color: "#6b21a8" },
+              2: { bg: "#bee3f8", color: "#1d4ed8" },
+              3: { bg: "#c6f6d5", color: "#276749" },
+              4: { bg: "#fefcbf", color: "#b7791f" },
+              5: { bg: "#fed7d7", color: "#c53030" },
+            };
+
+            // name으로 tier 번호 찾기
+            const getTier = (q: WaitingQueueVO): number | null => {
+              const name = getField(q, "name");
+              if (!name || !status.tiers) return null;
+              for (const tier of status.tiers) {
+                if (tier.items?.some((item) => item.name === name)) return tier.tier;
+              }
+              return null;
+            };
+
+            const TierBadge = ({ q }: { q: WaitingQueueVO }) => {
+              const tier = getTier(q);
+              if (tier === null) return null;
+              const c = TIER_COLORS[tier] ?? { bg: "#e2e8f0", color: "#4a5568" };
+              return (
+                <span style={{ fontSize: 11, fontWeight: 800, color: c.color, background: c.bg, borderRadius: 5, padding: "2px 8px" }}>
+                  Tier {tier}
+                </span>
+              );
+            };
 
             return (
               <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -357,10 +410,14 @@ export function IntroCompleteQueueTab() {
 
                 {/* ── 🔔 팝업: 상위 3개 좌우 ───────────────────────────── */}
                 <div>
-                  {sectionLabel("🔔 팝업", Math.min(3, qs.length))}
+                  {sectionLabel("🔔 팝업", status.waitingPopupQueues?.length ?? 0, "최대")}
                   <div style={{ display: "flex", gap: 10, alignItems: "stretch" }}>
-                    {qs.slice(0, 3).map((q, i) => (
+                    {(status.waitingPopupQueues ?? []).slice(0, 3).map((q, i) => (
                       <div key={i} style={{ flex: 1, background: "#f7fafc", border: "1px solid #e2e8f0", borderRadius: 10, padding: "14px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
+                          <TierBadge q={q} />
+                          <DifficultyBadge q={q} />
+                        </div>
                         <p style={{ margin: 0, fontSize: 10, color: "#a0aec0" }}>#{i + 1} {getField(q, "name")}</p>
                         {getField(q, "popupTitle") && <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "#1a202c" }}>{getField(q, "popupTitle")}</p>}
                         {getField(q, "popupSubTitle") && <p style={{ margin: 0, fontSize: 11, color: "#4a5568" }}>{getField(q, "popupSubTitle")}</p>}
