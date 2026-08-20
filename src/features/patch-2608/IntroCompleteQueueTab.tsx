@@ -96,6 +96,14 @@ function fmtDate(dt: string | null) {
   catch { return dt; }
 }
 
+const HIGH_DIFFICULTY_NAMES = new Set([
+  "tutor_video", "tutor_simple_introduction", "tutor_achievement",
+  "tutor_subject_description", "tutor_session_plan", "tutor_differentiation",
+  "tutor_appeal", "tutor_university_passnote", "tutor_tip",
+  "tutor_experience", "tutor_business_doc", "tutor_academy_career",
+  "tutor_etc_career",
+]);
+
 // ── 메인 ─────────────────────────────────────────────────────────────────────
 export function IntroCompleteQueueTab() {
   const [nickname, setNickname] = useState("");
@@ -260,6 +268,7 @@ export function IntroCompleteQueueTab() {
                     <thead>
                       <tr style={{ background: "#f7fafc" }}>
                         <th style={{ padding: "5px 10px", textAlign: "left", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>항목명</th>
+                        <th style={{ padding: "5px 10px", textAlign: "center", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>난이도</th>
                         <th style={{ padding: "5px 10px", textAlign: "center", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>완료</th>
                         <th style={{ padding: "5px 10px", textAlign: "center", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>노출</th>
                         <th style={{ padding: "5px 10px", textAlign: "center", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>랩/순서</th>
@@ -271,6 +280,18 @@ export function IntroCompleteQueueTab() {
                       {tier.items?.map((item, idx) => (
                         <tr key={item.itemId ?? idx} style={{ borderBottom: "1px solid #f0f0f0", background: item.isCompleted ? "rgba(39,103,73,0.03)" : "transparent" }}>
                           <td style={{ padding: "6px 10px", fontWeight: 600, color: "#1a202c" }}>{item.name ?? "-"}</td>
+                          <td style={{ padding: "6px 10px", textAlign: "center" }}>
+                            {item.name ? (
+                              <span style={{
+                                fontSize: 10, fontWeight: 700,
+                                color: HIGH_DIFFICULTY_NAMES.has(item.name) ? "#c53030" : "#276749",
+                                background: HIGH_DIFFICULTY_NAMES.has(item.name) ? "rgba(197,48,48,0.08)" : "rgba(39,103,73,0.08)",
+                                borderRadius: 4, padding: "2px 6px",
+                              }}>
+                                {HIGH_DIFFICULTY_NAMES.has(item.name) ? "상" : "하"}
+                              </span>
+                            ) : "-"}
+                          </td>
                           <td style={{ padding: "6px 10px", textAlign: "center" }}><Badge ok={item.isCompleted} /></td>
                           <td style={{ padding: "6px 10px", textAlign: "center" }}><VisibleBadge v={item.isVisible} /></td>
                           <td style={{ padding: "6px 10px", textAlign: "center", color: "#4a5568" }}>
@@ -302,14 +323,6 @@ export function IntroCompleteQueueTab() {
                 {label} <span style={{ fontWeight: 400 }}>({unit} {count}개)</span>
               </p>
             );
-
-            const HIGH_DIFFICULTY_NAMES = new Set([
-              "tutor_video", "tutor_simple_introduction", "tutor_achievement",
-              "tutor_subject_description", "tutor_session_plan", "tutor_differentiation",
-              "tutor_appeal", "tutor_university_passnote", "tutor_tip",
-              "tutor_experience", "tutor_business_doc", "tutor_academy_career",
-              "tutor_etc_career",
-            ]);
 
             const DifficultyBadge = ({ q }: { q: WaitingQueueVO }) => {
               const name = getField(q, "name");
@@ -410,10 +423,10 @@ export function IntroCompleteQueueTab() {
 
                 {/* ── 🔔 팝업: 상위 3개 좌우 ───────────────────────────── */}
                 <div>
-                  {sectionLabel("🔔 팝업", status.waitingPopupQueues?.length ?? 0, "최대")}
+                  <p style={{ margin: "0 0 8px", fontSize: 11, fontWeight: 700, color: "#718096", letterSpacing: 1 }}>🔔 팝업</p>
                   <div style={{ display: "flex", gap: 10, alignItems: "stretch" }}>
                     {(status.waitingPopupQueues ?? []).slice(0, 3).map((q, i) => (
-                      <div key={i} style={{ flex: 1, background: "#f7fafc", border: "1px solid #e2e8f0", borderRadius: 10, padding: "14px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                      <div key={i} style={{ width: "calc(33.333% - 7px)", flexShrink: 0, background: "#f7fafc", border: "1px solid #e2e8f0", borderRadius: 10, padding: "14px", textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
                         <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap", justifyContent: "center" }}>
                           <TierBadge q={q} />
                           <DifficultyBadge q={q} />
