@@ -336,6 +336,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'patch2608:childPopupReset',
+    path: /^\/admin\/test\/reset\/child\/popup$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'patch2608:introQueueGet',
     path: /^\/admin\/test\/get\/tutor\/completion$/,
     method: 'GET',

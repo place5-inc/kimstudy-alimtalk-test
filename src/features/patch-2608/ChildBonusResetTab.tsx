@@ -6,6 +6,7 @@ const applySchema = z.object({
   tutorNickname: requiredText,
 });
 const resetSchema = z.object({ nickname: requiredText });
+const popupResetSchema = z.object({ nickname: requiredText });
 
 export function ChildBonusResetTab() {
   return (
@@ -88,6 +89,38 @@ export function ChildBonusResetTab() {
             <div className="guide-box guide-box--reset">
               <p className="guide-title">
                 해당 유저의 자녀 교차 매칭 혜택 이력 및 플래그를 초기화합니다.
+              </p>
+            </div>
+          </div>
+        )}
+      </ActionForm>
+
+      {/* ── 팝업 노출 이력 초기화 ────────────────────────────────────────── */}
+      <ActionForm
+        title="'다른 자녀분의 과외도 구하면 페이백 2배' 바텀시트 노출 이력 초기화"
+        buttonLabel="초기화"
+        variant="reset"
+        schema={popupResetSchema}
+        backendPath="/admin/test/reset/child/popup"
+        buildParams={(v) => ({ nickname: v.nickname })}
+        action="patch2608:childPopupReset"
+        dangerous={false}
+      >
+        {({ register }) => (
+          <div className="field">
+            <label htmlFor="cb_popup_nickname">
+              nickname (학생/학부모) <span className="required">*</span>
+            </label>
+            <input
+              id="cb_popup_nickname"
+              type="text"
+              placeholder="학생 또는 학부모 닉네임"
+              autoComplete="off"
+              {...register("nickname")}
+            />
+            <div className="guide-box guide-box--reset">
+              <p className="guide-title">
+                해당 유저의 자녀 보너스 바텀시트 노출 이력을 초기화합니다.
               </p>
             </div>
           </div>
