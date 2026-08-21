@@ -365,6 +365,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'patch2608:curationPopupReset',
+    path: /^\/admin\/test\/reset\/curation\/popup$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(

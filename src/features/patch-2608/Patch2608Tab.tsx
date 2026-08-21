@@ -4,6 +4,7 @@ import { GenderChangeTab } from "./GenderChangeTab";
 import { RecommendSubjectTab } from "./RecommendSubjectTab";
 import { ChildBonusResetTab } from "./ChildBonusResetTab";
 import { IntroCompleteQueueTab } from "./IntroCompleteQueueTab";
+import { CurationPopupResetTab } from "./CurationPopupResetTab";
 
 const SUB_TABS = [
   { id: "membership-level", label: "멤버십 레벨 확인 및 수정", component: MembershipLevelTab },
@@ -11,6 +12,7 @@ const SUB_TABS = [
   { id: "recommend-subject", label: "추천 과목 확인", component: RecommendSubjectTab },
   { id: "child-bonus-reset", label: "자녀 보너스 혜택 관련", component: ChildBonusResetTab },
   { id: "intro-complete-queue", label: "소개서 완성 큐", component: IntroCompleteQueueTab },
+  { id: "curation-popup-reset", label: "특별관 팝업 노출기록 초기화", component: CurationPopupResetTab },
 ] as const;
 
 export function Patch2608Tab() {
