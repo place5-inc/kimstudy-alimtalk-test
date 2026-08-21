@@ -314,7 +314,49 @@ export function IntroCompleteQueueTab() {
             if (qs.length === 0) return (
               <div>
                 <p style={{ margin: "0 0 10px", fontSize: 13, fontWeight: 700, color: "#2d3748" }}>📱 앱·웹에 노출되는 소개서 완성 유도 아이템 정보</p>
-                <p style={{ fontSize: 13, color: "#718096" }}>노출되는 아이템 없음</p>
+                <p style={{ margin: "0 0 12px", fontSize: 12, color: "#e53e3e", fontWeight: 600 }}>
+                  ※ 노출될 소개서 아이템이 없는 경우, 아래 기본 배너가 노출됩니다.
+                </p>
+                <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                  {/* 홈 기본 배너 */}
+                  <div style={{ flex: "1 1 200px" }}>
+                    <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#718096" }}>🏠 홈</p>
+                    <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "12px 14px", display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin: "0 0 3px", fontSize: 11, fontWeight: 700, color: "#1a202c" }}>소개서에 신규 항목이 추가됐어요!</p>
+                        <p style={{ margin: 0, fontSize: 10, color: "#718096", lineHeight: 1.4 }}>소개서를 80% 이상 채운 선생님의 성사가능성이 12배 더 높아요!</p>
+                      </div>
+                      <div style={{ position: "relative", flexShrink: 0, width: 44, height: 44 }}>
+                        <div style={{ width: 44, height: 44, borderRadius: "50%", background: "linear-gradient(135deg,#667eea,#764ba2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22 }}>📄</div>
+                        <div style={{ position: "absolute", bottom: -2, right: -2, background: "#e53e3e", color: "#fff", fontSize: 8, fontWeight: 700, borderRadius: 6, padding: "1px 4px", lineHeight: 1.4 }}>NEW</div>
+                        <div style={{ position: "absolute", top: -4, right: -8, background: "#3182ce", color: "#fff", fontSize: 8, fontWeight: 700, borderRadius: 5, padding: "1px 4px", lineHeight: 1.4 }}>4/12</div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* 채팅 기본 배너 */}
+                  <div style={{ flex: "1 1 200px" }}>
+                    <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#718096" }}>💬 채팅</p>
+                    <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "12px 14px", display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#667eea,#764ba2)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>📄</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin: "0 0 2px", fontSize: 10, color: "#718096" }}>성사가능성을 높이는 가장 쉬운 방법!</p>
+                        <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1a202c" }}>신규 소개서 항목 채우기</p>
+                      </div>
+                    </div>
+                  </div>
+                  {/* 학생찾기 기본 배너 */}
+                  <div style={{ flex: "1 1 200px" }}>
+                    <p style={{ margin: "0 0 6px", fontSize: 11, fontWeight: 700, color: "#718096" }}>🔍 학생찾기</p>
+                    <div style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 12, padding: "12px 14px", display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{ width: 40, height: 40, borderRadius: "50%", background: "linear-gradient(135deg,#667eea,#764ba2)", flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20 }}>📄</div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ margin: "0 0 2px", fontSize: 10, color: "#718096" }}>성사가능성을 높이는 가장 쉬운 방법!</p>
+                        <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1a202c" }}>신규 소개서 항목 채우기</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p style={{ margin: "14px 0 0", fontSize: 12, color: "#718096" }}>🔔 노출 팝업 없음</p>
               </div>
             );
 
