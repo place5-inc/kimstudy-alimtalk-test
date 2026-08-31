@@ -142,22 +142,28 @@ function TransTable({ t, fields }: { t: AnyObj; fields: readonly (readonly [stri
   );
 }
 
-function Section({ title, defaultOpen = false, children }: { title: string; defaultOpen?: boolean; children: React.ReactNode }) {
+function Section({ title, defaultOpen = false, accentColor, children }: { title: string; defaultOpen?: boolean; accentColor?: { border: string; headerBg: string; bodyBg: string }; children: React.ReactNode }) {
   const [open, setOpen] = useState(defaultOpen);
+  const border = accentColor?.border ?? "#e2e8f0";
+  const headerBg = accentColor?.headerBg ?? "#f7fafc";
+  const bodyBg = accentColor?.bodyBg ?? "#ffffff";
   return (
-    <div style={{ marginBottom: 10, border: "1px solid #e2e8f0", borderRadius: 8, overflow: "hidden" }}>
+    <div style={{ marginBottom: 10, border: `1px solid ${border}`, borderRadius: 8, overflow: "hidden" }}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        style={{ width: "100%", textAlign: "left", padding: "8px 12px", background: "#f7fafc", border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, fontWeight: 700, color: "#2d3748" }}
+        style={{ width: "100%", textAlign: "left", padding: "8px 12px", background: headerBg, border: "none", cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: 12, fontWeight: 700, color: "#2d3748" }}
       >
         <span>{title}</span>
         <span style={{ fontSize: 10, color: "#718096" }}>{open ? "▲" : "▼"}</span>
       </button>
-      {open && <div style={{ padding: 10 }}>{children}</div>}
+      {open && <div style={{ padding: 10, background: bodyBg }}>{children}</div>}
     </div>
   );
 }
+
+const BLUE = { border: "#90cdf4", headerBg: "#ebf8ff", bodyBg: "#f0f9ff" };
+const GREEN = { border: "#9ae6b4", headerBg: "#f0fff4", bodyBg: "#f7fff9" };
 
 export function MultiLanguageTab() {
   const [nickname, setNickname] = useState("");
@@ -230,7 +236,7 @@ export function MultiLanguageTab() {
       {data && (
         <div>
           {/* 기본소개서 */}
-          <Section title="📄 기본소개서" defaultOpen>
+          <Section title="📄 기본소개서" defaultOpen accentColor={BLUE}>
             {ci ? (
               <FieldTable obj={ci} fields={CI_TRANS_FIELDS} />
             ) : (
@@ -239,7 +245,7 @@ export function MultiLanguageTab() {
           </Section>
 
           {/* 기본소개서 언어별 번역 */}
-          <Section title={`🌐 기본소개서 번역 (${ciTrans.length}개 언어)`} defaultOpen={ciTrans.length > 0}>
+          <Section title={`🌐 기본소개서 번역 (${ciTrans.length}개 언어)`} defaultOpen={ciTrans.length > 0} accentColor={BLUE}>
             {ciTrans.length === 0 ? (
               <p style={{ fontSize: 13, color: "#718096" }}>번역 데이터 없음</p>
             ) : (
@@ -256,7 +262,7 @@ export function MultiLanguageTab() {
           </Section>
 
           {/* 멀티소개서 */}
-          <Section title={`📋 멀티소개서 (${multiProfiles.length}개)`} defaultOpen={multiProfiles.length > 0}>
+          <Section title={`📋 멀티소개서 (${multiProfiles.length}개)`} defaultOpen={multiProfiles.length > 0} accentColor={GREEN}>
             {multiProfiles.length === 0 ? (
               <p style={{ fontSize: 13, color: "#718096" }}>멀티소개서 없음</p>
             ) : (
