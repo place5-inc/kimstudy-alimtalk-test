@@ -5,6 +5,8 @@ import { RecommendSubjectTab } from "./RecommendSubjectTab";
 import { ChildBonusResetTab } from "./ChildBonusResetTab";
 import { IntroCompleteQueueTab } from "./IntroCompleteQueueTab";
 import { CurationPopupResetTab } from "./CurationPopupResetTab";
+import { MultiProfileResetTab } from "./MultiProfileResetTab";
+import { MultiLanguageTab } from "./MultiLanguageTab";
 
 const SUB_TABS = [
   { id: "membership-level", label: "멤버십 레벨 확인 및 수정", component: MembershipLevelTab },
@@ -13,6 +15,8 @@ const SUB_TABS = [
   { id: "child-bonus-reset", label: "자녀 보너스 혜택 관련", component: ChildBonusResetTab },
   { id: "intro-complete-queue", label: "소개서 완성 큐", component: IntroCompleteQueueTab },
   { id: "curation-popup-reset", label: "특별관 팝업 노출기록 초기화", component: CurationPopupResetTab },
+  { id: "multi-profile-reset", label: "멀티소개서 초기화", component: MultiProfileResetTab },
+  { id: "multi-language", label: "다국어번역", component: MultiLanguageTab },
 ] as const;
 
 export function Patch2608Tab() {

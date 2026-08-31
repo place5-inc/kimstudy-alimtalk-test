@@ -371,6 +371,24 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'patch2608:wholeInformation',
+    path: /^\/admin\/test\/get\/whole\/information$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'patch2608:resetTranslatedClassInfo',
+    path: /^\/admin\/test\/reset\/translated\/classInformation$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'patch2608:resetMultiProfile',
+    path: /^\/admin\/test\/reset\/multiProfile$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
