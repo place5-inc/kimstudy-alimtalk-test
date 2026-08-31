@@ -34,10 +34,40 @@ const MP_TRANS_FIELDS = CI_TRANS_FIELDS.filter(
   ([k]) => k !== "mbti_description" && !k.startsWith("tutor_tip"),
 );
 
-function trunc(v: unknown, n = 55): string {
-  if (v === null || v === undefined) return "";
+const LINE_THRESHOLD = 3;
+
+function isLong(v: unknown): boolean {
+  if (v === null || v === undefined || v === "") return false;
   const s = String(v);
-  return s.length > n ? s.slice(0, n) + "…" : s;
+  return s.split("\n").length > LINE_THRESHOLD || s.length > 120;
+}
+
+function ExpandableText({ value, color }: { value: unknown; color: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const s = value === null || value === undefined ? "" : String(value);
+  const long = isLong(value);
+
+  if (!long) {
+    return <span style={{ color, whiteSpace: "pre-wrap", wordBreak: "break-all" }}>{s}</span>;
+  }
+
+  const preview = s.split("\n").slice(0, LINE_THRESHOLD).join("\n");
+
+  return (
+    <span>
+      <span style={{ color, whiteSpace: "pre-wrap", wordBreak: "break-all" }}>
+        {expanded ? s : preview}
+        {!expanded && "…"}
+      </span>
+      <button
+        type="button"
+        onClick={() => setExpanded((o) => !o)}
+        style={{ marginLeft: 6, fontSize: 10, color: "#3182ce", background: "none", border: "1px solid #bee3f8", borderRadius: 4, padding: "1px 6px", cursor: "pointer", verticalAlign: "middle" }}
+      >
+        {expanded ? "접기" : "전체 보기"}
+      </button>
+    </span>
+  );
 }
 
 function FieldTable({ obj, fields }: { obj: AnyObj; fields: readonly (readonly [string, string])[] }) {
@@ -49,9 +79,9 @@ function FieldTable({ obj, fields }: { obj: AnyObj; fields: readonly (readonly [
           const hasVal = val !== null && val !== undefined && val !== "";
           return (
             <tr key={key} style={{ borderBottom: "1px solid #f0f0f0" }}>
-              <td style={{ padding: "4px 8px", color: "#718096", fontWeight: 600, whiteSpace: "nowrap", width: "28%" }}>{label}</td>
-              <td style={{ padding: "4px 8px", color: hasVal ? "#1a202c" : "#cbd5e0", wordBreak: "break-all" }}>
-                {hasVal ? trunc(val) : "—"}
+              <td style={{ padding: "4px 8px", color: "#718096", fontWeight: 600, whiteSpace: "nowrap", width: "28%", verticalAlign: "top" }}>{label}</td>
+              <td style={{ padding: "4px 8px" }}>
+                {hasVal ? <ExpandableText value={val} color="#1a202c" /> : <span style={{ color: "#cbd5e0" }}>—</span>}
               </td>
             </tr>
           );
@@ -81,10 +111,14 @@ function TransTable({ t, fields }: { t: AnyObj; fields: readonly (readonly [stri
           const hasAi = aiVal !== null && aiVal !== undefined && aiVal !== "";
           return (
             <tr key={key} style={{ borderBottom: "1px solid #f0f0f0" }}>
-              <td style={{ padding: "4px 8px", color: "#718096", fontWeight: 600 }}>{label}</td>
-              <td style={{ padding: "4px 8px", color: hasVal ? "#1a202c" : "#cbd5e0", wordBreak: "break-all" }}>{hasVal ? trunc(val) : "—"}</td>
-              <td style={{ padding: "4px 8px", color: hasAi ? "#2b6cb0" : "#cbd5e0", wordBreak: "break-all" }}>{hasAi ? trunc(aiVal) : "—"}</td>
-              <td style={{ padding: "4px 8px", textAlign: "center" }}>
+              <td style={{ padding: "4px 8px", color: "#718096", fontWeight: 600, verticalAlign: "top" }}>{label}</td>
+              <td style={{ padding: "4px 8px", verticalAlign: "top" }}>
+                {hasVal ? <ExpandableText value={val} color="#1a202c" /> : <span style={{ color: "#cbd5e0" }}>—</span>}
+              </td>
+              <td style={{ padding: "4px 8px", verticalAlign: "top" }}>
+                {hasAi ? <ExpandableText value={aiVal} color="#2b6cb0" /> : <span style={{ color: "#cbd5e0" }}>—</span>}
+              </td>
+              <td style={{ padding: "4px 8px", textAlign: "center", verticalAlign: "top" }}>
                 {isChanged
                   ? <span style={{ color: "#c53030", fontWeight: 700 }}>✓</span>
                   : <span style={{ color: "#cbd5e0" }}>—</span>}
