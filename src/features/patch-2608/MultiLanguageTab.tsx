@@ -34,6 +34,17 @@ const MP_TRANS_FIELDS = CI_TRANS_FIELDS.filter(
   ([k]) => k !== "mbti_description" && !k.startsWith("tutor_tip"),
 );
 
+const LANG_LABEL: Record<string, string> = {
+  en: "영어",
+  ja: "일본어",
+  zh: "중국어",
+  vi: "베트남어",
+};
+function langLabel(code: unknown): string {
+  const s = String(code ?? "");
+  return LANG_LABEL[s] ?? s;
+}
+
 const LINE_THRESHOLD = 3;
 
 function isLong(v: unknown): boolean {
@@ -78,7 +89,7 @@ function FieldTable({ obj, fields }: { obj: AnyObj; fields: readonly (readonly [
           const val = obj[key];
           const hasVal = val !== null && val !== undefined && val !== "";
           return (
-            <tr key={key} style={{ borderBottom: "1px solid #f0f0f0" }}>
+            <tr key={key} style={{ borderBottom: "1px solid #cbd5e0" }}>
               <td style={{ padding: "4px 8px", color: "#718096", fontWeight: 600, whiteSpace: "nowrap", width: "28%", verticalAlign: "top" }}>{label}</td>
               <td style={{ padding: "4px 8px" }}>
                 {hasVal ? <ExpandableText value={val} color="#1a202c" /> : <span style={{ color: "#cbd5e0" }}>—</span>}
@@ -110,7 +121,7 @@ function TransTable({ t, fields }: { t: AnyObj; fields: readonly (readonly [stri
           const hasVal = val !== null && val !== undefined && val !== "";
           const hasAi = aiVal !== null && aiVal !== undefined && aiVal !== "";
           return (
-            <tr key={key} style={{ borderBottom: "1px solid #f0f0f0" }}>
+            <tr key={key} style={{ borderBottom: "1px solid #cbd5e0" }}>
               <td style={{ padding: "4px 8px", color: "#718096", fontWeight: 600, verticalAlign: "top" }}>{label}</td>
               <td style={{ padding: "4px 8px", verticalAlign: "top" }}>
                 {hasVal ? <ExpandableText value={val} color="#1a202c" /> : <span style={{ color: "#cbd5e0" }}>—</span>}
@@ -235,7 +246,7 @@ export function MultiLanguageTab() {
               ciTrans.map((t, i) => (
                 <Section
                   key={i}
-                  title={`${String(t.language_code)}  ·  AI번역: ${t.is_ai_translated ? "✓" : "✗"}  ·  데이터변경: ${t.isChangedData ? "✓" : "✗"}  ·  번역일: ${t.translated_at ? String(t.translated_at).slice(0, 10) : "—"}`}
+                  title={`${langLabel(t.language_code)}  ·  AI번역: ${t.is_ai_translated ? "✓" : "✗"}  ·  데이터변경: ${t.isChangedData ? "✓" : "✗"}  ·  번역일: ${t.translated_at ? String(t.translated_at).slice(0, 10) : "—"}`}
                   defaultOpen={i === 0}
                 >
                   <TransTable t={t} fields={CI_TRANS_FIELDS} />
@@ -268,7 +279,7 @@ export function MultiLanguageTab() {
                         translations.map((t, j) => (
                           <Section
                             key={j}
-                            title={`${String(t.language_code)}  ·  AI번역: ${t.is_ai_translated ? "✓" : "✗"}  ·  데이터변경: ${t.isChangedData ? "✓" : "✗"}  ·  번역일: ${t.translated_at ? String(t.translated_at).slice(0, 10) : "—"}`}
+                            title={`${langLabel(t.language_code)}  ·  AI번역: ${t.is_ai_translated ? "✓" : "✗"}  ·  데이터변경: ${t.isChangedData ? "✓" : "✗"}  ·  번역일: ${t.translated_at ? String(t.translated_at).slice(0, 10) : "—"}`}
                             defaultOpen={j === 0}
                           >
                             <TransTable t={t} fields={MP_TRANS_FIELDS} />
