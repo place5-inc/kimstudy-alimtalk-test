@@ -150,6 +150,14 @@ export function MultiLanguageTab() {
     <div>
       <p className="page-title">다국어번역</p>
 
+      <div className="guide-box" style={{ marginBottom: 16 }}>
+        <p className="guide-title" style={{ margin: 0, fontSize: 13, color: "#4a5568" }}>
+          기본소개서와 기본소개서의 각 언어버전(영어, 일본어, 중국어, 베트남어)<br />
+          멀티소개서와 멀티소개서의 각 언어버전(영어, 일본어, 중국어, 베트남어)<br />
+          의 입력된 정보와 번역된 정보를 볼 수 있습니다.
+        </p>
+      </div>
+
       <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
         <input
           type="text"
