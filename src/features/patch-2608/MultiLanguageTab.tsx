@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { callProxy } from "../../shared/api/client";
 
 type AnyObj = Record<string, unknown>;
 
@@ -125,11 +126,12 @@ export function MultiLanguageTab() {
     setData(null);
     setError(null);
     try {
-      const res = await fetch(
-        `/api/proxy/admin/test/get/whole/information?nickname=${encodeURIComponent(nickname.trim())}`,
-        { headers: { "x-action": "patch2608:wholeInformation" } },
-      );
-      const json = (await res.json()) as AnyObj;
+      const result = await callProxy("/admin/test/get/whole/information", { nickname: nickname.trim() });
+      if (!result.ok) {
+        setError(`HTTP ${result.status}`);
+        return;
+      }
+      const json = JSON.parse(result.body) as AnyObj;
       if (!json.isSuccess) {
         setError(String(json.systemMessage ?? "오류 발생"));
       } else {
