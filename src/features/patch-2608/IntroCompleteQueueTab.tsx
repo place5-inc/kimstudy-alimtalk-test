@@ -84,11 +84,12 @@ function Badge({ ok }: { ok: boolean | null }) {
   return <span style={{ fontSize: 11, color: "#a0aec0" }}>-</span>;
 }
 
-function VisibleBadge({ v }: { v: boolean | null }) {
-  if (v === true)  return <span style={{ fontSize: 10, color: "#2b6cb0", background: "rgba(43,108,176,0.1)", borderRadius: 3, padding: "1px 5px" }}>노출중</span>;
-  if (v === false) return <span style={{ fontSize: 10, color: "#718096", background: "#edf2f7", borderRadius: 3, padding: "1px 5px" }}>숨김</span>;
-  return null;
-}
+// '노출' 컬럼과 한 쌍 — 컬럼 되살릴 때 같이 풀기.
+// function VisibleBadge({ v }: { v: boolean | null }) {
+//   if (v === true)  return <span style={{ fontSize: 10, color: "#2b6cb0", background: "rgba(43,108,176,0.1)", borderRadius: 3, padding: "1px 5px" }}>노출중</span>;
+//   if (v === false) return <span style={{ fontSize: 10, color: "#718096", background: "#edf2f7", borderRadius: 3, padding: "1px 5px" }}>숨김</span>;
+//   return null;
+// }
 
 function fmtDate(dt: string | null) {
   if (!dt) return "-";
@@ -103,6 +104,61 @@ const HIGH_DIFFICULTY_NAMES = new Set([
   "tutor_experience", "tutor_business_doc", "tutor_academy_career",
   "tutor_etc_career",
 ]);
+
+// 서버는 항목명을 tutor_video 같은 영문 키로 보내옴. super-kimstudy-web 의
+// components/completionItems 에 있는 label 을 그대로 옮겨, 큐 화면에서 사람이 알아보게 함.
+// (프론트에서 label 이 바뀌면 여기도 맞춰줌)
+const NAME_LABELS: Record<string, string> = {
+  tutor_lesson_requirement_state: "과외 구함 상태",
+  tutor_video: "수업 영상",
+  tutor_simple_introduction: "수업 간단 소개",
+  tutor_achievement: "수업 성과",
+  tutor_offline_class_description: "대면과외 수업 방식",
+  tutor_online_class_description: "화상과외 수업방식",
+  tutor_subject_specialty_point: "특히 자신있는 파트",
+  tutor_possible_format: "수업 가능 유형",
+  tutor_possible_time: "수업 가능 일정",
+  tutor_demo_class: "시범과외",
+  tutor_demo_class_impossible: "시범과외",
+  tutor_address_priority: "주요 대면과외 지역",
+  tutor_possible_school: "주요 수업 가능학교",
+  tutor_confident_type: "자신있는 학생 유형",
+  tutor_subject_description: "과목별 수업 내용",
+  tutor_possible_language: "수업가능 언어",
+  tutor_session_plan: "한 회차 수업 계획",
+  tutor_text_book: "주요 수업 교재",
+  tutor_possible_online_course: "연계 가능 인강",
+  tutor_possible_academy: "연계 가능 학원",
+  tutor_feedback: "피드백 방식",
+  tutor_homework_management: "숙제 관리 방식",
+  tutor_extra_service: "본 수업 외 제공 항목",
+  tutor_differentiation: "차별점",
+  tutor_appeal: "어필",
+  tutor_highschool: "출신 고교",
+  tutor_middleschool: "출신 중학교",
+  tutor_university_passnote: "대학 합격 수기",
+  tutor_tip: "나만의 공부법",
+  tutor_experience: "기타 경험",
+  tutor_mbti: "MBTI",
+  tutor_business_doc: "과외 영업 서류 인증",
+  tutor_document: "요청 시 제공 서류",
+  tutor_academy_career: "학원 경력",
+  tutor_etc_career: "기타 경력",
+};
+
+// 항목명을 한글 라벨 아래 원본 키 두 줄로 보여줌. 매핑에 없는 키는 원본 키를 그대로 둬서 정보가 사라지지 않게 함.
+function ItemName({ name }: { name: string | null | undefined }) {
+  if (!name) return <>-</>;
+  const label = NAME_LABELS[name];
+  if (!label) return <span style={{ fontWeight: 600 }}>{name}</span>;
+  return (
+    <span style={{ display: "inline-block" }}>
+      <span style={{ fontWeight: 600 }}>{label}</span>
+      <br />
+      <span style={{ fontSize: 10, fontWeight: 400, color: "#a0aec0", fontFamily: "monospace" }}>({name})</span>
+    </span>
+  );
+}
 
 // ── 메인 ─────────────────────────────────────────────────────────────────────
 export function IntroCompleteQueueTab() {
@@ -183,6 +239,10 @@ export function IntroCompleteQueueTab() {
     }
   }, [nickname, env, logout, showToast, doQuery]);
 
+  const setupQueue = () => void doAction("/admin/test/setting/tutor/completion", "setting", setSettingResult);
+  const resetQueue = () => void doAction("/admin/test/reset/tutor/completion", "reset", setResetResult);
+  const clearPopupLog = () => void doAction("/admin/test/reset/tutor/completion/log", "logReset", setLogResetResult);
+
   return (
     <div>
       <p className="page-title">소개서 완성 큐</p>
@@ -210,6 +270,52 @@ export function IntroCompleteQueueTab() {
         </div>
         {queryError && <div className="result-box result-error" role="status">{queryError}</div>}
       </form>
+
+      {/* ── 큐 관리 (액션 3개, 한 줄) ──────────────────────────────────────── */}
+      <div className="section">
+        <p className="section-title">⚙️ 큐 관리</p>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <div style={{ flex: 1, minWidth: 160 }}>
+            <button
+              type="button"
+              className="btn btn-send"
+              disabled={busy !== null}
+              style={{ width: "100%" }}
+              onClick={setupQueue}
+            >
+              {busy === "setting" ? "처리 중..." : "큐 세팅"}
+            </button>
+            <p style={{ margin: "6px 2px 0", fontSize: 11, color: "#718096", lineHeight: 1.4 }}>처음 실행하거나 큐가 없을 때 초기 세팅</p>
+          </div>
+          <div style={{ flex: 1, minWidth: 160 }}>
+            <button
+              type="button"
+              className="btn"
+              disabled={busy !== null}
+              style={{ width: "100%", background: "#e53e3e", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
+              onClick={resetQueue}
+            >
+              {busy === "reset" ? "처리 중..." : "초기화 후 재세팅"}
+            </button>
+            <p style={{ margin: "6px 2px 0", fontSize: 11, color: "#718096", lineHeight: 1.4 }}>기존 큐를 초기화하고 다시 세팅</p>
+          </div>
+          <div style={{ flex: 1, minWidth: 160 }}>
+            <button
+              type="button"
+              className="btn"
+              disabled={busy !== null}
+              style={{ width: "100%", background: "#718096", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
+              onClick={clearPopupLog}
+            >
+              {busy === "logReset" ? "처리 중..." : "팝업 기록 초기화"}
+            </button>
+            <p style={{ margin: "6px 2px 0", fontSize: 11, color: "#718096", lineHeight: 1.4 }}>tutorCompletion 타입 user_send_log 삭제</p>
+          </div>
+        </div>
+        <ResultBox result={settingResult?.message ? settingResult : null} />
+        <ResultBox result={resetResult?.message ? resetResult : null} />
+        <ResultBox result={logResetResult?.message ? logResetResult : null} />
+      </div>
 
       {/* ── 조회 결과 ─────────────────────────────────────────────────────── */}
       {status && (
@@ -270,7 +376,7 @@ export function IntroCompleteQueueTab() {
                         <th style={{ padding: "5px 10px", textAlign: "left", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>항목명</th>
                         <th style={{ padding: "5px 10px", textAlign: "center", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>난이도</th>
                         <th style={{ padding: "5px 10px", textAlign: "center", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>완료</th>
-                        <th style={{ padding: "5px 10px", textAlign: "center", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>노출</th>
+                        {/* <th style={{ padding: "5px 10px", textAlign: "center", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>노출</th> */}
                         <th style={{ padding: "5px 10px", textAlign: "center", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>랩/순서</th>
                         <th style={{ padding: "5px 10px", textAlign: "center", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>노출횟수</th>
                         <th style={{ padding: "5px 10px", textAlign: "right", color: "#718096", fontWeight: 600, borderBottom: "1px solid #e2e8f0" }}>마지막노출</th>
@@ -279,7 +385,7 @@ export function IntroCompleteQueueTab() {
                     <tbody>
                       {tier.items?.map((item, idx) => (
                         <tr key={item.itemId ?? idx} style={{ borderBottom: "1px solid #f0f0f0", background: item.isCompleted ? "rgba(39,103,73,0.03)" : "transparent" }}>
-                          <td style={{ padding: "6px 10px", fontWeight: 600, color: "#1a202c" }}>{item.name ?? "-"}</td>
+                          <td style={{ padding: "6px 10px", color: "#1a202c" }}><ItemName name={item.name} /></td>
                           <td style={{ padding: "6px 10px", textAlign: "center" }}>
                             {item.name ? (
                               <span style={{
@@ -293,7 +399,7 @@ export function IntroCompleteQueueTab() {
                             ) : "-"}
                           </td>
                           <td style={{ padding: "6px 10px", textAlign: "center" }}><Badge ok={item.isCompleted} /></td>
-                          <td style={{ padding: "6px 10px", textAlign: "center" }}><VisibleBadge v={item.isVisible} /></td>
+                          {/* <td style={{ padding: "6px 10px", textAlign: "center" }}><VisibleBadge v={item.isVisible} /></td> */}
                           <td style={{ padding: "6px 10px", textAlign: "center", color: "#4a5568" }}>
                             {item.currentLap ?? "-"}랩 / {item.queueOrder ?? "-"}순
                           </td>
@@ -423,7 +529,7 @@ export function IntroCompleteQueueTab() {
                   <div style={{ display: "flex", gap: 10 }}>
                     {qs.slice(0, 2).map((q, i) => (
                       <div key={i} style={{ flex: 1, background: "#f7fafc", border: "1px solid #e2e8f0", borderRadius: 10, padding: "14px" }}>
-                        <p style={{ margin: "0 0 4px", fontSize: 11, color: "#a0aec0" }}>#{i + 1} {getField(q, "name")}</p>
+                        <p style={{ margin: "0 0 4px", fontSize: 11, color: "#a0aec0" }}>#{i + 1} <ItemName name={getField(q, "name")} /></p>
                         {getField(q, "homeTitle") && <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "#1a202c" }}>{getField(q, "homeTitle")}</p>}
                         {getField(q, "homeSubTitle") && <p style={{ margin: "5px 0 0", fontSize: 12, color: "#4a5568" }}>{getField(q, "homeSubTitle")}</p>}
                       </div>
@@ -473,7 +579,7 @@ export function IntroCompleteQueueTab() {
                           <TierBadge q={q} />
                           <DifficultyBadge q={q} />
                         </div>
-                        <p style={{ margin: 0, fontSize: 10, color: "#a0aec0" }}>#{i + 1} {getField(q, "name")}</p>
+                        <p style={{ margin: 0, fontSize: 10, color: "#a0aec0" }}>#{i + 1} <ItemName name={getField(q, "name")} /></p>
                         {getField(q, "popupTitle") && <p style={{ margin: 0, fontSize: 14, fontWeight: 700, color: "#1a202c" }}>{getField(q, "popupTitle")}</p>}
                         {getField(q, "popupSubTitle") && <p style={{ margin: 0, fontSize: 11, color: "#4a5568" }}>{getField(q, "popupSubTitle")}</p>}
                         {getField(q, "popupButton") && (
@@ -498,74 +604,6 @@ export function IntroCompleteQueueTab() {
           })()}
         </div>
       )}
-
-      {/* ── 액션 버튼 3개 ─────────────────────────────────────────────────── */}
-      <div className="section">
-        <p className="section-title">⚙️ 큐 관리</p>
-        <p style={{ fontSize: 12, color: "#718096", marginBottom: 14 }}>
-          위에서 닉네임 입력 후 각 버튼을 누르면 해당 액션이 실행되고 자동으로 재조회됩니다.
-        </p>
-
-        {/* 큐 없는 경우 세팅 */}
-        <div style={{ marginBottom: 14, padding: "12px 14px", border: "1px solid #e2e8f0", borderRadius: 8 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <div style={{ flex: 1 }}>
-              <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1a202c" }}>큐 없는 경우 세팅하기</p>
-              <p style={{ margin: "2px 0 0", fontSize: 12, color: "#718096" }}>처음 실행하거나 큐가 없을 때 초기 세팅합니다.</p>
-            </div>
-            <button
-              type="button"
-              className="btn btn-send"
-              disabled={busy !== null}
-              style={{ width: "auto", padding: "0 20px" }}
-              onClick={() => void doAction("/admin/test/setting/tutor/completion", "setting", setSettingResult)}
-            >
-              {busy === "setting" ? "처리 중..." : "세팅"}
-            </button>
-          </div>
-          <ResultBox result={settingResult?.message ? settingResult : null} />
-        </div>
-
-        {/* 큐 초기화 후 재세팅 */}
-        <div style={{ marginBottom: 14, padding: "12px 14px", border: "1px solid #fed7d7", borderRadius: 8, background: "rgba(254,215,215,0.15)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <div style={{ flex: 1 }}>
-              <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#c53030" }}>큐 초기화하여 다시 세팅</p>
-              <p style={{ margin: "2px 0 0", fontSize: 12, color: "#718096" }}>기존 큐를 초기화하고 다시 세팅합니다.</p>
-            </div>
-            <button
-              type="button"
-              className="btn"
-              disabled={busy !== null}
-              style={{ width: "auto", padding: "0 20px", background: "#e53e3e", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-              onClick={() => void doAction("/admin/test/reset/tutor/completion", "reset", setResetResult)}
-            >
-              {busy === "reset" ? "처리 중..." : "초기화 후 재세팅"}
-            </button>
-          </div>
-          <ResultBox result={resetResult?.message ? resetResult : null} />
-        </div>
-
-        {/* 팝업 기록 초기화 */}
-        <div style={{ padding: "12px 14px", border: "1px solid #e2e8f0", borderRadius: 8 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-            <div style={{ flex: 1 }}>
-              <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1a202c" }}>팝업 봤다는 기록 초기화</p>
-              <p style={{ margin: "2px 0 0", fontSize: 12, color: "#718096" }}>tutorCompletion 타입의 user_send_log를 삭제합니다.</p>
-            </div>
-            <button
-              type="button"
-              className="btn"
-              disabled={busy !== null}
-              style={{ width: "auto", padding: "0 20px", background: "#718096", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer" }}
-              onClick={() => void doAction("/admin/test/reset/tutor/completion/log", "logReset", setLogResetResult)}
-            >
-              {busy === "logReset" ? "처리 중..." : "팝업 기록 초기화"}
-            </button>
-          </div>
-          <ResultBox result={logResetResult?.message ? logResetResult : null} />
-        </div>
-      </div>
     </div>
   );
 }
