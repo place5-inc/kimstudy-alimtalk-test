@@ -26,6 +26,8 @@ interface Tier {
 interface CompletionStatus {
   tutorId: string;
   isCompleted: boolean | null;
+  profile?: { id: string } | null;
+  classInfo?: { key: string } | null;
   tutorCompletion: number | null;
   classInfoCompletion: number | null;
   totalCount: number;
@@ -160,12 +162,71 @@ function ItemName({ name }: { name: string | null | undefined }) {
   );
 }
 
+// ── 상태별 접기/펼치기 카드 ───────────────────────────────────────────────────
+function CollapsibleStatusCard({
+  status,
+  statusIdx,
+  isActive,
+  children,
+}: {
+  status: CompletionStatus;
+  statusIdx: number;
+  isActive: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(!status.isCompleted);
+  const isBaseProfile = !status.profile?.id;
+  const profileLabel = isBaseProfile ? "📄 기본소개서" : `📋 멀티소개서 #${statusIdx}`;
+
+  return (
+    <div className="section" style={{ padding: 0, overflow: "hidden" }}>
+      {/* 헤더 */}
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        style={{
+          width: "100%", textAlign: "left", padding: "10px 16px",
+          background: isBaseProfile ? "#ebf8ff" : "#f0fff4",
+          border: "none", borderBottom: open ? `1px solid ${isBaseProfile ? "#90cdf4" : "#9ae6b4"}` : "none",
+          cursor: "pointer", display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap",
+        }}
+      >
+        <span style={{ fontSize: 13, fontWeight: 700, color: "#2d3748" }}>
+          📊 소개서 완성 현황
+        </span>
+        <span style={{
+          fontSize: 12, fontWeight: 600, padding: "2px 10px", borderRadius: 12,
+          background: isBaseProfile ? "#bee3f8" : "#c6f6d5",
+          color: isBaseProfile ? "#2b6cb0" : "#276749",
+          border: `1px solid ${isBaseProfile ? "#90cdf4" : "#9ae6b4"}`,
+        }}>
+          {profileLabel}
+        </span>
+        {isActive && (
+          <span style={{ fontSize: 11, fontWeight: 700, color: "#c53030", background: "#fff5f5", border: "1px solid #feb2b2", borderRadius: 10, padding: "2px 8px" }}>
+            🔴 현재 노출중
+          </span>
+        )}
+        {status.isCompleted && (
+          <span style={{ fontSize: 11, color: "#276749", background: "#f0fff4", border: "1px solid #9ae6b4", borderRadius: 10, padding: "2px 8px" }}>
+            ✅ 소개서 완성 (배너·팝업 미노출)
+          </span>
+        )}
+        <span style={{ marginLeft: "auto", fontSize: 11, color: "#718096" }}>{open ? "▲ 접기" : "▼ 펼치기"}</span>
+      </button>
+
+      {/* 콘텐츠 */}
+      {open && <div style={{ padding: "16px" }}>{children}</div>}
+    </div>
+  );
+}
+
 // ── 메인 ─────────────────────────────────────────────────────────────────────
 export function IntroCompleteQueueTab() {
   const [nickname, setNickname] = useState("");
   const [querying, setQuerying] = useState(false);
   const [queryError, setQueryError] = useState<string | null>(null);
-  const [status, setStatus] = useState<CompletionStatus | null>(null);
+  const [statusList, setStatusList] = useState<CompletionStatus[] | null>(null);
 
   // 각 액션별 결과
   const [settingResult, setSettingResult] = useState<ResultState | null>(null);
@@ -181,13 +242,13 @@ export function IntroCompleteQueueTab() {
   const doQuery = useCallback(async (nick: string) => {
     setQuerying(true);
     setQueryError(null);
-    setStatus(null);
+    setStatusList(null);
     try {
       const r = await callProxy("/admin/test/get/tutor/completion", { nickname: nick }, { env });
       if (r.ok) {
-        const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; data?: CompletionStatus };
+        const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; data?: CompletionStatus[] };
         if (json.isSuccess && json.data) {
-          setStatus(json.data);
+          setStatusList(json.data);
         } else {
           setQueryError(json.systemMessage ?? "조회 실패");
         }
@@ -318,9 +379,10 @@ export function IntroCompleteQueueTab() {
       </div>
 
       {/* ── 조회 결과 ─────────────────────────────────────────────────────── */}
-      {status && (
-        <div className="section">
-          <p className="section-title">📊 소개서 완성 현황</p>
+      {statusList && (() => {
+        const firstActiveIdx = statusList.findIndex((s) => !s.isCompleted);
+        return statusList.map((status, statusIdx) => (
+        <CollapsibleStatusCard key={statusIdx} status={status} statusIdx={statusIdx} isActive={statusIdx === firstActiveIdx}>
 
           {/* 완성도 + 요약 */}
           <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 16 }}>
@@ -602,8 +664,10 @@ export function IntroCompleteQueueTab() {
               </div>
             );
           })()}
-        </div>
-      )}
+
+        </CollapsibleStatusCard>
+        ));
+      })()}
     </div>
   );
 }
