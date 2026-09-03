@@ -174,7 +174,7 @@ function CollapsibleStatusCard({
   isActive: boolean;
   children: React.ReactNode;
 }) {
-  const [open, setOpen] = useState(!status.isCompleted);
+  const [open, setOpen] = useState(status.isCompleted !== true);
   const isBaseProfile = !status.profile?.id;
   const profileLabel = isBaseProfile ? "📄 기본소개서" : `📋 멀티소개서 #${statusIdx}`;
 
@@ -476,8 +476,8 @@ export function IntroCompleteQueueTab() {
             </div>
           )}
 
-          {/* 앱·웹에 노출되는 소개서 완성 유도 아이템 */}
-          {(() => {
+          {/* 앱·웹에 노출되는 소개서 완성 유도 아이템 — 현재 노출중인 소개서만 표시 */}
+          {(statusIdx === firstActiveIdx) && (() => {
             const qs = status.waitingQueues ?? [];
             if (qs.length === 0) return (
               <div>
