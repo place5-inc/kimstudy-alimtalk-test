@@ -7,6 +7,7 @@ import { IntroCompleteQueueTab } from "./IntroCompleteQueueTab";
 import { CurationPopupResetTab } from "./CurationPopupResetTab";
 import { MultiProfileResetTab } from "./MultiProfileResetTab";
 import { MultiLanguageTab } from "./MultiLanguageTab";
+import { SignupFunnelLogTab } from "./SignupFunnelLogTab";
 
 const SUB_TABS = [
   { id: "membership-level", label: "멤버십 레벨 확인 및 수정", component: MembershipLevelTab },
@@ -17,6 +18,7 @@ const SUB_TABS = [
   { id: "curation-popup-reset", label: "특별관 팝업 노출기록 초기화", component: CurationPopupResetTab },
   { id: "multi-profile-reset", label: "멀티소개서 초기화", component: MultiProfileResetTab },
   { id: "multi-language", label: "다국어번역", component: MultiLanguageTab },
+  { id: "signup-funnel-log", label: "가입이탈기록로그", component: SignupFunnelLogTab },
 ] as const;
 
 export function Patch2608Tab() {
