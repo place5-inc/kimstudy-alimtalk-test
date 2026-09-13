@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../shared/auth/AuthProvider';
-import { TABS } from '../shared/config/tabsConfig';
+import { GROUPS, findFeature } from '../shared/config/groupsConfig';
 import { EnvProvider, useEnv, type AppEnv } from '../shared/config/EnvContext';
 
 function EnvToggle() {
@@ -29,45 +29,163 @@ function EnvToggle() {
   );
 }
 
+function HomeScreen({ onNavigate }: { onNavigate: (featureId: string) => void }) {
+  return (
+    <div className="home-wrap">
+    <div className="home-screen">
+      <div className="home-header">
+        <h1 className="home-title">김과외 어드민</h1>
+        <p className="home-subtitle">기능을 선택해 시작하세요</p>
+      </div>
+      <div className="home-grid">
+        {GROUPS.map((group) => (
+          <div key={group.id} className="home-group-row">
+            <div className="home-group-name">{group.label}</div>
+            <div className="home-group-features">
+              {group.features.map((feature) => (
+                <button
+                  key={feature.id}
+                  type="button"
+                  className="home-feature-btn"
+                  onClick={() => onNavigate(feature.id)}
+                >
+                  {feature.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+    </div>
+  );
+}
+
+function TopNav({
+  activeFeatureId,
+  onNavigate,
+  onHome,
+}: {
+  activeFeatureId: string;
+  onNavigate: (featureId: string) => void;
+  onHome: () => void;
+}) {
+  const [openGroupId, setOpenGroupId] = useState<string | null>(null);
+  const activeResult = findFeature(activeFeatureId);
+  const navRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    function handleOutside(e: MouseEvent) {
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenGroupId(null);
+      }
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
+
+  return (
+    <nav ref={navRef} className="top-nav">
+      <button type="button" className="top-nav-home" onClick={onHome}>
+        ← 홈
+      </button>
+      <div className="top-nav-groups">
+        {GROUPS.map((group) => {
+          const isActiveGroup = activeResult?.group.id === group.id;
+          const isOpen = openGroupId === group.id;
+          return (
+            <div
+              key={group.id}
+              className={`top-nav-group ${isActiveGroup ? 'active' : ''} ${isOpen ? 'open' : ''}`}
+            >
+              <button
+                type="button"
+                className="top-nav-group-btn"
+                onClick={() => setOpenGroupId(isOpen ? null : group.id)}
+              >
+                {group.label}
+                <span className="top-nav-caret">▾</span>
+              </button>
+              {isOpen && (
+                <div className="top-nav-dropdown">
+                  {group.features.map((feature) => (
+                    <button
+                      key={feature.id}
+                      type="button"
+                      className={`top-nav-dropdown-item ${feature.id === activeFeatureId ? 'active' : ''}`}
+                      onClick={() => {
+                        onNavigate(feature.id);
+                        setOpenGroupId(null);
+                      }}
+                    >
+                      {feature.label}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
+
 function AdminPageInner() {
   const { logout } = useAuth();
-  const [activeId, setActiveId] = useState<string>(TABS[0]?.id ?? '');
+  const [activeFeatureId, setActiveFeatureId] = useState<string | null>(null);
 
-  const active = TABS.find((t) => t.id === activeId) ?? TABS[0];
-  const ActiveComponent = active?.component;
+  const activeResult = activeFeatureId ? findFeature(activeFeatureId) : null;
+  const ActiveComponent = activeResult?.feature.component;
 
   return (
     <div className="app-shell">
       <header className="app-header">
-        <span className="app-brand">김과외 어드민</span>
+        <button
+          type="button"
+          className="app-brand"
+          onClick={() => setActiveFeatureId(null)}
+        >
+          김과외 어드민
+        </button>
         <EnvToggle />
         <button
           type="button"
           className="app-logout"
-          onClick={() => {
-            void logout();
-          }}
+          onClick={() => { void logout(); }}
         >
           로그아웃
         </button>
       </header>
 
-      <div className="tab-header" role="tablist" aria-label="어드민 기능">
-        {TABS.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            role="tab"
-            aria-selected={tab.id === activeId}
-            className={`tab-btn ${tab.id === activeId ? 'active' : ''}`}
-            onClick={() => setActiveId(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      <div className="tab-content">{ActiveComponent && <ActiveComponent />}</div>
+      {activeFeatureId === null ? (
+        <HomeScreen onNavigate={setActiveFeatureId} />
+      ) : (
+        <>
+          <TopNav
+            activeFeatureId={activeFeatureId}
+            onNavigate={setActiveFeatureId}
+            onHome={() => setActiveFeatureId(null)}
+          />
+          {activeResult && (
+            <div className="breadcrumb">
+              {activeResult.group.features.map((f) => (
+                <button
+                  key={f.id}
+                  type="button"
+                  className={`breadcrumb-sibling-btn ${f.id === activeFeatureId ? 'current' : ''}`}
+                  onClick={() => setActiveFeatureId(f.id)}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+          )}
+          <div className="tab-content">
+            {ActiveComponent && <ActiveComponent />}
+          </div>
+        </>
+      )}
     </div>
   );
 }
