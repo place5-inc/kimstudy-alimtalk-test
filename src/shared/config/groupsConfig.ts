@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
-import { ComingSoon1, ComingSoon2 } from '../../features/coming-soon/ComingSoonTab';
+import { OverseasIdentityVerifyTab, OverseasIdentityResetTab, OverseasNationalityChangeTab } from '../../features/coming-soon/ComingSoonTab';
+import { OverseasAuthPhoneTab } from '../../features/overseas/OverseasAuthPhoneTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
 import { SincerityDemotionTab } from '../../features/sincerity-demotion/SincerityDemotionTab';
 import { AuthPhoneTab } from '../../features/auth-phone/authPhoneTab';
@@ -59,8 +60,10 @@ export const GROUPS: readonly GroupConfig[] = [
     id: 'overseas',
     label: '해외개방',
     features: [
-      { id: 'coming-soon-1', label: '준비중1', component: ComingSoon1 },
-      { id: 'coming-soon-2', label: '준비중2', component: ComingSoon2 },
+      { id: 'overseas-auth-phone', label: '인증번호 확인', component: OverseasAuthPhoneTab },
+      { id: 'overseas-identity-verify', label: '신원인증완료처리', component: OverseasIdentityVerifyTab },
+      { id: 'overseas-identity-reset', label: '신원인증초기화', component: OverseasIdentityResetTab },
+      { id: 'overseas-nationality-change', label: '국적변경', component: OverseasNationalityChangeTab },
     ],
   },
   {
