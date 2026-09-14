@@ -19,6 +19,22 @@ export default function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/:groupId"
+            element={
+              <ProtectedRoute>
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/:groupId/:featureId"
+            element={
+              <ProtectedRoute>
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ToastProvider>

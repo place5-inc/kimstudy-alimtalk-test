@@ -774,6 +774,20 @@ input[type="password"]:focus {
   white-space: nowrap;
 }
 
+.group-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 1px 5px;
+  background: #e53935;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  letter-spacing: 0.03em;
+  line-height: 1.5;
+  vertical-align: middle;
+}
+
 .home-group-features {
   display: flex;
   flex-wrap: wrap;

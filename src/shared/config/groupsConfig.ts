@@ -52,6 +52,7 @@ export interface FeatureConfig {
 export interface GroupConfig {
   id: string;
   label: string;
+  badge?: string;
   features: readonly FeatureConfig[];
 }
 
@@ -59,11 +60,12 @@ export const GROUPS: readonly GroupConfig[] = [
   {
     id: 'overseas',
     label: '해외개방',
+    badge: 'new',
     features: [
-      { id: 'overseas-auth-phone', label: '인증번호 확인', component: OverseasAuthPhoneTab },
-      { id: 'overseas-identity-verify', label: '신원인증완료처리', component: OverseasIdentityVerifyTab },
-      { id: 'overseas-identity-reset', label: '신원인증초기화', component: OverseasIdentityResetTab },
-      { id: 'overseas-nationality-change', label: '국적변경', component: OverseasNationalityChangeTab },
+      { id: 'auth-phone', label: '인증번호 확인', component: OverseasAuthPhoneTab },
+      { id: 'auth-user', label: '신원인증완료처리', component: OverseasIdentityVerifyTab },
+      { id: 'auth-reset', label: '신원인증초기화', component: OverseasIdentityResetTab },
+      { id: 'nationality', label: '국적변경', component: OverseasNationalityChangeTab },
     ],
   },
   {
@@ -71,7 +73,7 @@ export const GROUPS: readonly GroupConfig[] = [
     label: '계정 상태 관리',
     features: [
       { id: 'pass-reset', label: 'PASS 인증 초기화', component: PassResetTab },
-      { id: 'sincerity-demotion', label: '성실등급강등', component: SincerityDemotionTab },
+      { id: 'degrade-black', label: '성실등급강등', component: SincerityDemotionTab },
       { id: 'auth-phone', label: '인증번호 확인', component: AuthPhoneTab },
       { id: 'dormant', label: '휴면전환', component: DormantTab },
       { id: 'membership-level', label: '멤버십 레벨', component: MembershipLevelTab },
@@ -97,14 +99,14 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'clone-request', label: '모집공고 복제', component: CloneRequestTab },
       { id: 'lesson-request-date', label: '모집공고 날짜 수정', component: LessonRequestDateTab },
       { id: 'recommend-subject', label: '추천 과목 확인', component: RecommendSubjectTab },
-      { id: 'child-bonus-reset', label: '자녀 보너스 혜택', component: ChildBonusResetTab },
+      { id: 'child-bonus-benefit', label: '자녀 보너스 혜택', component: ChildBonusResetTab },
     ],
   },
   {
     id: 'profile',
     label: '선생님 소개서',
     features: [
-      { id: 'intro-complete-queue', label: '소개서 완성 큐', component: IntroCompleteQueueTab },
+      { id: 'completion-queue', label: '소개서 완성 큐', component: IntroCompleteQueueTab },
       { id: 'multi-profile-reset', label: '멀티소개서 초기화', component: MultiProfileResetTab },
       { id: 'multi-language', label: '다국어번역', component: MultiLanguageTab },
     ],
@@ -120,13 +122,13 @@ export const GROUPS: readonly GroupConfig[] = [
     id: 'alimtalk',
     label: '알림톡',
     features: [
-      { id: 'alimtalk', label: '알림톡 발송', component: AlimtalkTab },
-      { id: 'checkin-alimtalk', label: '체크인 알림톡', component: CheckinAlimtalkTab },
-      { id: 'alimtalk-button-url', label: '버튼 URL 확인', component: AlimtalkButtonUrlTab },
-      { id: 'matching', label: '성사누락', component: MatchingTab },
+      { id: 'send', label: '알림톡 발송', component: AlimtalkTab },
+      { id: 'checkin', label: '체크인 알림톡', component: CheckinAlimtalkTab },
+      { id: 'button-url', label: '버튼 URL 확인', component: AlimtalkButtonUrlTab },
+      { id: 'check-matching', label: '성사누락', component: MatchingTab },
       { id: 'demo', label: '시범전환', component: DemoTab },
-      { id: 'tutor-return-alimtalk', label: '선생님복귀 알림톡', component: TutorReturnAlimtalkTab },
-      { id: 'noti99-v2-alimtalk', label: 'noti99_v2 알림톡', component: Noti99V2AlimtalkTab },
+      { id: 'tutor-return', label: '선생님복귀 알림톡', component: TutorReturnAlimtalkTab },
+      { id: 'noti99_v2', label: 'noti99_v2 알림톡', component: Noti99V2AlimtalkTab },
     ],
   },
   {
@@ -139,14 +141,14 @@ export const GROUPS: readonly GroupConfig[] = [
     ],
   },
   {
-    id: 'kim',
+    id: 'kimacademy',
     label: '김강사',
     features: [
-      { id: 'join-history-reset', label: '가입 이력 해제', component: JoinHistoryResetTab },
-      { id: 'post-delete', label: '공고 삭제', component: PostDeleteTab },
+      { id: 'signup-reset', label: '가입 이력 해제', component: JoinHistoryResetTab },
+      { id: 'jobOffer-delete', label: '공고 삭제', component: PostDeleteTab },
       { id: 'account-recovery', label: '계정 복구', component: AccountRecoveryTab },
       { id: 'pass-auth', label: '패스 인증처리', component: PassAuthTab },
-      { id: 'academy-requirement-reset', label: '채용제안 팝업 초기화', component: AcademyRequirementResetTab },
+      { id: 'requirement-popup-reset', label: '채용제안 팝업 초기화', component: AcademyRequirementResetTab },
       { id: 'apply-chat-reset', label: '제안·채팅 초기화', component: ApplyChatResetTab },
     ],
   },
@@ -161,16 +163,17 @@ export const GROUPS: readonly GroupConfig[] = [
     id: 'pass-predictor',
     label: '합격예측기',
     features: [
-      { id: 'pass-predict-alimtalk', label: '알림톡 발송', component: PassPredictAlimtalkTab },
-      { id: 'pass-predictor-reset', label: '기록 초기화', component: PassPredictorResetTab },
-      { id: 'pass-predictor-update-day', label: '수정일 100일전 변경', component: PassPredictorUpdateDayTab },
-      { id: 'pass-predictor-coupon', label: '쿠폰 추가', component: PassPredictorCouponTab },
+      { id: 'kakao', label: '알림톡 발송', component: PassPredictAlimtalkTab },
+      { id: 'reset', label: '기록 초기화', component: PassPredictorResetTab },
+      { id: 'update-day', label: '수정일 100일전 변경', component: PassPredictorUpdateDayTab },
+      { id: 'add-coupon', label: '쿠폰 추가', component: PassPredictorCouponTab },
     ],
   },
 ];
 
-export function findFeature(featureId: string): { group: GroupConfig; feature: FeatureConfig } | null {
+export function findFeature(featureId: string, groupId?: string): { group: GroupConfig; feature: FeatureConfig } | null {
   for (const group of GROUPS) {
+    if (groupId && group.id !== groupId) continue;
     const feature = group.features.find((f) => f.id === featureId);
     if (feature) return { group, feature };
   }

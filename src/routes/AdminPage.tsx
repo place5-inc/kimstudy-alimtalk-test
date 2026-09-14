@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../shared/auth/AuthProvider';
 import { GROUPS, findFeature } from '../shared/config/groupsConfig';
 import { EnvProvider, useEnv, type AppEnv } from '../shared/config/EnvContext';
@@ -29,7 +30,7 @@ function EnvToggle() {
   );
 }
 
-function HomeScreen({ onNavigate }: { onNavigate: (featureId: string) => void }) {
+function HomeScreen({ onNavigate }: { onNavigate: (groupId: string, featureId: string) => void }) {
   return (
     <div className="home-wrap">
     <div className="home-screen">
@@ -40,14 +41,17 @@ function HomeScreen({ onNavigate }: { onNavigate: (featureId: string) => void })
       <div className="home-grid">
         {GROUPS.map((group) => (
           <div key={group.id} className="home-group-row">
-            <div className="home-group-name">{group.label}</div>
+            <div className="home-group-name">
+              {group.label}
+              {group.badge && <span className="group-badge">{group.badge}</span>}
+            </div>
             <div className="home-group-features">
               {group.features.map((feature) => (
                 <button
                   key={feature.id}
                   type="button"
                   className="home-feature-btn"
-                  onClick={() => onNavigate(feature.id)}
+                  onClick={() => onNavigate(group.id, feature.id)}
                 >
                   {feature.label}
                 </button>
@@ -62,16 +66,18 @@ function HomeScreen({ onNavigate }: { onNavigate: (featureId: string) => void })
 }
 
 function TopNav({
+  activeGroupId,
   activeFeatureId,
   onNavigate,
   onHome,
 }: {
+  activeGroupId: string;
   activeFeatureId: string;
-  onNavigate: (featureId: string) => void;
+  onNavigate: (groupId: string, featureId: string) => void;
   onHome: () => void;
 }) {
   const [openGroupId, setOpenGroupId] = useState<string | null>(null);
-  const activeResult = findFeature(activeFeatureId);
+  const activeResult = findFeature(activeFeatureId, activeGroupId);
   const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -114,7 +120,7 @@ function TopNav({
                       type="button"
                       className={`top-nav-dropdown-item ${feature.id === activeFeatureId ? 'active' : ''}`}
                       onClick={() => {
-                        onNavigate(feature.id);
+                        onNavigate(group.id, feature.id);
                         setOpenGroupId(null);
                       }}
                     >
@@ -133,10 +139,28 @@ function TopNav({
 
 function AdminPageInner() {
   const { logout } = useAuth();
-  const [activeFeatureId, setActiveFeatureId] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const { groupId, featureId } = useParams<{ groupId?: string; featureId?: string }>();
 
-  const activeResult = activeFeatureId ? findFeature(activeFeatureId) : null;
+  // /:groupId with no featureId → redirect to first feature of that group
+  useEffect(() => {
+    if (groupId && !featureId) {
+      const group = GROUPS.find((g) => g.id === groupId);
+      if (group && group.features.length > 0) {
+        navigate(`/${groupId}/${group.features[0].id}`, { replace: true });
+      } else {
+        navigate('/', { replace: true });
+      }
+    }
+  }, [groupId, featureId, navigate]);
+
+  const activeResult = featureId ? findFeature(featureId, groupId) : null;
   const ActiveComponent = activeResult?.feature.component;
+
+  const handleNavigate = (gId: string, fId: string) => navigate(`/${gId}/${fId}`);
+
+  // still redirecting (groupId set, featureId not yet)
+  if (groupId && !featureId) return null;
 
   return (
     <div className="app-shell">
@@ -144,7 +168,7 @@ function AdminPageInner() {
         <button
           type="button"
           className="app-brand"
-          onClick={() => setActiveFeatureId(null)}
+          onClick={() => navigate('/')}
         >
           김과외 어드민
         </button>
@@ -158,14 +182,15 @@ function AdminPageInner() {
         </button>
       </header>
 
-      {activeFeatureId === null ? (
-        <HomeScreen onNavigate={setActiveFeatureId} />
+      {!featureId ? (
+        <HomeScreen onNavigate={handleNavigate} />
       ) : (
         <>
           <TopNav
-            activeFeatureId={activeFeatureId}
-            onNavigate={setActiveFeatureId}
-            onHome={() => setActiveFeatureId(null)}
+            activeGroupId={groupId ?? ''}
+            activeFeatureId={featureId}
+            onNavigate={handleNavigate}
+            onHome={() => navigate('/')}
           />
           {activeResult && (
             <div className="breadcrumb">
@@ -173,8 +198,8 @@ function AdminPageInner() {
                 <button
                   key={f.id}
                   type="button"
-                  className={`breadcrumb-sibling-btn ${f.id === activeFeatureId ? 'current' : ''}`}
-                  onClick={() => setActiveFeatureId(f.id)}
+                  className={`breadcrumb-sibling-btn ${f.id === featureId ? 'current' : ''}`}
+                  onClick={() => navigate(`/${activeResult.group.id}/${f.id}`)}
                 >
                   {f.label}
                 </button>
