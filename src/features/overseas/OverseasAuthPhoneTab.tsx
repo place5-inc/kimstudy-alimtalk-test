@@ -87,15 +87,15 @@ export function OverseasAuthPhoneTab() {
           <input
             id="oa_phone"
             type="text"
-            placeholder="+8210aaaabbbb"
+            placeholder="+13474820873"
             autoComplete="off"
             value={phoneNumber}
             onChange={(e) => setPhoneNumber(e.target.value)}
           />
           <div className="guide-box" style={{ marginTop: 8 }}>
             <p className="guide-title">
-              ⚠️ 해외 번호는 반드시 <strong>+</strong> 로 시작하는 E.164 형식으로 입력해주세요.<br />
-              예: <code>+8210aaaabbbb</code> (한국 기준 +82 + 10으로 시작하는 번호)
+              ⚠️ 해외 번호는 반드시 <strong>+</strong> 로 시작하는 형식으로 입력해주세요.<br />
+              예: <code>+13474820873</code> (한국 휴대전화의 경우 010으로 시작하는 번호로 입력해주세요)
             </p>
           </div>
         </div>
