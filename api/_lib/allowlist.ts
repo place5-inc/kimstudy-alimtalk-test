@@ -397,7 +397,7 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
   },
   {
     action: 'overseas:authPhone',
-    path: /^\/admin\/test\/overseas\/auth\/phone$/,
+    path: /^\/admin\/test\/abroad\/auth\/phone$/,
     method: 'GET',
     dangerous: false,
   },

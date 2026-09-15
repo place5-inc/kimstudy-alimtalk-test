@@ -58,7 +58,7 @@ export interface GroupConfig {
 
 export const GROUPS: readonly GroupConfig[] = [
   {
-    id: 'overseas',
+    id: 'abroad',
     label: '해외개방',
     badge: 'new',
     features: [

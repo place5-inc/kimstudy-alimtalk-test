@@ -38,7 +38,7 @@ export function OverseasAuthPhoneTab() {
       setAuthCode(null);
 
       try {
-        const r = await callProxy("/admin/test/overseas/auth/phone", { phoneNumber: phoneNumber.trim() }, { env });
+        const r = await callProxy("/admin/test/abroad/auth/phone", { phoneNumber: phoneNumber.trim() }, { env });
         if (r.ok) {
           try {
             const data = JSON.parse(r.body) as AuthResponse;
