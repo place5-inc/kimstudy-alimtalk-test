@@ -1,5 +1,6 @@
 import type { ComponentType } from 'react';
-import { OverseasIdentityVerifyTab, OverseasIdentityResetTab, OverseasNationalityChangeTab } from '../../features/coming-soon/ComingSoonTab';
+import { OverseasIdentityVerifyTab, OverseasIdentityResetTab, OverseasNationalityChangeTab } from '../../features/overseas/OverseasNicknameActionTab';
+import { OverseasSendEmailTab } from '../../features/overseas/OverseasSendEmailTab';
 import { OverseasAuthPhoneTab } from '../../features/overseas/OverseasAuthPhoneTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
 import { SincerityDemotionTab } from '../../features/sincerity-demotion/SincerityDemotionTab';
@@ -66,6 +67,7 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'auth-user', label: '신원인증완료처리', component: OverseasIdentityVerifyTab },
       { id: 'auth-reset', label: '신원인증초기화', component: OverseasIdentityResetTab },
       { id: 'nationality', label: '국적변경', component: OverseasNationalityChangeTab },
+      { id: 'send-email', label: '이메일발송', component: OverseasSendEmailTab },
     ],
   },
   {

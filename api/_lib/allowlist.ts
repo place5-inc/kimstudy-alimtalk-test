@@ -396,8 +396,32 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
-    action: 'overseas:authPhone',
+    action: 'abroad:authPhone',
     path: /^\/admin\/test\/abroad\/auth\/phone$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'abroad:authComplete',
+    path: /^\/admin\/test\/abroad\/auth\/complete$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'abroad:authReset',
+    path: /^\/admin\/test\/abroad\/auth\/rest$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'abroad:changeNationality',
+    path: /^\/admin\/test\/abroad\/change\/nationality$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'abroad:sendEmail',
+    path: /^\/admin\/test\/abroad\/send\/email$/,
     method: 'GET',
     dangerous: false,
   },
