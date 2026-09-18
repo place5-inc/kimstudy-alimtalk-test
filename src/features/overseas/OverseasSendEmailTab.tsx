@@ -14,8 +14,6 @@ const TEMPLATES = [
   { code: "bizp_2026040708573825806856732",    desc: "수업 시작 알림 요청" },
   { code: "bizp_2026040709050112312208609",    desc: "정규 전환 알림 요청" },
   { code: "crbt_mch_prt_wth_sbjt_v1",         desc: "과외 성사 축하" },
-  { code: "canc_pr_01",                        desc: "시범과외 종료" },
-  { code: "canc_pr_03",                        desc: "안심결제 해지" },
   { code: "rqst_rv_1st_v1_new",               desc: "후기 요청 (2주)" },
   { code: "rqst_rv_2nd_v1",                   desc: "후기 재요청" },
   { code: "noti_cs_center_v1",                desc: "고객센터 메시지" },
@@ -30,7 +28,6 @@ type TemplateCode = (typeof TEMPLATES)[number]["code"];
 
 const KOREAN_ONLY = new Set<string>([
   "bizp_2026060214373715156144015",
-  "canc_pr_03",
   "pay_cont_all_03_v2",
 ]);
 
