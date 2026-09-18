@@ -127,7 +127,7 @@ export function OverseasNationalityChangeTab() {
                   color: nationality ? "#1a202c" : "#a0aec0",
                 }}
               >
-                <option value="">— 국적을 선택하세요 —</option>
+                <option value="">— 닉네임 입력 후 국적을 선택해주세요 —</option>
                 {nations.map((n) => (
                   <option key={n.iso_code} value={n.iso_code}>
                     {n.name}　({n.iso_code})
