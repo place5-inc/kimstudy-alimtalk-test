@@ -1,5 +1,7 @@
 import type { ComponentType } from 'react';
-import { OverseasIdentityVerifyTab, OverseasIdentityResetTab, OverseasNationalityChangeTab } from '../../features/overseas/OverseasNicknameActionTab';
+import { OverseasIdentityVerifyTab } from '../../features/overseas/OverseasIdentityVerifyTab';
+import { OverseasIdentityResetTab } from '../../features/overseas/OverseasNicknameActionTab';
+import { OverseasNationalityChangeTab } from '../../features/overseas/OverseasNationalityChangeTab';
 import { OverseasSendEmailTab } from '../../features/overseas/OverseasSendEmailTab';
 import { OverseasAuthPhoneTab } from '../../features/overseas/OverseasAuthPhoneTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';

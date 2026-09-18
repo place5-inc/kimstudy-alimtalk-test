@@ -56,14 +56,15 @@ function ComingSoon({ label }: { label: string }) {
   );
 }
 
-export function OverseasIdentityVerifyTab() {
-  return <ComingSoon label="신원인증 완료처리" />;
-}
-
 export function OverseasIdentityResetTab() {
-  return <ComingSoon label="신원인증 초기화" />;
+  return (
+    <OverseasNicknameActionTab
+      title="신원인증 초기화"
+      subtitle="해외 사용자의 신원인증 정보(생년월일·국적·인증일시)를 초기화합니다."
+      sectionTitle="신원인증 초기화"
+      backendPath="/admin/test/abroad/auth/rest"
+      action="abroad:authReset"
+    />
+  );
 }
 
-export function OverseasNationalityChangeTab() {
-  return <ComingSoon label="국적 변경" />;
-}

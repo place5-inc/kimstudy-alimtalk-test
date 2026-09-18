@@ -402,6 +402,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'abroad:getNationality',
+    path: /^\/admin\/test\/abroad\/get\/nationality$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'abroad:authComplete',
     path: /^\/admin\/test\/abroad\/auth\/complete$/,
     method: 'GET',
