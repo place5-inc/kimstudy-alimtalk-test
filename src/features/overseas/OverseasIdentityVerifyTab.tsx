@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { callProxy, UnauthenticatedError } from "../../shared/api/client";
 import { useAuth } from "../../shared/auth/AuthProvider";
 import { useEnv } from "../../shared/config/EnvContext";
@@ -15,7 +15,7 @@ export function OverseasIdentityVerifyTab() {
   const [birth, setBirth]           = useState("");
   const [nationality, setNationality] = useState("");
   const [nations, setNations]       = useState<Nation[]>([]);
-  const [nationsLoading, setNationsLoading] = useState(true);
+  const [nationsLoading, setNationsLoading] = useState(false);
   const [nationsError, setNationsError]     = useState<string | null>(null);
   const [busy, setBusy]             = useState(false);
   const [result, setResult]         = useState<ResultState | null>(null);
@@ -24,29 +24,27 @@ export function OverseasIdentityVerifyTab() {
   const { env }             = useEnv();
   const { show: showToast } = useToast();
 
-  // 국가 목록 로드
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      try {
-        const r = await callProxy("/admin/test/abroad/get/nationality", {});
-        if (!r.ok) { setNationsError(`국가 목록 로드 실패 (${r.status})`); return; }
-        const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; list?: Nation[] };
-        if (!cancelled) {
-          if (json.isSuccess && json.list) {
-            setNations(json.list);
-          } else {
-            setNationsError(json.systemMessage ?? "국가 목록 로드 실패");
-          }
-        }
-      } catch (e) {
-        if (!cancelled) setNationsError(String(e));
-      } finally {
-        if (!cancelled) setNationsLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
+  // 닉네임 입력 시 국가 목록 로드 (최초 1회)
+  const loadNations = useCallback(async () => {
+    if (nations.length > 0 || nationsLoading) return;
+    setNationsLoading(true);
+    try {
+      const r = await callProxy("/admin/test/abroad/get/nationality", {});
+      if (!r.ok) { setNationsError(`국가 목록 로드 실패 (${r.status})`); return; }
+      const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; list?: Nation[] };
+      if (json.isSuccess && json.list) setNations(json.list);
+      else setNationsError(json.systemMessage ?? "국가 목록 로드 실패");
+    } catch (e) {
+      setNationsError(String(e));
+    } finally {
+      setNationsLoading(false);
+    }
+  }, [nations.length, nationsLoading]);
+
+  const handleNicknameChange = (value: string) => {
+    setNickname(value);
+    if (value.length === 1) void loadNations();
+  };
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -102,7 +100,7 @@ export function OverseasIdentityVerifyTab() {
             placeholder="닉네임 입력"
             autoComplete="off"
             value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+            onChange={(e) => handleNicknameChange(e.target.value)}
           />
         </div>
 
@@ -151,7 +149,7 @@ export function OverseasIdentityVerifyTab() {
                   color: nationality ? "#1a202c" : "#a0aec0",
                 }}
               >
-                <option value="">— 국적을 선택하세요 —</option>
+                <option value="">— 닉네임 입력 후 국적을 선택해주세요 —</option>
                 {nations.map((n) => (
                   <option key={n.iso_code} value={n.iso_code}>
                     {n.name}　({n.iso_code})

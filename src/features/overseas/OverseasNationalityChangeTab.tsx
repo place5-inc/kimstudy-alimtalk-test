@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { callProxy, UnauthenticatedError } from "../../shared/api/client";
 import { useAuth } from "../../shared/auth/AuthProvider";
 import { useEnv } from "../../shared/config/EnvContext";
@@ -14,7 +14,7 @@ export function OverseasNationalityChangeTab() {
   const [nickname, setNickname]       = useState("");
   const [nationality, setNationality] = useState("");
   const [nations, setNations]         = useState<Nation[]>([]);
-  const [nationsLoading, setNationsLoading] = useState(true);
+  const [nationsLoading, setNationsLoading] = useState(false);
   const [nationsError, setNationsError]     = useState<string | null>(null);
   const [busy, setBusy]               = useState(false);
   const [result, setResult]           = useState<ResultState | null>(null);
@@ -23,25 +23,27 @@ export function OverseasNationalityChangeTab() {
   const { env }             = useEnv();
   const { show: showToast } = useToast();
 
-  useEffect(() => {
-    let cancelled = false;
-    void (async () => {
-      try {
-        const r = await callProxy("/admin/test/abroad/get/nationality", {});
-        if (!r.ok) { setNationsError(`국가 목록 로드 실패 (${r.status})`); return; }
-        const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; list?: Nation[] };
-        if (!cancelled) {
-          if (json.isSuccess && json.list) setNations(json.list);
-          else setNationsError(json.systemMessage ?? "국가 목록 로드 실패");
-        }
-      } catch (e) {
-        if (!cancelled) setNationsError(String(e));
-      } finally {
-        if (!cancelled) setNationsLoading(false);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
+  // 닉네임 입력 시 국가 목록 로드 (최초 1회)
+  const loadNations = useCallback(async () => {
+    if (nations.length > 0 || nationsLoading) return;
+    setNationsLoading(true);
+    try {
+      const r = await callProxy("/admin/test/abroad/get/nationality", {});
+      if (!r.ok) { setNationsError(`국가 목록 로드 실패 (${r.status})`); return; }
+      const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; list?: Nation[] };
+      if (json.isSuccess && json.list) setNations(json.list);
+      else setNationsError(json.systemMessage ?? "국가 목록 로드 실패");
+    } catch (e) {
+      setNationsError(String(e));
+    } finally {
+      setNationsLoading(false);
+    }
+  }, [nations.length, nationsLoading]);
+
+  const handleNicknameChange = (value: string) => {
+    setNickname(value);
+    if (value.length === 1) void loadNations();
+  };
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -95,7 +97,7 @@ export function OverseasNationalityChangeTab() {
             placeholder="닉네임 입력"
             autoComplete="off"
             value={nickname}
-            onChange={(e) => setNickname(e.target.value)}
+            onChange={(e) => handleNicknameChange(e.target.value)}
           />
         </div>
 
