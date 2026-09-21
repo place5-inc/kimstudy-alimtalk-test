@@ -17,3 +17,7 @@ export function AbroadNicknameConvertTab() {
 export function SuhaengComingSoon1() {
   return <ComingSoon label="준비중1" />;
 }
+
+export function AbroadTutorTranslateTab() {
+  return <ComingSoon label="소개서번역" />;
+}
