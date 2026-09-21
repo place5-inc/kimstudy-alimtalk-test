@@ -5,6 +5,7 @@ import { OverseasNationalityChangeTab } from '../../features/overseas/OverseasNa
 import { OverseasSendEmailTab } from '../../features/overseas/OverseasSendEmailTab';
 import { OverseasAuthPhoneTab } from '../../features/overseas/OverseasAuthPhoneTab';
 import { AbroadNicknameConvertTab } from '../../features/overseas/AbroadNicknameConvertTab';
+import { SuhaengComingSoon1 } from '../../features/coming-soon/ComingSoonTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
 import { SincerityDemotionTab } from '../../features/sincerity-demotion/SincerityDemotionTab';
 import { AuthPhoneTab } from '../../features/auth-phone/authPhoneTab';
@@ -61,6 +62,14 @@ export interface GroupConfig {
 }
 
 export const GROUPS: readonly GroupConfig[] = [
+  {
+    id: 'suhaeng',
+    label: '김수행',
+    badge: 'new',
+    features: [
+      { id: 'reset', label: '준비중1', component: SuhaengComingSoon1 },
+    ],
+  },
   {
     id: 'abroad',
     label: '해외개방',

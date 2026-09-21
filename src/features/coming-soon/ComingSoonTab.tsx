@@ -13,3 +13,7 @@ export function ComingSoon2() {
 export function AbroadNicknameConvertTab() {
   return <ComingSoon label="선생님닉네임변환" />;
 }
+
+export function SuhaengComingSoon1() {
+  return <ComingSoon label="준비중1" />;
+}
