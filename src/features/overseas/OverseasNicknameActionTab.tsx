@@ -45,17 +45,6 @@ export function OverseasNicknameActionTab({ title, subtitle, sectionTitle, backe
   );
 }
 
-function ComingSoon({ label }: { label: string }) {
-  return (
-    <div>
-      <p className="page-title">{label}</p>
-      <div style={{ padding: "3rem 1.5rem", color: "#bbb", fontSize: 14 }}>
-        {label} — 준비중입니다
-      </div>
-    </div>
-  );
-}
-
 export function OverseasIdentityResetTab() {
   return (
     <OverseasNicknameActionTab
