@@ -9,3 +9,7 @@ function ComingSoon({ label }: { label: string }) {
 export function ComingSoon2() {
   return <ComingSoon label="준비중2" />;
 }
+
+export function AbroadNicknameConvertTab() {
+  return <ComingSoon label="선생님닉네임변환" />;
+}

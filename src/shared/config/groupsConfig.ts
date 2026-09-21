@@ -4,6 +4,7 @@ import { OverseasIdentityResetTab } from '../../features/overseas/OverseasNickna
 import { OverseasNationalityChangeTab } from '../../features/overseas/OverseasNationalityChangeTab';
 import { OverseasSendEmailTab } from '../../features/overseas/OverseasSendEmailTab';
 import { OverseasAuthPhoneTab } from '../../features/overseas/OverseasAuthPhoneTab';
+import { AbroadNicknameConvertTab } from '../../features/overseas/AbroadNicknameConvertTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
 import { SincerityDemotionTab } from '../../features/sincerity-demotion/SincerityDemotionTab';
 import { AuthPhoneTab } from '../../features/auth-phone/authPhoneTab';
@@ -70,6 +71,7 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'auth-reset', label: '신원인증초기화', component: OverseasIdentityResetTab },
       { id: 'nationality', label: '국적변경', component: OverseasNationalityChangeTab },
       { id: 'send-email', label: '이메일발송', component: OverseasSendEmailTab },
+      { id: 'nickname-convert', label: '선생님닉네임변환', component: AbroadNicknameConvertTab },
     ],
   },
   {
