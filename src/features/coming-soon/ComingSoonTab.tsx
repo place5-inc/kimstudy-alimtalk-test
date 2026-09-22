@@ -21,3 +21,7 @@ export function SuhaengComingSoon1() {
 export function AbroadTutorTranslateTab() {
   return <ComingSoon label="소개서번역" />;
 }
+
+export function AbroadKeywordPoolTab() {
+  return <ComingSoon label="키워드검색용풀확인" />;
+}

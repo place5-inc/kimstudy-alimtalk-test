@@ -6,6 +6,7 @@ import { OverseasSendEmailTab } from '../../features/overseas/OverseasSendEmailT
 import { OverseasAuthPhoneTab } from '../../features/overseas/OverseasAuthPhoneTab';
 import { AbroadNicknameConvertTab } from '../../features/overseas/AbroadNicknameConvertTab';
 import { SuhaengComingSoon1 } from '../../features/coming-soon/ComingSoonTab';
+import { AbroadKeywordPoolTab } from '../../features/overseas/AbroadKeywordPoolTab';
 import { AbroadTutorTranslateTab } from '../../features/overseas/AbroadTutorTranslateTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
 import { SincerityDemotionTab } from '../../features/sincerity-demotion/SincerityDemotionTab';
@@ -83,6 +84,7 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'send-email', label: '이메일발송', component: OverseasSendEmailTab },
       { id: 'nickname-convert', label: '선생님닉네임변환', component: AbroadNicknameConvertTab },
       { id: 'tutor-translate', label: '소개서번역', component: AbroadTutorTranslateTab },
+      { id: 'keyword-pool', label: '키워드검색용풀확인', component: AbroadKeywordPoolTab },
     ],
   },
   {

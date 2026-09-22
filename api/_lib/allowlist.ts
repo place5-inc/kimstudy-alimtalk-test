@@ -443,6 +443,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'abroad:rebuildLanguageTutor',
+    path: /^\/admin\/test\/rebuild\/language\/tutor$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
