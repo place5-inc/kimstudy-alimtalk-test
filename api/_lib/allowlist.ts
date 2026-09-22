@@ -437,6 +437,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'abroad:translateTutorInfo',
+    path: /^\/admin\/test\/abroad\/translate\/tutor\/info$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(

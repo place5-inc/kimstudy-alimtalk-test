@@ -5,7 +5,8 @@ import { OverseasNationalityChangeTab } from '../../features/overseas/OverseasNa
 import { OverseasSendEmailTab } from '../../features/overseas/OverseasSendEmailTab';
 import { OverseasAuthPhoneTab } from '../../features/overseas/OverseasAuthPhoneTab';
 import { AbroadNicknameConvertTab } from '../../features/overseas/AbroadNicknameConvertTab';
-import { SuhaengComingSoon1, AbroadTutorTranslateTab } from '../../features/coming-soon/ComingSoonTab';
+import { SuhaengComingSoon1 } from '../../features/coming-soon/ComingSoonTab';
+import { AbroadTutorTranslateTab } from '../../features/overseas/AbroadTutorTranslateTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
 import { SincerityDemotionTab } from '../../features/sincerity-demotion/SincerityDemotionTab';
 import { AuthPhoneTab } from '../../features/auth-phone/authPhoneTab';
