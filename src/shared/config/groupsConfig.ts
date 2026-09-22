@@ -5,7 +5,8 @@ import { OverseasNationalityChangeTab } from '../../features/overseas/OverseasNa
 import { OverseasSendEmailTab } from '../../features/overseas/OverseasSendEmailTab';
 import { OverseasAuthPhoneTab } from '../../features/overseas/OverseasAuthPhoneTab';
 import { AbroadNicknameConvertTab } from '../../features/overseas/AbroadNicknameConvertTab';
-import { SuhaengComingSoon1 } from '../../features/coming-soon/ComingSoonTab';
+import { SuhaengResetTab } from '../../features/suhaeng/SuhaengResetTab';
+import { SuhaengPaymentGrantTab } from '../../features/suhaeng/SuhaengPaymentGrantTab';
 import { AbroadKeywordPoolTab } from '../../features/overseas/AbroadKeywordPoolTab';
 import { AbroadTutorTranslateTab } from '../../features/overseas/AbroadTutorTranslateTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
@@ -69,7 +70,8 @@ export const GROUPS: readonly GroupConfig[] = [
     label: '김수행',
     badge: 'new',
     features: [
-      { id: 'reset', label: '준비중1', component: SuhaengComingSoon1 },
+      { id: 'reset', label: '회원초기화', component: SuhaengResetTab },
+      { id: 'payment-grant', label: '이용권발급', component: SuhaengPaymentGrantTab },
     ],
   },
   {

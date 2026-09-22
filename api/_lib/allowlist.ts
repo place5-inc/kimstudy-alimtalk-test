@@ -18,6 +18,8 @@ export interface AllowlistEntry {
   action: string;
   /** 기본 백엔드 호스트 대신 사용할 URL (host + 경로 prefix 포함). 지정 시 /api prefix 자동 추가 안 함. */
   baseUrl?: string;
+  /** 백엔드 요청에 추가할 커스텀 헤더 */
+  extraHeaders?: Record<string, string>;
 }
 
 export const ALLOWLIST: readonly AllowlistEntry[] = [
@@ -448,6 +450,22 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     path: /^\/admin\/test\/rebuild\/language\/tutor$/,
     method: 'GET',
     dangerous: false,
+  },
+  {
+    action: 'suhaeng:userReset',
+    path: /^\/api\/test\/users\/reset$/,
+    method: 'POST',
+    dangerous: false,
+    baseUrl: 'https://suhaengkim-api-h3dsabcvhcbxeefj.koreacentral-01.azurewebsites.net',
+    extraHeaders: { 'x-internal-key': 'aabb1122!' },
+  },
+  {
+    action: 'suhaeng:paymentTestGrant',
+    path: /^\/api\/payments\/test-grant$/,
+    method: 'POST',
+    dangerous: false,
+    baseUrl: 'https://suhaengkim-api-h3dsabcvhcbxeefj.koreacentral-01.azurewebsites.net',
+    extraHeaders: { 'x-internal-key': 'aabb1122!' },
   },
 ];
 

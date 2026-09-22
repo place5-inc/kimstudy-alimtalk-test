@@ -16,6 +16,7 @@ export async function callBackend(
   body: string | null,
   env?: string,
   overrideBaseUrl?: string,
+  extraHeaders?: Record<string, string>,
 ): Promise<BackendResponse> {
   const { BACKEND_SHARED_SECRET } = getEnv();
   const qs = query.toString();
@@ -31,6 +32,7 @@ export async function callBackend(
       Authorization: `Bearer ${BACKEND_SHARED_SECRET}`,
       Accept: 'application/json, text/plain, */*',
       ...(body ? { 'Content-Type': 'application/json' } : {}),
+      ...(extraHeaders ?? {}),
     },
     ...(body && method !== 'GET' ? { body } : {}),
   };
