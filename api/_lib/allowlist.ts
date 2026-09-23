@@ -452,6 +452,18 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'suhaeng:chatLogReset',
+    path: /^\/admin\/test\/reset\/kimsuhaeng\/log$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'suhaeng:chatLogDateChange',
+    path: /^\/admin\/test\/change\/date\/kimsuhaeng\/log$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'suhaeng:userReset',
     path: /^\/api\/test\/users\/reset$/,
     method: 'POST',

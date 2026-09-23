@@ -7,6 +7,10 @@ import { OverseasAuthPhoneTab } from '../../features/overseas/OverseasAuthPhoneT
 import { AbroadNicknameConvertTab } from '../../features/overseas/AbroadNicknameConvertTab';
 import { SuhaengResetTab } from '../../features/suhaeng/SuhaengResetTab';
 import { SuhaengPaymentGrantTab } from '../../features/suhaeng/SuhaengPaymentGrantTab';
+import { SuhaengChatLogResetTab } from '../../features/suhaeng/SuhaengChatLogResetTab';
+import { SuhaengChatLogDateTab } from '../../features/suhaeng/SuhaengChatLogDateTab';
+import { SuhaengChatLogResetTab } from '../../features/suhaeng/SuhaengChatLogResetTab';
+import { SuhaengChatLogDateTab } from '../../features/suhaeng/SuhaengChatLogDateTab';
 import { AbroadKeywordPoolTab } from '../../features/overseas/AbroadKeywordPoolTab';
 import { AbroadTutorTranslateTab } from '../../features/overseas/AbroadTutorTranslateTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
@@ -72,6 +76,8 @@ export const GROUPS: readonly GroupConfig[] = [
     features: [
       { id: 'reset', label: '회원초기화', component: SuhaengResetTab },
       { id: 'payment-grant', label: '이용권발급', component: SuhaengPaymentGrantTab },
+      { id: 'log-reset', label: '(채팅)김수행 로그 초기화', component: SuhaengChatLogResetTab },
+      { id: 'log-date', label: '(채팅)김수행 로그 날짜 변경', component: SuhaengChatLogDateTab },
     ],
   },
   {
