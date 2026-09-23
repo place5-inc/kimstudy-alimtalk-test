@@ -9,6 +9,8 @@ import { SuhaengResetTab } from '../../features/suhaeng/SuhaengResetTab';
 import { SuhaengPaymentGrantTab } from '../../features/suhaeng/SuhaengPaymentGrantTab';
 import { SuhaengChatLogResetTab } from '../../features/suhaeng/SuhaengChatLogResetTab';
 import { SuhaengChatLogDateTab } from '../../features/suhaeng/SuhaengChatLogDateTab';
+import { SuhaengPaymentAddTab } from '../../features/suhaeng/SuhaengPaymentAddTab';
+import { SuhaengPaymentResetTab } from '../../features/suhaeng/SuhaengPaymentResetTab';
 import { AbroadKeywordPoolTab } from '../../features/overseas/AbroadKeywordPoolTab';
 import { AbroadTutorTranslateTab } from '../../features/overseas/AbroadTutorTranslateTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
@@ -76,6 +78,8 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'payment-grant', label: '이용권발급', component: SuhaengPaymentGrantTab },
       { id: 'log-reset', label: '(채팅)김수행 로그 초기화', component: SuhaengChatLogResetTab },
       { id: 'log-date', label: '(채팅)김수행 로그 날짜 변경', component: SuhaengChatLogDateTab },
+      { id: 'payment-add', label: '(결제)김수행 결제이력 추가', component: SuhaengPaymentAddTab },
+      { id: 'payment-reset', label: '(결제)김수행 결제이력 초기화', component: SuhaengPaymentResetTab },
     ],
   },
   {

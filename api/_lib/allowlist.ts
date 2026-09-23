@@ -464,6 +464,18 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'suhaeng:paymentAdd',
+    path: /^\/admin\/test\/add\/kimsuhaeng\/payment\/log$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'suhaeng:paymentReset',
+    path: /^\/admin\/test\/reset\/kimsuhaeng\/payment\/log$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'suhaeng:userReset',
     path: /^\/api\/test\/users\/reset$/,
     method: 'POST',
