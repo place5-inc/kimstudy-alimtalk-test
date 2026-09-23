@@ -9,8 +9,6 @@ import { SuhaengResetTab } from '../../features/suhaeng/SuhaengResetTab';
 import { SuhaengPaymentGrantTab } from '../../features/suhaeng/SuhaengPaymentGrantTab';
 import { SuhaengChatLogResetTab } from '../../features/suhaeng/SuhaengChatLogResetTab';
 import { SuhaengChatLogDateTab } from '../../features/suhaeng/SuhaengChatLogDateTab';
-import { SuhaengChatLogResetTab } from '../../features/suhaeng/SuhaengChatLogResetTab';
-import { SuhaengChatLogDateTab } from '../../features/suhaeng/SuhaengChatLogDateTab';
 import { AbroadKeywordPoolTab } from '../../features/overseas/AbroadKeywordPoolTab';
 import { AbroadTutorTranslateTab } from '../../features/overseas/AbroadTutorTranslateTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
