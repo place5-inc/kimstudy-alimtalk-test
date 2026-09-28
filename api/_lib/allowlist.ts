@@ -491,7 +491,7 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
   },
   {
     action: 'alimtalkBizgo:checkRequiredVariables',
-    path: /^\/admin\/bizgo\/check\/requiredVariables$/,
+    path: /^\/admin\/bizgo\/templates\/[A-Za-z0-9_.\-]+\/required-variables$/,
     method: 'GET',
     dangerous: false,
   },

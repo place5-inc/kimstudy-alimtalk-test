@@ -34,7 +34,7 @@ export function AlimtalkBizgoReplaceTab() {
     setVarsError(null);
     setRequiredVars(null);
     try {
-      const r = await callProxy("/admin/bizgo/check/requiredVariables", { templateCode: trimmed });
+      const r = await callProxy(`/admin/bizgo/templates/${trimmed}/required-variables`, {});
       const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; result?: string[] };
       if (r.ok && json.isSuccess) {
         const vars = json.result ?? [];
