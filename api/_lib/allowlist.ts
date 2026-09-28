@@ -490,6 +490,18 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'alimtalkBizgo:getTemplates',
+    path: /^\/admin\/bizgo\/templates$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
+    action: 'alimtalkBizgo:addTemplate',
+    path: /^\/admin\/bizgo\/add\/template$/,
+    method: 'POST',
+    dangerous: false,
+  },
+  {
     action: 'alimtalkBizgo:checkRequiredVariables',
     path: /^\/admin\/bizgo\/templates\/[A-Za-z0-9_.\-]+\/required-variables$/,
     method: 'GET',

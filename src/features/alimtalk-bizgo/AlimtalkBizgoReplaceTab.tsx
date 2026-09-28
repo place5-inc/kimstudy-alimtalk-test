@@ -5,23 +5,48 @@ import { ResultBox, type ResultState } from "../../shared/ui/ResultBox";
 
 interface KvRow { key: string; value: string }
 
+interface BizgoTemplate {
+  id?: number;
+  templateCode?: string;
+  senderKey?: string;
+  requiredVariables?: string;
+  description?: string;
+  isActive?: boolean;
+  createdAt?: string;
+}
+
 export function AlimtalkBizgoReplaceTab() {
-  const [templateCode, setTemplateCode] = useState("");
-  const [phoneNumber, setPhoneNumber]   = useState("");
-  const [rows, setRows]                 = useState<KvRow[]>([{ key: "", value: "" }]);
-  const [requiredVars, setRequiredVars] = useState<string[] | null>(null);
-  const [varsLoading, setVarsLoading]   = useState(false);
-  const [varsError, setVarsError]       = useState<string | null>(null);
-  const [busy, setBusy]                 = useState(false);
-  const [result, setResult]             = useState<ResultState | null>(null);
-  const [resultData, setResultData]     = useState<unknown>(null);
+  const [templates, setTemplates]           = useState<BizgoTemplate[]>([]);
+  const [templatesLoading, setTemplatesLoading] = useState(false);
+  const [templateCode, setTemplateCode]     = useState("");
+  const [phoneNumber, setPhoneNumber]       = useState("");
+  const [rows, setRows]                     = useState<KvRow[]>([{ key: "", value: "" }]);
+  const [requiredVars, setRequiredVars]     = useState<string[] | null>(null);
+  const [varsLoading, setVarsLoading]       = useState(false);
+  const [varsError, setVarsError]           = useState<string | null>(null);
+  const [busy, setBusy]                     = useState(false);
+  const [result, setResult]                 = useState<ResultState | null>(null);
+  const [resultData, setResultData]         = useState<unknown>(null);
 
   const { logout } = useAuth();
   const lastCheckedCode = useRef("");
 
+  const loadTemplates = useCallback(async () => {
+    setTemplatesLoading(true);
+    try {
+      const r = await callProxy("/admin/bizgo/templates", {});
+      const json = JSON.parse(r.body) as { isSuccess: boolean; templates?: BizgoTemplate[] };
+      if (json.isSuccess && json.templates) setTemplates(json.templates);
+    } catch {
+      // 목록 로드 실패는 조용히 무시 (직접 입력 가능)
+    } finally {
+      setTemplatesLoading(false);
+    }
+  }, []);
+
+
   const updateRow = (idx: number, field: keyof KvRow, val: string) =>
     setRows((prev) => prev.map((r, i) => i === idx ? { ...r, [field]: val } : r));
-
   const addRow    = () => setRows((prev) => [...prev, { key: "", value: "" }]);
   const removeRow = (idx: number) => setRows((prev) => prev.filter((_, i) => i !== idx));
 
@@ -39,9 +64,7 @@ export function AlimtalkBizgoReplaceTab() {
       if (r.ok && json.isSuccess) {
         const vars = json.result ?? [];
         setRequiredVars(vars);
-        if (vars.length > 0) {
-          setRows(vars.map((key) => ({ key, value: "" })));
-        }
+        if (vars.length > 0) setRows(vars.map((key) => ({ key, value: "" })));
       } else {
         setVarsError(json.systemMessage ?? "필수 변수 조회 실패");
       }
@@ -52,6 +75,12 @@ export function AlimtalkBizgoReplaceTab() {
       setVarsLoading(false);
     }
   }, [logout]);
+
+  const handleTemplateSelect = (code: string) => {
+    setTemplateCode(code);
+    lastCheckedCode.current = "";
+    if (code) void checkRequiredVars(code);
+  };
 
   const handleTemplateBlur = () => void checkRequiredVars(templateCode);
 
@@ -93,10 +122,64 @@ export function AlimtalkBizgoReplaceTab() {
     [templateCode, phoneNumber, rows, logout],
   );
 
+  const activeTemplates = templates.filter((t) => t.isActive !== false);
+  const inactiveTemplates = templates.filter((t) => t.isActive === false);
+
   return (
     <div>
       <p className="page-title">알림톡(비즈고) 교체 발송</p>
       <p className="page-subtitle">비즈고(Bizgo) 알림톡 서비스를 이용하여 알림톡을 테스트 발송합니다.</p>
+
+      {/* 템플릿 목록 */}
+      <div className="section" style={{ marginBottom: 16 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+          <p className="section-title" style={{ margin: 0 }}>템플릿 목록</p>
+          <button
+            type="button"
+            onClick={() => void loadTemplates()}
+            disabled={templatesLoading}
+            style={{ padding: "5px 14px", border: "1px solid #bee3f8", borderRadius: 6, background: "#ebf8ff", color: "#2b6cb0", fontSize: 12, cursor: "pointer" }}
+          >
+            {templatesLoading ? "조회 중..." : "조회하기"}
+          </button>
+        </div>
+        {templatesLoading ? (
+          <p style={{ fontSize: 13, color: "#a0aec0" }}>목록 로딩 중...</p>
+        ) : templates.length === 0 ? (
+          <p style={{ fontSize: 13, color: "#a0aec0" }}>조회하기 버튼을 눌러 템플릿 목록을 불러오세요.</p>
+        ) : (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            {[...activeTemplates, ...inactiveTemplates].map((t) => (
+              <button
+                key={t.id ?? t.templateCode}
+                type="button"
+                onClick={() => handleTemplateSelect(t.templateCode ?? "")}
+                style={{
+                  display: "flex", alignItems: "center", gap: 10,
+                  padding: "10px 14px", borderRadius: 8, cursor: "pointer",
+                  border: `1.5px solid ${templateCode === t.templateCode ? "#4299e1" : "#e2e8f0"}`,
+                  background: templateCode === t.templateCode ? "#ebf8ff" : (t.isActive === false ? "#f7fafc" : "#fff"),
+                  textAlign: "left",
+                }}
+              >
+                <span style={{
+                  fontFamily: "monospace", fontSize: 13, fontWeight: 600,
+                  color: t.isActive === false ? "#a0aec0" : "#1a202c",
+                  minWidth: 0, wordBreak: "break-all",
+                }}>
+                  {t.templateCode}
+                </span>
+                {t.description && (
+                  <span style={{ fontSize: 12, color: "#718096", flexShrink: 0 }}>— {t.description}</span>
+                )}
+                {t.isActive === false && (
+                  <span style={{ marginLeft: "auto", fontSize: 10, color: "#a0aec0", flexShrink: 0 }}>비활성</span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       <form className="section" onSubmit={(e) => void handleSubmit(e)} noValidate>
         <p className="section-title">발송 정보</p>
@@ -108,7 +191,7 @@ export function AlimtalkBizgoReplaceTab() {
           <input
             id="bz_template"
             type="text"
-            placeholder="템플릿 코드 입력"
+            placeholder="템플릿 코드 입력 또는 위 목록에서 선택"
             autoComplete="off"
             value={templateCode}
             onChange={(e) => { setTemplateCode(e.target.value); lastCheckedCode.current = ""; }}
