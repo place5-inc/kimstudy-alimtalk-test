@@ -490,6 +490,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'alimtalkBizgo:checkRequiredVariables',
+    path: /^\/admin\/bizgo\/check\/requiredVariables$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'suhaeng:paymentTestGrant',
     path: /^\/api\/payments\/test-grant$/,
     method: 'POST',

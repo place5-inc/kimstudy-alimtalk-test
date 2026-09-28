@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { callProxyPost, UnauthenticatedError } from "../../shared/api/client";
+import { useState, useCallback, useRef } from "react";
+import { callProxy, callProxyPost, UnauthenticatedError } from "../../shared/api/client";
 import { useAuth } from "../../shared/auth/AuthProvider";
 import { ResultBox, type ResultState } from "../../shared/ui/ResultBox";
 
@@ -9,17 +9,51 @@ export function AlimtalkBizgoReplaceTab() {
   const [templateCode, setTemplateCode] = useState("");
   const [phoneNumber, setPhoneNumber]   = useState("");
   const [rows, setRows]                 = useState<KvRow[]>([{ key: "", value: "" }]);
+  const [requiredVars, setRequiredVars] = useState<string[] | null>(null);
+  const [varsLoading, setVarsLoading]   = useState(false);
+  const [varsError, setVarsError]       = useState<string | null>(null);
   const [busy, setBusy]                 = useState(false);
   const [result, setResult]             = useState<ResultState | null>(null);
   const [resultData, setResultData]     = useState<unknown>(null);
 
   const { logout } = useAuth();
+  const lastCheckedCode = useRef("");
 
   const updateRow = (idx: number, field: keyof KvRow, val: string) =>
     setRows((prev) => prev.map((r, i) => i === idx ? { ...r, [field]: val } : r));
 
   const addRow    = () => setRows((prev) => [...prev, { key: "", value: "" }]);
   const removeRow = (idx: number) => setRows((prev) => prev.filter((_, i) => i !== idx));
+
+  const checkRequiredVars = useCallback(async (code: string) => {
+    const trimmed = code.trim();
+    if (!trimmed || trimmed === lastCheckedCode.current) return;
+    lastCheckedCode.current = trimmed;
+
+    setVarsLoading(true);
+    setVarsError(null);
+    setRequiredVars(null);
+    try {
+      const r = await callProxy("/admin/bizgo/check/requiredVariables", { templateCode: trimmed });
+      const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; result?: string[] };
+      if (r.ok && json.isSuccess) {
+        const vars = json.result ?? [];
+        setRequiredVars(vars);
+        if (vars.length > 0) {
+          setRows(vars.map((key) => ({ key, value: "" })));
+        }
+      } else {
+        setVarsError(json.systemMessage ?? "필수 변수 조회 실패");
+      }
+    } catch (e) {
+      if (e instanceof UnauthenticatedError) { await logout(); return; }
+      setVarsError(String(e));
+    } finally {
+      setVarsLoading(false);
+    }
+  }, [logout]);
+
+  const handleTemplateBlur = () => void checkRequiredVars(templateCode);
 
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
@@ -77,9 +111,32 @@ export function AlimtalkBizgoReplaceTab() {
             placeholder="템플릿 코드 입력"
             autoComplete="off"
             value={templateCode}
-            onChange={(e) => setTemplateCode(e.target.value)}
+            onChange={(e) => { setTemplateCode(e.target.value); lastCheckedCode.current = ""; }}
+            onBlur={handleTemplateBlur}
             style={{ fontFamily: "monospace" }}
           />
+          {varsLoading && (
+            <p style={{ margin: "4px 0 0", fontSize: 11, color: "#a0aec0" }}>필수 변수 조회 중...</p>
+          )}
+          {varsError && (
+            <p style={{ margin: "4px 0 0", fontSize: 11, color: "#c53030" }}>{varsError}</p>
+          )}
+          {requiredVars && !varsLoading && (
+            <div style={{ margin: "6px 0 0", display: "flex", flexWrap: "wrap", gap: 4 }}>
+              {requiredVars.length === 0
+                ? <span style={{ fontSize: 11, color: "#718096" }}>필수 변수 없음</span>
+                : requiredVars.map((v) => (
+                  <span key={v} style={{
+                    padding: "2px 8px", borderRadius: 12,
+                    background: "#ebf8ff", border: "1px solid #90cdf4",
+                    fontSize: 11, color: "#2b6cb0", fontFamily: "monospace",
+                  }}>
+                    #{v}
+                  </span>
+                ))
+              }
+            </div>
+          )}
         </div>
 
         <div className="field">
