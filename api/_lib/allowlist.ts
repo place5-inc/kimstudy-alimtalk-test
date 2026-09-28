@@ -484,6 +484,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     extraHeaders: { 'x-internal-key': 'aabb1122!' },
   },
   {
+    action: 'alimtalkBizgo:sendTest',
+    path: /^\/admin\/bizgo\/test\/send$/,
+    method: 'POST',
+    dangerous: false,
+  },
+  {
     action: 'suhaeng:paymentTestGrant',
     path: /^\/api\/payments\/test-grant$/,
     method: 'POST',

@@ -25,3 +25,7 @@ export function AbroadTutorTranslateTab() {
 export function AbroadKeywordPoolTab() {
   return <ComingSoon label="키워드검색용풀확인" />;
 }
+
+export function AlimtalkBizgoReplaceTab() {
+  return <ComingSoon label="알림톡(비즈고)교체" />;
+}

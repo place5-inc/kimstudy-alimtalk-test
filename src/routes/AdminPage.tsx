@@ -54,6 +54,7 @@ function HomeScreen({ onNavigate }: { onNavigate: (groupId: string, featureId: s
                   onClick={() => onNavigate(group.id, feature.id)}
                 >
                   {feature.label}
+                  {feature.badge && <span className="group-badge">{feature.badge}</span>}
                 </button>
               ))}
             </div>
@@ -125,6 +126,7 @@ function TopNav({
                       }}
                     >
                       {feature.label}
+                      {feature.badge && <span className="group-badge">{feature.badge}</span>}
                     </button>
                   ))}
                 </div>

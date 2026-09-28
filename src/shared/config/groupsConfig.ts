@@ -6,6 +6,7 @@ import { OverseasSendEmailTab } from '../../features/overseas/OverseasSendEmailT
 import { OverseasAuthPhoneTab } from '../../features/overseas/OverseasAuthPhoneTab';
 import { AbroadNicknameConvertTab } from '../../features/overseas/AbroadNicknameConvertTab';
 import { SuhaengResetTab } from '../../features/suhaeng/SuhaengResetTab';
+import { AlimtalkBizgoReplaceTab } from '../../features/alimtalk-bizgo/AlimtalkBizgoReplaceTab';
 import { SuhaengPaymentGrantTab } from '../../features/suhaeng/SuhaengPaymentGrantTab';
 import { SuhaengChatLogResetTab } from '../../features/suhaeng/SuhaengChatLogResetTab';
 import { SuhaengChatLogDateTab } from '../../features/suhaeng/SuhaengChatLogDateTab';
@@ -59,6 +60,7 @@ export interface FeatureConfig {
   id: string;
   label: string;
   component: ComponentType;
+  badge?: string;
 }
 
 export interface GroupConfig {
@@ -151,6 +153,7 @@ export const GROUPS: readonly GroupConfig[] = [
     id: 'alimtalk',
     label: '알림톡',
     features: [
+      { id: 'bizgo-replace', label: '알림톡(비즈고)교체', component: AlimtalkBizgoReplaceTab, badge: 'new' },
       { id: 'send', label: '알림톡 발송', component: AlimtalkTab },
       { id: 'checkin', label: '체크인 알림톡', component: CheckinAlimtalkTab },
       { id: 'button-url', label: '버튼 URL 확인', component: AlimtalkButtonUrlTab },
