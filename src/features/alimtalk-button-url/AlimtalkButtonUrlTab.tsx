@@ -8,47 +8,12 @@ interface ButtonUrlResult {
   button_url: string;
 }
 
-const BIZZPURIO_ACCOUNT = "richard555";
-const BIZGO_SENDER_KEY  = "1002c3c4c19514277d0cf361aedb50129bd05d59";
-
-interface ParsedAlimtalk {
-  type: "bizzpurio" | "bizgo" | "unknown";
-  templateCode?: string;
-  text?: string;
-  buttons: { name?: string; urlPc?: string }[];
-}
-
-function parseSendType(raw: string): ParsedAlimtalk {
-  try {
-    const p = JSON.parse(raw) as Record<string, unknown>;
-
-    // 비즈뿌리오: account === "richard555", 구조는 content.at 안에 중첩
-    if (p["account"] === BIZZPURIO_ACCOUNT) {
-      const at = (p["content"] as Record<string, unknown>)?.["at"] as Record<string, unknown> | undefined;
-      const btns = (at?.["button"] as { name?: string; url_pc?: string }[] | undefined) ?? [];
-      return {
-        type: "bizzpurio",
-        templateCode: at?.["templatecode"] as string | undefined,
-        text: at?.["message"] as string | undefined,
-        buttons: btns.map((b) => ({ name: b.name, urlPc: b.url_pc })),
-      };
-    }
-
-    // 비즈고: senderKey 매칭, 구조는 최상위
-    if (p["senderKey"] === BIZGO_SENDER_KEY) {
-      const btns = (p["buttons"] as { name?: string; urlPc?: string }[] | undefined) ?? [];
-      return {
-        type: "bizgo",
-        templateCode: p["templateCode"] as string | undefined,
-        text: p["text"] as string | undefined,
-        buttons: btns.map((b) => ({ name: b.name, urlPc: b.urlPc })),
-      };
-    }
-
-    return { type: "unknown", buttons: [] };
-  } catch {
-    return { type: "unknown", buttons: [] };
-  }
+// button_url 패턴으로 발송 타입 구분
+// 비즈고: applink.kimstudy.com 도메인 사용
+// 비즈뿌리오: kimstudy.com/alimtalk 경로 + JWT 토큰
+function detectSendType(buttonUrl: string): "bizzpurio" | "bizgo" {
+  if (buttonUrl.includes("applink.kimstudy.com")) return "bizgo";
+  return "bizzpurio";
 }
 
 function SendTypeBadge({ type }: { type: "bizzpurio" | "bizgo" | "unknown" }) {
@@ -189,7 +154,7 @@ export function AlimtalkButtonUrlTab() {
       {results && results.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 8 }}>
           {results.map((item, index) => {
-            const parsed = parseSendType(item.message);
+            const type = detectSendType(item.button_url);
 
             return (
               <div key={index} style={{ border: "1px solid #e2e8f0", borderRadius: 10, overflow: "hidden" }}>
@@ -201,12 +166,7 @@ export function AlimtalkButtonUrlTab() {
                   <span style={{ fontSize: 12, color: "#718096", fontWeight: 600 }}>
                     #{index + 1} — 최근 발송 알림톡
                   </span>
-                  <SendTypeBadge type={parsed.type} />
-                  {parsed.templateCode && (
-                    <span style={{ fontSize: 11, color: "#a0aec0", fontFamily: "monospace" }}>
-                      {parsed.templateCode}
-                    </span>
-                  )}
+                  <SendTypeBadge type={type} />
                 </div>
 
                 {/* 메시지 미리보기 */}
@@ -218,26 +178,16 @@ export function AlimtalkButtonUrlTab() {
                     border: "1px solid #e2e8f0", borderRadius: 6, padding: "8px 12px",
                     maxHeight: 120, overflowY: "auto", color: "#2d3748",
                   }}>
-                    {parsed.text ?? item.message}
+                    {item.message}
                   </pre>
                 </div>
 
                 {/* 버튼 URL */}
                 <div style={{ padding: "12px 14px" }}>
-                  <p style={{ fontSize: 12, color: "#718096", marginBottom: 6 }}>버튼 URL</p>
-
-                  {parsed.buttons.length > 0 ? (
-                    parsed.buttons.map((btn, bi) => (
-                      <UrlRow
-                        key={bi}
-                        label={btn.name ? `${btn.name}${parsed.type === "bizgo" ? " (urlPc)" : ""}` : `버튼 ${bi + 1}`}
-                        url={btn.urlPc ?? "—"}
-                      />
-                    ))
-                  ) : (
-                    // 파싱 실패 fallback: 기존 button_url
-                    <UrlRow url={item.button_url} />
-                  )}
+                  <p style={{ fontSize: 12, color: "#718096", marginBottom: 6 }}>
+                    버튼 URL{type === "bizgo" ? " (urlPc)" : ""}
+                  </p>
+                  <UrlRow url={item.button_url} />
                 </div>
               </div>
             );
