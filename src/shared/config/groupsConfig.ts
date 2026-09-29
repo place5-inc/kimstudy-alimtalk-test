@@ -8,6 +8,7 @@ import { AbroadNicknameConvertTab } from '../../features/overseas/AbroadNickname
 import { SuhaengResetTab } from '../../features/suhaeng/SuhaengResetTab';
 import { AlimtalkBizgoReplaceTab } from '../../features/alimtalk-bizgo/AlimtalkBizgoReplaceTab';
 import { BizgoAddTemplateTab } from '../../features/alimtalk-bizgo/BizgoAddTemplateTab';
+import { BizgoTemplateActiveTab } from '../../features/alimtalk-bizgo/BizgoTemplateActiveTab';
 import { SuhaengPaymentGrantTab } from '../../features/suhaeng/SuhaengPaymentGrantTab';
 import { SuhaengChatLogResetTab } from '../../features/suhaeng/SuhaengChatLogResetTab';
 import { SuhaengChatLogDateTab } from '../../features/suhaeng/SuhaengChatLogDateTab';
@@ -108,6 +109,7 @@ export const GROUPS: readonly GroupConfig[] = [
     features: [
       { id: 'send-test', label: '알림톡(비즈고)교체', component: AlimtalkBizgoReplaceTab },
       { id: 'add-template', label: '비즈고DB추가', component: BizgoAddTemplateTab },
+      { id: 'template-active', label: '비즈고 템플릿 활성화', component: BizgoTemplateActiveTab },
     ],
   },
   {

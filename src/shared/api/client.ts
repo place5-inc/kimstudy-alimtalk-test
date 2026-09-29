@@ -98,6 +98,30 @@ export async function callProxyPost(
   return { ok: res.ok, status: res.status, body: text };
 }
 
+export async function callProxyPatch(
+  backendPath: string,
+  body: Record<string, unknown>,
+  options: { env?: string } = {},
+): Promise<ProxyCallResult> {
+  const baseParams: Record<string, string> = { _p: backendPath };
+  if (options.env) baseParams._env = options.env;
+  const search = new URLSearchParams(baseParams);
+  const url = `/api/proxy?${search.toString()}`;
+
+  const res = await fetch(url, {
+    method: 'PATCH',
+    credentials: 'same-origin',
+    headers: {
+      Accept: 'text/plain, application/json, */*',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  if (res.status === 401) throw new UnauthenticatedError();
+  const text = await readBodyText(res);
+  return { ok: res.ok, status: res.status, body: text };
+}
+
 export async function fetchConfirmToken(action: string): Promise<string> {
   const result = await fetchJson<{ token: string }>('/api/admin/confirm', {
     method: 'POST',

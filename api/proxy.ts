@@ -35,8 +35,8 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!(await requireAuth(req, res))) return;
 
   const method = (req.method ?? 'GET').toUpperCase();
-  if (method !== 'GET' && method !== 'POST') {
-    res.setHeader('Allow', 'GET, POST');
+  if (method !== 'GET' && method !== 'POST' && method !== 'PATCH') {
+    res.setHeader('Allow', 'GET, POST, PATCH');
     res.status(405).json({ error: 'method_not_allowed' });
     return;
   }
@@ -96,7 +96,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   let body: string | null = null;
-  if (method === 'POST') {
+  if (method === 'POST' || method === 'PATCH') {
     body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body ?? {});
   }
 

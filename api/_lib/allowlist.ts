@@ -13,7 +13,7 @@
  */
 export interface AllowlistEntry {
   path: RegExp;
-  method: 'GET' | 'POST';
+  method: 'GET' | 'POST' | 'PATCH';
   dangerous: boolean;
   action: string;
   /** 기본 백엔드 호스트 대신 사용할 URL (host + 경로 prefix 포함). 지정 시 /api prefix 자동 추가 안 함. */
@@ -505,6 +505,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     action: 'alimtalkBizgo:addTemplate',
     path: /^\/admin\/bizgo\/add\/template$/,
     method: 'POST',
+    dangerous: false,
+  },
+  {
+    action: 'alimtalkBizgo:setTemplateActive',
+    path: /^\/admin\/bizgo\/templates\/[A-Za-z0-9_.\-]+\/active$/,
+    method: 'PATCH',
     dangerous: false,
   },
   {

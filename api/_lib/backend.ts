@@ -10,7 +10,7 @@ const TEST_API_BASE = 'https://dev-admin-api-cycndteybqbvbzc4.koreacentral-01.az
 const PROD_API_BASE = 'https://adminapi.place5.com';
 
 export async function callBackend(
-  method: 'GET' | 'POST',
+  method: 'GET' | 'POST' | 'PATCH',
   path: string,
   query: URLSearchParams,
   body: string | null,
@@ -35,6 +35,7 @@ export async function callBackend(
       ...(extraHeaders ?? {}),
     },
     ...(body && method !== 'GET' ? { body } : {}),
+    // PATCH는 body 없이도 올 수 있으므로 별도 처리 없음
   };
 
   console.log(`[backend] ${method} ${url}`);
