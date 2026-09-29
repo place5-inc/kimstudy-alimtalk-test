@@ -25,6 +25,7 @@ import { SignupFunnelLogTab } from '../../features/patch-2608/SignupFunnelLogTab
 import { EngagePopupTab } from '../../features/engage-popup/EngagePopupTab';
 import { BudgetPopupResetTab } from '../../features/patch-2607/BudgetPopupResetTab';
 import { AcademyLawPopupTab } from '../../features/patch-2607/AcademyLawPopupTab';
+import { IncheonPopupResetTab } from '../../features/popup/IncheonPopupResetTab';
 import { CurationPopupResetTab } from '../../features/patch-2608/CurationPopupResetTab';
 import { QuickReplyTab } from '../../features/quick-reply/QuickReplyTab';
 import { CloneRequestTab } from '../../features/patch-2607/CloneRequestTab';
@@ -130,6 +131,7 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'budget-popup-reset', label: '예산상향팝업 초기화', component: BudgetPopupResetTab },
       { id: 'academy-law-popup', label: '학원법 팝업', component: AcademyLawPopupTab },
       { id: 'curation-popup-reset', label: '특별관 팝업 초기화', component: CurationPopupResetTab },
+      { id: 'incheon-popup-reset', label: '인천팝업초기화', component: IncheonPopupResetTab },
     ],
   },
   {

@@ -490,6 +490,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'popup:incheonReset',
+    path: /^\/admin\/test\/reset\/incheon$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'alimtalkBizgo:getTemplates',
     path: /^\/admin\/bizgo\/templates$/,
     method: 'GET',
