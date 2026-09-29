@@ -4,23 +4,15 @@ import { useAuth } from "../../shared/auth/AuthProvider";
 import { useEnv } from "../../shared/config/EnvContext";
 
 interface ButtonUrlResult {
+  sendType: "bizppurio" | "bizgo";
   message: string;
   button_url: string;
 }
 
-// button_url 패턴으로 발송 타입 구분
-// 비즈고: applink.kimstudy.com 도메인 사용
-// 비즈뿌리오: kimstudy.com/alimtalk 경로 + JWT 토큰
-function detectSendType(buttonUrl: string): "bizzpurio" | "bizgo" {
-  if (buttonUrl.includes("applink.kimstudy.com")) return "bizgo";
-  return "bizzpurio";
-}
-
-function SendTypeBadge({ type }: { type: "bizzpurio" | "bizgo" | "unknown" }) {
+function SendTypeBadge({ type }: { type: "bizppurio" | "bizgo" }) {
   const map = {
-    bizzpurio: { label: "비즈뿌리오 발송", bg: "#ebf8ff", border: "#90cdf4", color: "#2b6cb0" },
+    bizppurio: { label: "비즈뿌리오 발송", bg: "#ebf8ff", border: "#90cdf4", color: "#2b6cb0" },
     bizgo:     { label: "비즈고 발송",     bg: "#f0fff4", border: "#9ae6b4", color: "#276749" },
-    unknown:   { label: "알 수 없음",      bg: "#edf2f7", border: "#cbd5e0", color: "#718096" },
   };
   const s = map[type];
   return (
@@ -153,45 +145,41 @@ export function AlimtalkButtonUrlTab() {
 
       {results && results.length > 0 && (
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 8 }}>
-          {results.map((item, index) => {
-            const type = detectSendType(item.button_url);
-
-            return (
-              <div key={index} style={{ border: "1px solid #e2e8f0", borderRadius: 10, overflow: "hidden" }}>
-                {/* 헤더 */}
-                <div style={{
-                  background: "#f7fafc", borderBottom: "1px solid #e2e8f0",
-                  padding: "8px 14px", display: "flex", alignItems: "center", gap: 10,
-                }}>
-                  <span style={{ fontSize: 12, color: "#718096", fontWeight: 600 }}>
-                    #{index + 1} — 최근 발송 알림톡
-                  </span>
-                  <SendTypeBadge type={type} />
-                </div>
-
-                {/* 메시지 미리보기 */}
-                <div style={{ padding: "12px 14px 0" }}>
-                  <p style={{ fontSize: 12, color: "#718096", marginBottom: 4 }}>알림톡 내용</p>
-                  <pre style={{
-                    fontSize: 12, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap",
-                    wordBreak: "break-all", background: "#f7fafc",
-                    border: "1px solid #e2e8f0", borderRadius: 6, padding: "8px 12px",
-                    maxHeight: 120, overflowY: "auto", color: "#2d3748",
-                  }}>
-                    {item.message}
-                  </pre>
-                </div>
-
-                {/* 버튼 URL */}
-                <div style={{ padding: "12px 14px" }}>
-                  <p style={{ fontSize: 12, color: "#718096", marginBottom: 6 }}>
-                    버튼 URL{type === "bizgo" ? " (urlPc)" : ""}
-                  </p>
-                  <UrlRow url={item.button_url} />
-                </div>
+          {results.map((item, index) => (
+            <div key={index} style={{ border: "1px solid #e2e8f0", borderRadius: 10, overflow: "hidden" }}>
+              {/* 헤더 */}
+              <div style={{
+                background: "#f7fafc", borderBottom: "1px solid #e2e8f0",
+                padding: "8px 14px", display: "flex", alignItems: "center", gap: 10,
+              }}>
+                <span style={{ fontSize: 12, color: "#718096", fontWeight: 600 }}>
+                  #{index + 1} — 최근 발송 알림톡
+                </span>
+                <SendTypeBadge type={item.sendType} />
               </div>
-            );
-          })}
+
+              {/* 메시지 미리보기 */}
+              <div style={{ padding: "12px 14px 0" }}>
+                <p style={{ fontSize: 12, color: "#718096", marginBottom: 4 }}>알림톡 내용</p>
+                <pre style={{
+                  fontSize: 12, lineHeight: 1.7, margin: 0, whiteSpace: "pre-wrap",
+                  wordBreak: "break-all", background: "#f7fafc",
+                  border: "1px solid #e2e8f0", borderRadius: 6, padding: "8px 12px",
+                  maxHeight: 120, overflowY: "auto", color: "#2d3748",
+                }}>
+                  {item.message}
+                </pre>
+              </div>
+
+              {/* 버튼 URL */}
+              <div style={{ padding: "12px 14px" }}>
+                <p style={{ fontSize: 12, color: "#718096", marginBottom: 6 }}>
+                  버튼 URL{item.sendType === "bizgo" ? " (urlPc)" : ""}
+                </p>
+                <UrlRow url={item.button_url} />
+              </div>
+            </div>
+          ))}
         </div>
       )}
     </div>
