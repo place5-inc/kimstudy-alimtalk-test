@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { callProxy, callProxyPost, UnauthenticatedError } from "../../shared/api/client";
 import { useAuth } from "../../shared/auth/AuthProvider";
 import { useEnv } from "../../shared/config/EnvContext";
@@ -31,25 +31,22 @@ export function OverseasIdentityVerifyTab() {
   const { env }             = useEnv();
   const { show: showToast } = useToast();
 
-  const loadNations = useCallback(async () => {
-    if (nations.length > 0 || nationsLoading) return;
+  useEffect(() => {
     setNationsLoading(true);
-    try {
-      const r = await callProxy("/admin/test/abroad/get/nationality", {});
-      if (!r.ok) { setNationsError(`국가 목록 로드 실패 (${r.status})`); return; }
-      const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; list?: Nation[] };
-      if (json.isSuccess && json.list) setNations(json.list);
-      else setNationsError(json.systemMessage ?? "국가 목록 로드 실패");
-    } catch (e) {
-      setNationsError(String(e));
-    } finally {
-      setNationsLoading(false);
-    }
-  }, [nations.length, nationsLoading]);
+    callProxy("/admin/test/abroad/get/nationality", {})
+      .then((r) => {
+        if (!r.ok) { setNationsError(`국가 목록 로드 실패 (${r.status})`); return; }
+        const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; list?: Nation[] };
+        if (json.isSuccess && json.list) setNations(json.list);
+        else setNationsError(json.systemMessage ?? "국가 목록 로드 실패");
+      })
+      .catch((e: unknown) => setNationsError(String(e)))
+      .finally(() => setNationsLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleNicknameChange = (value: string) => {
     setNickname(value);
-    if (value.length === 1) void loadNations();
   };
 
   const handleComplete = useCallback(
