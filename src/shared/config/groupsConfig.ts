@@ -93,7 +93,7 @@ export const GROUPS: readonly GroupConfig[] = [
     badge: 'new',
     features: [
       { id: 'auth-phone', label: '인증번호 확인', component: OverseasAuthPhoneTab },
-      { id: 'auth-user', label: '신원인증완료처리', component: OverseasIdentityVerifyTab },
+      { id: 'auth-user', label: '신원인증처리', component: OverseasIdentityVerifyTab },
       { id: 'auth-reset', label: '신원인증초기화', component: OverseasIdentityResetTab },
       { id: 'nationality', label: '국적변경', component: OverseasNationalityChangeTab },
       { id: 'send-email', label: '이메일발송', component: OverseasSendEmailTab },
