@@ -4,130 +4,97 @@ import { useAuth } from "../../shared/auth/AuthProvider";
 import { useEnv } from "../../shared/config/EnvContext";
 import { ResultBox, type ResultState } from "../../shared/ui/ResultBox";
 
-// ─── 번역 결과 타입 ───────────────────────────────────────────────────────────
+// ─── 실제 응답 구조 타입 ──────────────────────────────────────────────────────
+// 응답 루트에 데이터가 직접 위치 (result 래퍼 없음)
+// lesson_tutor_class_information_translation 은 언어별 row 배열
+// 각 row: { id, lang, is_ai_translated, ai_<field>, <field>, is_changed_<field>, ... }
 
-interface TranslationField {
-  value: string | null;
-  ai_value: string | null;
-  is_changed: boolean;
+type AnyRow = Record<string, unknown>;
+
+interface TextBookEntry {
+  text_book: { id: number; book_name: string; book_description?: string | null };
+  translations: AnyRow[];
 }
 
-interface LangTranslation {
-  lang: string;
-  fields: Record<string, TranslationField>;
+interface SessionFlow {
+  id: number;
+  order_seq: number;
+  running_time: number;
+  lesson_description: string | null;
+  ai_lesson_description: string | null;
+  is_changed_lesson_description: boolean | null;
+  is_ai_translated: boolean | null;
+  language_code: string | null;
 }
 
-interface BasicInfoSection {
-  is_ai_translated: boolean;
-  languages: LangTranslation[];
+interface SessionLangGroup {
+  language_code: string | null;
+  flows: SessionFlow[];
 }
 
-interface TextBookItem {
-  textbook_id: number;
-  textbook_name: string;
-  languages: LangTranslation[];
+interface SessionPlanEntry {
+  plan: { key: number; lesson_time: number };
+  languages: SessionLangGroup[];
 }
 
-interface SingleSessionPlanFlow {
-  label: string | null;
-  value: string | null;
-  ai_label: string | null;
-  ai_value: string | null;
-  is_changed_label: boolean;
-  is_changed_value: boolean;
-}
-
-interface SingleSessionPlan {
-  is_ai_translated: boolean;
-  original_flows: SingleSessionPlanFlow[];
-  languages: Array<{
-    lang: string;
-    translated_flows: SingleSessionPlanFlow[];
-  }>;
-}
-
-interface TutorExperience {
-  experience_id: number;
-  type: number;
-  original: string | null;
-  ai_value: string | null;
-  is_changed: boolean;
-}
-
-interface TutorCareer {
-  career_id: number;
-  title: string | null;
-  ment: string | null;
-  ai_title: string | null;
-  ai_ment: string | null;
-  is_changed_title: boolean;
-  is_changed_ment: boolean;
-  output?: string | null;
-  ai_output?: string | null;
-  is_changed_output?: boolean;
-}
-
-interface ReviewReply {
-  reply_id: number;
+interface ReviewInfo {
+  key: number;
   comment: string | null;
-  ai_comment: string | null;
-  is_changed_comment: boolean;
+  comment_en?: string | null; comment_ja?: string | null; comment_zh?: string | null; comment_vi?: string | null;
 }
 
-interface LessonReview {
-  review_id: number;
-  comment: string | null;
-  ai_comment: string | null;
-  is_changed_comment: boolean;
-  replies: ReviewReply[];
+interface ReviewEntry {
+  review: ReviewInfo;
+  replies: ReviewInfo[];
 }
 
-interface TutorTranslationResult {
-  nickname: string;
-  lesson_tutor_class_information_translation?: BasicInfoSection;
-  text_book_translation?: TextBookItem[];
-  single_session_plan?: SingleSessionPlan;
-  tutor_experience?: TutorExperience[];
-  tutor_career?: TutorCareer[];
-  lesson_review?: LessonReview[];
+interface TutorTranslationResponse {
+  isSuccess: boolean;
+  systemMessage: string | null;
+  tutorId?: string;
+  lesson_tutor_class_information_translation?: AnyRow[];
+  text_book?: TextBookEntry[];
+  single_session_plan?: SessionPlanEntry[];
+  tutor_experience?: AnyRow[];
+  tutor_career?: CareerEntry[];
+  lesson_review?: ReviewEntry[];
+  [key: string]: unknown;
 }
 
 // ─── 필드 레이블 매핑 ─────────────────────────────────────────────────────────
 
-const BASIC_INFO_FIELDS: Record<string, string> = {
-  appeal: "어필 포인트",
-  pay_description: "수업료 안내",
-  simple_introduction: "한줄 소개",
-  online_class_description: "온라인 수업 안내",
-  subject_description: "과목 설명",
-  differentiation: "차별점",
-  mbti_description: "MBTI 상세 설명",
-  demo_class_description: "시범수업 안내",
-  feedback_cycle: "피드백 주기",
-  feedback_method: "피드백 방법",
-  homework_assignment_method: "숙제 부여 방식",
-  homework_checking: "숙제 검사 방식",
-  homework_not_completed: "숙제 미완료 시 대처",
-  extra_service_qna: "질의응답",
-  extra_service_coaching: "코칭",
-  extra_service_consulting: "컨설팅",
-  extra_service_etc: "기타 서비스",
-  tutor_tip_concern: "선생님 팁 - 학생 고민",
-  tutor_tip_study_method: "공부법",
-  tutor_tip_result: "성과",
-  extra_schedule: "추가 일정 안내",
-};
+const BASIC_INFO_FIELDS: [string, string][] = [
+  ["appeal", "어필 포인트"],
+  ["simple_introduction", "한줄 소개"],
+  ["pay_description", "수업료 안내"],
+  ["subject_description", "과목 설명"],
+  ["class_description", "수업 방식"],
+  ["differentiation", "차별점"],
+  ["demo_class_description", "시범수업 안내"],
+  ["online_class_description", "온라인 수업 안내"],
+  ["mbti_description", "MBTI 상세 설명"],
+  ["feedback_cycle", "피드백 주기"],
+  ["feedback_method", "피드백 방법"],
+  ["homework_assignment_method", "숙제 부여 방식"],
+  ["homework_checking", "숙제 검사 방식"],
+  ["homework_not_completed", "숙제 미완료 시 대처"],
+  ["extra_service_qna", "질의응답"],
+  ["extra_service_coaching", "코칭"],
+  ["extra_service_consulting", "컨설팅"],
+  ["extra_service_assessment", "수행평가"],
+  ["extra_service_detail_speciality", "세특/생기부"],
+  ["extra_service_etc", "기타 서비스"],
+  ["tutor_tip_concern", "선생님 팁 - 학생 고민"],
+  ["tutor_tip_study_method", "공부법"],
+  ["tutor_tip_result", "성과"],
+  ["extra_schedule", "추가 일정 안내"],
+];
 
 const LANG_LABELS: Record<string, string> = {
   en: "영어(EN)",
   ja: "일본어(JA)",
   zh: "중국어(ZH)",
   vi: "베트남어(VI)",
-};
-
-const EXPERIENCE_TYPE_LABELS: Record<number, string> = {
-  5: "사용자 정의",
-  7: "기타",
 };
 
 // ─── UI 컴포넌트 ──────────────────────────────────────────────────────────────
@@ -154,8 +121,8 @@ function ChangedBadge() {
 
 function FieldRow({ label, original, aiValue, isChanged }: {
   label: string;
-  original: string | null;
-  aiValue: string | null;
+  original: string | null | undefined;
+  aiValue: string | null | undefined;
   isChanged: boolean;
 }) {
   if (!aiValue && !original) return null;
@@ -208,232 +175,396 @@ function LangTab({ langs, selectedLang, onSelect }: {
   );
 }
 
-// ─── 섹션별 렌더러 ────────────────────────────────────────────────────────────
+// ─── 기본소개서 번역 뷰 ───────────────────────────────────────────────────────
+// 각 row: { language_code, is_ai_translated, ai_<field>, <field>, is_changed_<field> }
 
-function BasicInfoView({ data }: { data: BasicInfoSection }) {
-  const langs = data.languages.map((l) => l.lang);
-  const [selectedLang, setSelectedLang] = useState(langs[0] ?? "en");
+function BasicInfoView({ rows }: { rows: AnyRow[] }) {
+  const langs = rows.map((r) => String(r.language_code ?? "")).filter(Boolean);
+  const [selectedLang, setSelectedLang] = useState(langs[0] ?? "");
 
-  if (!data.is_ai_translated) {
-    return <p style={{ fontSize: 12, color: "#a0aec0", fontStyle: "italic" }}>아직 번역되지 않았습니다.</p>;
-  }
+  if (!rows.length) return <p style={{ fontSize: 12, color: "#a0aec0" }}>데이터 없음</p>;
 
-  const langData = data.languages.find((l) => l.lang === selectedLang);
+  const row = rows.find((r) => String(r.language_code ?? "") === selectedLang) ?? rows[0];
+  const isTranslated = row.is_ai_translated !== false;
 
   return (
     <>
-      <LangTab langs={langs} selectedLang={selectedLang} onSelect={setSelectedLang} />
-      {langData
-        ? Object.entries(BASIC_INFO_FIELDS).map(([key, label]) => {
-            const f = langData.fields[key];
-            if (!f) return null;
-            return <FieldRow key={key} label={label} original={f.value} aiValue={f.ai_value} isChanged={f.is_changed} />;
-          })
-        : <p style={{ fontSize: 12, color: "#a0aec0" }}>해당 언어 데이터 없음</p>
-      }
+      {langs.length > 1 && (
+        <LangTab langs={langs} selectedLang={selectedLang} onSelect={setSelectedLang} />
+      )}
+      {!isTranslated ? (
+        <p style={{ fontSize: 12, color: "#a0aec0", fontStyle: "italic" }}>아직 번역되지 않았습니다.</p>
+      ) : (
+        BASIC_INFO_FIELDS.map(([key, label]) => (
+          <FieldRow
+            key={key}
+            label={label}
+            original={row[key] as string | null}
+            aiValue={row[`ai_${key}`] as string | null}
+            isChanged={row[`is_changed_${key}`] === true}
+          />
+        ))
+      )}
     </>
   );
 }
 
-function TextBookView({ items }: { items: TextBookItem[] }) {
-  const [selectedBook, setSelectedBook] = useState(0);
+// ─── 교재 번역 뷰 ─────────────────────────────────────────────────────────────
+// { text_book: { id, book_name, book_description }, translations: [...] }[]
+
+function TextBookView({ items }: { items: TextBookEntry[] }) {
+  const [selectedIdx, setSelectedIdx] = useState(0);
   const [selectedLang, setSelectedLang] = useState("");
 
-  const book = items[selectedBook];
-  const langs = book?.languages.map((l) => l.lang) ?? [];
-  const activeLang = selectedLang || langs[0] || "";
-  const langData = book?.languages.find((l) => l.lang === activeLang);
-
   if (!items.length) return <p style={{ fontSize: 12, color: "#a0aec0" }}>교재 데이터 없음</p>;
+
+  const item = items[selectedIdx];
+  const langs = item.translations.map((t) => String(t.language_code ?? "")).filter(Boolean);
+  const activeLang = selectedLang || langs[0] || "";
+  const row = item.translations.find((t) => String(t.language_code ?? "") === activeLang) ?? item.translations[0];
+
+  return (
+    <>
+      {/* 교재 선택 탭 */}
+      <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
+        {items.map((b, i) => (
+          <button key={b.text_book.id} type="button"
+            onClick={() => { setSelectedIdx(i); setSelectedLang(""); }}
+            style={{
+              padding: "3px 10px", borderRadius: 12, fontSize: 11, cursor: "pointer",
+              border: selectedIdx === i ? "2px solid #805ad5" : "1px solid #e2e8f0",
+              background: selectedIdx === i ? "#faf5ff" : "#fff",
+              color: selectedIdx === i ? "#553c9a" : "#4a5568",
+              maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+            }}>
+            {b.text_book.book_name}
+          </button>
+        ))}
+      </div>
+
+      {/* 언어 탭 */}
+      <LangTab langs={langs} selectedLang={activeLang} onSelect={setSelectedLang} />
+
+      {row ? (
+        <>
+          <FieldRow label="교재명" original={row.book_name as string} aiValue={row.ai_book_name as string} isChanged={row.is_changed_book_name === true} />
+          <FieldRow label="교재 설명" original={row.book_description as string} aiValue={row.ai_book_description as string} isChanged={row.is_changed_book_description === true} />
+        </>
+      ) : (
+        <p style={{ fontSize: 12, color: "#a0aec0" }}>해당 언어 번역 없음</p>
+      )}
+    </>
+  );
+}
+
+// ─── 한회차 수업계획 뷰 ───────────────────────────────────────────────────────
+
+function SessionPlanView({ items }: { items: SessionPlanEntry[] }) {
+  const [selectedIdx, setSelectedIdx] = useState(0);
+  const [selectedLang, setSelectedLang] = useState("en");
+
+  if (!items.length) return <p style={{ fontSize: 12, color: "#a0aec0" }}>데이터 없음</p>;
+
+  const item = items[selectedIdx];
+  const originalGroup = item.languages.find((l) => l.language_code === null);
+  const translatedLangs = item.languages
+    .filter((l) => l.language_code !== null)
+    .map((l) => l.language_code as string);
+  const activeLang = selectedLang || translatedLangs[0] || "";
+  const translatedGroup = item.languages.find((l) => l.language_code === activeLang);
 
   return (
     <>
       {items.length > 1 && (
         <div style={{ display: "flex", gap: 6, marginBottom: 10, flexWrap: "wrap" }}>
-          {items.map((b, i) => (
-            <button key={b.textbook_id} type="button"
-              onClick={() => { setSelectedBook(i); setSelectedLang(""); }}
+          {items.map((p, i) => (
+            <button key={p.plan.key} type="button"
+              onClick={() => { setSelectedIdx(i); }}
               style={{
                 padding: "3px 10px", borderRadius: 12, fontSize: 11, cursor: "pointer",
-                border: selectedBook === i ? "2px solid #805ad5" : "1px solid #e2e8f0",
-                background: selectedBook === i ? "#faf5ff" : "#fff",
-                color: selectedBook === i ? "#553c9a" : "#4a5568",
+                border: selectedIdx === i ? "2px solid #3182ce" : "1px solid #e2e8f0",
+                background: selectedIdx === i ? "#ebf8ff" : "#fff",
+                color: selectedIdx === i ? "#2b6cb0" : "#4a5568",
               }}>
-              {b.textbook_name}
+              수업계획 #{p.plan.key} ({p.plan.lesson_time}분)
             </button>
           ))}
         </div>
       )}
-      <LangTab langs={langs} selectedLang={activeLang} onSelect={setSelectedLang} />
-      {langData
-        ? Object.entries(langData.fields).map(([key, f]) => (
-            <FieldRow key={key} label={key} original={f.value} aiValue={f.ai_value} isChanged={f.is_changed} />
-          ))
-        : <p style={{ fontSize: 12, color: "#a0aec0" }}>해당 언어 데이터 없음</p>
-      }
-    </>
-  );
-}
 
-function SessionPlanView({ data }: { data: SingleSessionPlan }) {
-  const langs = data.languages.map((l) => l.lang);
-  const [selectedLang, setSelectedLang] = useState(langs[0] ?? "en");
+      <LangTab langs={translatedLangs} selectedLang={activeLang} onSelect={setSelectedLang} />
 
-  if (!data.is_ai_translated) {
-    return <p style={{ fontSize: 12, color: "#a0aec0", fontStyle: "italic" }}>아직 번역되지 않았습니다.</p>;
-  }
-
-  const langData = data.languages.find((l) => l.lang === selectedLang);
-
-  return (
-    <>
-      <LangTab langs={langs} selectedLang={selectedLang} onSelect={setSelectedLang} />
-      {langData
-        ? langData.translated_flows.map((flow, i) => (
-            <div key={i} style={{ marginBottom: 10, padding: "8px 10px", background: "#f7fafc", borderRadius: 6 }}>
-              <div style={{ display: "flex", gap: 6, marginBottom: 4, alignItems: "center" }}>
-                <span style={{ fontSize: 12, fontWeight: 700, color: "#4a5568" }}>
-                  {flow.ai_label ?? `단계 ${i + 1}`}
-                </span>
-                {flow.is_changed_label && <ChangedBadge />}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+        {/* 원본 */}
+        <div>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#718096", margin: "0 0 6px" }}>원본 (한국어)</p>
+          {(originalGroup?.flows ?? []).map((flow) => (
+            <div key={flow.id} style={{ marginBottom: 6, padding: "6px 10px", background: "#f7fafc", borderRadius: 6 }}>
+              <span style={{ fontSize: 10, color: "#a0aec0" }}>{flow.order_seq}. {flow.running_time}분</span>
+              <p style={{ fontSize: 12, color: "#2d3748", margin: "2px 0 0" }}>{flow.lesson_description ?? "-"}</p>
+            </div>
+          ))}
+        </div>
+        {/* 번역 */}
+        <div>
+          <p style={{ fontSize: 11, fontWeight: 700, color: "#718096", margin: "0 0 6px" }}>번역</p>
+          {(translatedGroup?.flows ?? []).map((flow) => (
+            <div key={flow.id} style={{ marginBottom: 6, padding: "6px 10px", background: "#f0fff4", borderRadius: 6 }}>
+              <div style={{ display: "flex", gap: 4, alignItems: "center" }}>
+                <span style={{ fontSize: 10, color: "#a0aec0" }}>{flow.order_seq}. {flow.running_time}분</span>
+                {flow.is_changed_lesson_description === true && <ChangedBadge />}
               </div>
-              <p style={{ fontSize: 12, color: "#2d3748", margin: 0, whiteSpace: "pre-wrap" }}>
-                {flow.ai_value ?? <span style={{ color: "#a0aec0", fontStyle: "italic" }}>미번역</span>}
+              <p style={{ fontSize: 12, color: "#2d3748", margin: "2px 0 0" }}>
+                {flow.ai_lesson_description ?? <span style={{ color: "#a0aec0", fontStyle: "italic" }}>미번역</span>}
               </p>
             </div>
-          ))
-        : <p style={{ fontSize: 12, color: "#a0aec0" }}>해당 언어 데이터 없음</p>
-      }
-    </>
-  );
-}
-
-function ExperienceView({ items }: { items: TutorExperience[] }) {
-  if (!items.length) return <p style={{ fontSize: 12, color: "#a0aec0" }}>경험 데이터 없음</p>;
-  return (
-    <>
-      {items.map((exp) => (
-        <div key={exp.experience_id} style={{ marginBottom: 10, padding: "8px 10px", background: "#f7fafc", borderRadius: 6 }}>
-          <div style={{ display: "flex", gap: 6, marginBottom: 4, alignItems: "center" }}>
-            <span style={{ fontSize: 11, color: "#718096" }}>
-              {EXPERIENCE_TYPE_LABELS[exp.type] ?? `타입 ${exp.type}`} (ID: {exp.experience_id})
-            </span>
-            {exp.is_changed && <ChangedBadge />}
-          </div>
-          <p style={{ fontSize: 12, color: "#2d3748", margin: 0, whiteSpace: "pre-wrap" }}>
-            {exp.ai_value ?? <span style={{ color: "#a0aec0", fontStyle: "italic" }}>미번역</span>}
-          </p>
+          ))}
         </div>
-      ))}
+      </div>
     </>
   );
 }
 
-function CareerView({ items }: { items: TutorCareer[] }) {
-  if (!items.length) return <p style={{ fontSize: 12, color: "#a0aec0" }}>경력 데이터 없음</p>;
-  return (
-    <>
-      {items.map((c) => (
-        <div key={c.career_id} style={{ marginBottom: 12, padding: "10px 12px", background: "#f7fafc", borderRadius: 6 }}>
-          <p style={{ fontSize: 11, color: "#718096", margin: "0 0 6px" }}>경력 ID: {c.career_id}</p>
-          {(c.ai_title || c.title) && (
-            <div style={{ marginBottom: 6 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 2 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#4a5568" }}>제목</span>
-                {c.is_changed_title && <ChangedBadge />}
-              </div>
-              <p style={{ fontSize: 12, color: "#2d3748", margin: 0, whiteSpace: "pre-wrap" }}>{c.ai_title ?? c.title}</p>
-            </div>
-          )}
-          {(c.ai_ment || c.ment) && (
-            <div style={{ marginBottom: 6 }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 2 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#4a5568" }}>멘트</span>
-                {c.is_changed_ment && <ChangedBadge />}
-              </div>
-              <p style={{ fontSize: 12, color: "#2d3748", margin: 0, whiteSpace: "pre-wrap" }}>{c.ai_ment ?? c.ment}</p>
-            </div>
-          )}
-          {(c.ai_output !== undefined || c.output !== undefined) && (
-            <div>
-              <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 2 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: "#4a5568" }}>성과</span>
-                {c.is_changed_output && <ChangedBadge />}
-              </div>
-              <p style={{ fontSize: 12, color: "#2d3748", margin: 0, whiteSpace: "pre-wrap" }}>{c.ai_output ?? c.output ?? "-"}</p>
-            </div>
-          )}
-        </div>
-      ))}
-    </>
-  );
+// ─── 선생님 경험 뷰 ───────────────────────────────────────────────────────────
+// type 7: etc_title_*, etc_description_*  /  type 5: user_custom_define_*
+
+interface ExperienceEntry {
+  key: number;
+  tutor_experience_type_id: number;
+  etc_title?: string | null;
+  etc_title_en?: string | null;
+  etc_title_ja?: string | null;
+  etc_title_zh?: string | null;
+  etc_title_vi?: string | null;
+  etc_description?: string | null;
+  etc_description_en?: string | null;
+  etc_description_ja?: string | null;
+  etc_description_zh?: string | null;
+  etc_description_vi?: string | null;
+  user_custom_define?: string | null;
+  user_custom_define_en?: string | null;
+  user_custom_define_ja?: string | null;
+  user_custom_define_zh?: string | null;
+  user_custom_define_vi?: string | null;
+  language_grade?: string | null;
 }
 
-function ReviewView({ items }: { items: LessonReview[] }) {
-  if (!items.length) return <p style={{ fontSize: 12, color: "#a0aec0" }}>후기 데이터 없음</p>;
+const EXP_LANG_SUFFIX: Record<string, string> = { en: "_en", ja: "_ja", zh: "_zh", vi: "_vi" };
+
+function ExperienceView({ items }: { items: ExperienceEntry[] }) {
+  const [selectedLang, setSelectedLang] = useState("en");
+
+  if (!items.length) return <p style={{ fontSize: 12, color: "#a0aec0" }}>데이터 없음</p>;
+
+  const suffix = EXP_LANG_SUFFIX[selectedLang] ?? "_en";
+
   return (
     <>
-      {items.map((rev) => (
-        <div key={rev.review_id} style={{ marginBottom: 12, border: "1px solid #e2e8f0", borderRadius: 8, overflow: "hidden" }}>
-          <div style={{ background: "#f0fff4", padding: "8px 12px", borderBottom: "1px solid #e2e8f0", display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontSize: 11, color: "#276749", fontWeight: 700 }}>후기 ID: {rev.review_id}</span>
-            {rev.is_changed_comment && <ChangedBadge />}
-          </div>
-          <div style={{ padding: "8px 12px" }}>
-            <p style={{ fontSize: 12, color: "#2d3748", margin: 0, whiteSpace: "pre-wrap" }}>
-              {rev.ai_comment ?? <span style={{ color: "#a0aec0", fontStyle: "italic" }}>미번역</span>}
+      <LangTab langs={["en", "ja", "zh", "vi"]} selectedLang={selectedLang} onSelect={setSelectedLang} />
+      {items.map((exp) => {
+        const isType7 = exp.tutor_experience_type_id === 7;
+        const isType5 = exp.tutor_experience_type_id === 5;
+        return (
+          <div key={exp.key} style={{ marginBottom: 10, padding: "10px 12px", background: "#f7fafc", borderRadius: 6 }}>
+            <p style={{ fontSize: 11, color: "#718096", margin: "0 0 6px" }}>
+              {isType7 ? "기타 경험" : isType5 ? "사용자 정의" : `타입 ${exp.tutor_experience_type_id}`} (key: {exp.key})
             </p>
+            {isType7 && (
+              <>
+                <FieldRow label="제목" original={exp.etc_title ?? null} aiValue={(exp[`etc_title${suffix}` as keyof ExperienceEntry] as string) ?? null} isChanged={false} />
+                <FieldRow label="설명" original={exp.etc_description ?? null} aiValue={(exp[`etc_description${suffix}` as keyof ExperienceEntry] as string) ?? null} isChanged={false} />
+              </>
+            )}
+            {isType5 && (
+              <FieldRow label="사용자 정의" original={exp.user_custom_define ?? null} aiValue={(exp[`user_custom_define${suffix}` as keyof ExperienceEntry] as string) ?? null} isChanged={false} />
+            )}
           </div>
-          {rev.replies.length > 0 && (
-            <div style={{ borderTop: "1px solid #e2e8f0", background: "#fafafa" }}>
-              {rev.replies.map((reply) => (
-                <div key={reply.reply_id} style={{ padding: "6px 12px 6px 24px", borderBottom: "1px solid #f0f4f8" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 4, marginBottom: 2 }}>
-                    <span style={{ fontSize: 10, color: "#718096" }}>↳ 답글 {reply.reply_id}</span>
-                    {reply.is_changed_comment && <ChangedBadge />}
-                  </div>
-                  <p style={{ fontSize: 12, color: "#4a5568", margin: 0, whiteSpace: "pre-wrap" }}>
-                    {reply.ai_comment ?? <span style={{ color: "#a0aec0", fontStyle: "italic" }}>미번역</span>}
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      ))}
+        );
+      })}
     </>
   );
 }
 
-function TranslationResultView({ data }: { data: TutorTranslationResult }) {
+// ─── 선생님 경력 뷰 ───────────────────────────────────────────────────────────
+// { career: { id, career_type, title, title_en/ja/zh/vi, ment, ment_en/... },
+//   outputs: [{ id, description, description_en/..., title, title_en/... }] }[]
+
+interface CareerOutput {
+  id: number;
+  title?: string | null;
+  title_en?: string | null; title_ja?: string | null; title_zh?: string | null; title_vi?: string | null;
+  description?: string | null;
+  description_en?: string | null; description_ja?: string | null; description_zh?: string | null; description_vi?: string | null;
+}
+
+interface CareerInfo {
+  id: number;
+  career_type: string;
+  title?: string | null;
+  title_en?: string | null; title_ja?: string | null; title_zh?: string | null; title_vi?: string | null;
+  ment?: string | null;
+  ment_en?: string | null; ment_ja?: string | null; ment_zh?: string | null; ment_vi?: string | null;
+}
+
+interface CareerEntry {
+  career: CareerInfo;
+  outputs: CareerOutput[];
+}
+
+const CAREER_TYPE_LABELS: Record<string, string> = {
+  internal: "과외 경력", external: "외부 경력", instructor: "강사 경력",
+  assistant: "조교 경력", etc: "기타 경력",
+};
+
+const CAREER_LANG_SUFFIX: Record<string, string> = { en: "_en", ja: "_ja", zh: "_zh", vi: "_vi" };
+
+function CareerView({ items }: { items: CareerEntry[] }) {
+  const [selectedLang, setSelectedLang] = useState("en");
+  const suffix = CAREER_LANG_SUFFIX[selectedLang] ?? "_en";
+
+  if (!items.length) return <p style={{ fontSize: 12, color: "#a0aec0" }}>경력 데이터 없음</p>;
+
+  return (
+    <>
+      <LangTab langs={["en", "ja", "zh", "vi"]} selectedLang={selectedLang} onSelect={setSelectedLang} />
+      {items.map(({ career, outputs }) => {
+        const titleKo = career.title;
+        const titleTr = career[`title${suffix}` as keyof CareerInfo] as string | null | undefined;
+        const mentKo = career.ment;
+        const mentTr = career[`ment${suffix}` as keyof CareerInfo] as string | null | undefined;
+        const hasContent = titleTr || mentTr || outputs.some((o) =>
+          o[`description${suffix}` as keyof CareerOutput] || o[`title${suffix}` as keyof CareerOutput]
+        );
+        if (!hasContent && !titleKo && !mentKo) return null;
+        return (
+          <div key={career.id} style={{ marginBottom: 12, border: "1px solid #e2e8f0", borderRadius: 8, overflow: "hidden" }}>
+            <div style={{ background: "#f7fafc", padding: "6px 12px", borderBottom: "1px solid #e2e8f0" }}>
+              <span style={{ fontSize: 11, fontWeight: 700, color: "#4a5568" }}>
+                {CAREER_TYPE_LABELS[career.career_type] ?? career.career_type} (ID: {career.id})
+              </span>
+            </div>
+            <div style={{ padding: "8px 12px" }}>
+              {(titleKo || titleTr) && (
+                <FieldRow label="제목" original={titleKo ?? null} aiValue={titleTr ?? null} isChanged={false} />
+              )}
+              {(mentKo || mentTr) && (
+                <FieldRow label="멘트" original={mentKo ?? null} aiValue={mentTr ?? null} isChanged={false} />
+              )}
+              {outputs.map((o) => {
+                const descKo = o.description;
+                const descTr = o[`description${suffix}` as keyof CareerOutput] as string | null | undefined;
+                const outTitleTr = o[`title${suffix}` as keyof CareerOutput] as string | null | undefined;
+                if (!descTr && !outTitleTr && !descKo) return null;
+                return (
+                  <div key={o.id} style={{ marginTop: 4, padding: "6px 10px", background: "#f0fff4", borderRadius: 6 }}>
+                    <p style={{ fontSize: 10, color: "#718096", margin: "0 0 2px" }}>성과 #{o.id}</p>
+                    {(outTitleTr || o.title) && (
+                      <FieldRow label="성과 제목" original={o.title ?? null} aiValue={outTitleTr ?? null} isChanged={false} />
+                    )}
+                    {(descKo || descTr) && (
+                      <FieldRow label="설명" original={descKo ?? null} aiValue={descTr ?? null} isChanged={false} />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+// ─── 후기 번역 뷰 ────────────────────────────────────────────────────────────
+// { review: { key, comment, comment_en/ja/zh/vi }, replies: [{ key, comment, ... }] }[]
+
+const REVIEW_LANG_SUFFIX: Record<string, string> = { en: "_en", ja: "_ja", zh: "_zh", vi: "_vi" };
+
+function ReviewView({ items }: { items: ReviewEntry[] }) {
+  const [selectedLang, setSelectedLang] = useState("en");
+  const suffix = REVIEW_LANG_SUFFIX[selectedLang] ?? "_en";
+
+  if (!items.length) return <p style={{ fontSize: 12, color: "#a0aec0" }}>후기 데이터 없음</p>;
+
+  return (
+    <>
+      <LangTab langs={["en", "ja", "zh", "vi"]} selectedLang={selectedLang} onSelect={setSelectedLang} />
+      {items.map(({ review, replies }) => {
+        const translated = review[`comment${suffix}` as keyof ReviewInfo] as string | null | undefined;
+        return (
+          <div key={review.key} style={{ marginBottom: 10, border: "1px solid #e2e8f0", borderRadius: 8, overflow: "hidden" }}>
+            {/* 후기 헤더 */}
+            <div style={{ background: "#f0fff4", padding: "6px 12px", borderBottom: "1px solid #e2e8f0" }}>
+              <span style={{ fontSize: 11, color: "#276749", fontWeight: 700 }}>후기 #{review.key}</span>
+            </div>
+            {/* 한국어 원본 */}
+            <div style={{ padding: "8px 12px", borderBottom: "1px dashed #e2e8f0", background: "#fafafa" }}>
+              <p style={{ fontSize: 10, color: "#a0aec0", margin: "0 0 2px" }}>원본</p>
+              <p style={{ fontSize: 12, color: "#4a5568", margin: 0, whiteSpace: "pre-wrap" }}>{review.comment ?? "-"}</p>
+            </div>
+            {/* 번역 */}
+            <div style={{ padding: "8px 12px" }}>
+              <p style={{ fontSize: 10, color: "#a0aec0", margin: "0 0 2px" }}>번역</p>
+              <p style={{ fontSize: 12, color: "#2d3748", margin: 0, whiteSpace: "pre-wrap" }}>
+                {translated ?? <span style={{ color: "#a0aec0", fontStyle: "italic" }}>미번역</span>}
+              </p>
+            </div>
+            {/* 답글 */}
+            {replies.length > 0 && (
+              <div style={{ borderTop: "1px solid #e2e8f0" }}>
+                {replies.map((reply) => {
+                  const replyTr = reply[`comment${suffix}` as keyof ReviewInfo] as string | null | undefined;
+                  return (
+                    <div key={reply.key} style={{ padding: "6px 12px 6px 24px", borderBottom: "1px solid #f0f4f8", background: "#fafafa" }}>
+                      <p style={{ fontSize: 10, color: "#718096", margin: "0 0 2px" }}>↳ 답글 #{reply.key}</p>
+                      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 6 }}>
+                        <p style={{ fontSize: 11, color: "#718096", margin: 0, whiteSpace: "pre-wrap" }}>{reply.comment ?? "-"}</p>
+                        <p style={{ fontSize: 11, color: "#2d3748", margin: 0, whiteSpace: "pre-wrap" }}>
+                          {replyTr ?? <span style={{ color: "#a0aec0", fontStyle: "italic" }}>미번역</span>}
+                        </p>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
+// ─── 전체 결과 뷰 ─────────────────────────────────────────────────────────────
+
+function TranslationResultView({ data }: { data: TutorTranslationResponse }) {
   return (
     <div style={{ marginTop: 16 }}>
       <div style={{ padding: "8px 14px", background: "#ebf8ff", border: "1px solid #90cdf4", borderRadius: 8, marginBottom: 16 }}>
-        <span style={{ fontSize: 13, fontWeight: 700, color: "#2b6cb0" }}>{data.nickname}</span>
-        <span style={{ fontSize: 12, color: "#4a5568", marginLeft: 8 }}>번역 결과</span>
+        <span style={{ fontSize: 13, fontWeight: 700, color: "#2b6cb0" }}>tutor: {data.tutorId ?? "—"}</span>
       </div>
 
-      {data.lesson_tutor_class_information_translation && (
-        <SectionCard title="기본소개서 번역">
-          <BasicInfoView data={data.lesson_tutor_class_information_translation} />
+      {data.lesson_tutor_class_information_translation && data.lesson_tutor_class_information_translation.length > 0 && (
+        <SectionCard title={`기본소개서 번역 (${data.lesson_tutor_class_information_translation.length}개 언어)`}>
+          <BasicInfoView rows={data.lesson_tutor_class_information_translation} />
         </SectionCard>
       )}
 
-      {data.text_book_translation && data.text_book_translation.length > 0 && (
-        <SectionCard title={`교재 번역 (${data.text_book_translation.length}권)`}>
-          <TextBookView items={data.text_book_translation} />
+      {data.text_book && data.text_book.length > 0 && (
+        <SectionCard title={`교재 번역 (${data.text_book.length}권)`}>
+          <TextBookView items={data.text_book} />
         </SectionCard>
       )}
 
-      {data.single_session_plan && (
-        <SectionCard title="한회차 수업계획 번역">
-          <SessionPlanView data={data.single_session_plan} />
+      {data.single_session_plan && data.single_session_plan.length > 0 && (
+        <SectionCard title={`한회차 수업계획 (${data.single_session_plan.length}건)`}>
+          <SessionPlanView items={data.single_session_plan} />
         </SectionCard>
       )}
 
       {data.tutor_experience && data.tutor_experience.length > 0 && (
         <SectionCard title={`선생님 경험 (${data.tutor_experience.length}건)`}>
-          <ExperienceView items={data.tutor_experience} />
+          <ExperienceView items={data.tutor_experience as unknown as ExperienceEntry[]} />
         </SectionCard>
       )}
 
@@ -466,7 +597,7 @@ export function AbroadTutorTranslateTab() {
   const [viewNickname, setViewNickname] = useState("");
   const [viewBusy, setViewBusy]         = useState(false);
   const [viewError, setViewError]       = useState<string | null>(null);
-  const [viewData, setViewData]         = useState<TutorTranslationResult | null>(null);
+  const [viewData, setViewData]         = useState<TutorTranslationResponse | null>(null);
 
   const { logout } = useAuth();
   const { env }    = useEnv();
@@ -483,6 +614,7 @@ export function AbroadTutorTranslateTab() {
           nickname: translateNickname.trim(),
         }, { env });
 
+        if (!r.body.trim()) { setTranslateResult({ ok: false, message: `빈 응답 (${r.status})` }); return; }
         const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null };
         if (r.ok && json.isSuccess) {
           setTranslateResult({ ok: true, message: json.systemMessage ?? "번역이 진행중입니다." });
@@ -512,6 +644,7 @@ export function AbroadTutorTranslateTab() {
           includePre: "true",
         }, { env });
 
+        if (!r.body.trim()) { setResetResult({ ok: false, message: `빈 응답 (${r.status})` }); return; }
         const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null };
         if (r.ok && json.isSuccess) {
           setResetResult({ ok: true, message: json.systemMessage ?? "번역 초기화 완료" });
@@ -542,10 +675,11 @@ export function AbroadTutorTranslateTab() {
         }, { env });
 
         if (!r.ok) { setViewError(`실패 (${r.status}) ${r.body}`); return; }
+        if (!r.body.trim()) { setViewError(`빈 응답 (${r.status})`); return; }
 
-        const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; result?: TutorTranslationResult };
-        if (json.isSuccess && json.result) {
-          setViewData(json.result);
+        const json = JSON.parse(r.body) as TutorTranslationResponse;
+        if (json.isSuccess) {
+          setViewData(json);
         } else {
           setViewError(json.systemMessage ?? "조회 실패");
         }

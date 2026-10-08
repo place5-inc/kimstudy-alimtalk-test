@@ -441,7 +441,7 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
   },
   {
     action: 'abroad:previewTutorNickname',
-    path: /^\/admin\/test\/abroad\/preivew\/tutor\/nickname$/,
+    path: /^\/admin\/test\/abroad\/preview\/tutor\/nickname$/,
     method: 'GET',
     dangerous: false,
   },

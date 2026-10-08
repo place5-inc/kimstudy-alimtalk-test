@@ -22,10 +22,11 @@ export function AbroadNicknameConvertTab() {
       setResult(null);
       setConverted(null);
       try {
-        const r = await callProxy("/admin/test/abroad/preivew/tutor/nickname", {
+        const r = await callProxy("/admin/test/abroad/preview/tutor/nickname", {
           nickname: nickname.trim(),
         }, { env });
 
+        if (!r.body.trim()) { setResult({ ok: false, message: `빈 응답 (${r.status})` }); return; }
         const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null; convertedNickname?: string };
         if (r.ok && json.isSuccess) {
           setConverted(json.convertedNickname ?? null);
