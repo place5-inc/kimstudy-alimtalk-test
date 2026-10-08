@@ -12,7 +12,7 @@ import { ResultBox, type ResultState } from "../../shared/ui/ResultBox";
 type AnyRow = Record<string, unknown>;
 
 interface TextBookEntry {
-  text_book: { id: number; book_name: string; book_description?: string | null };
+  text_book: { id: number; book_name: string; book_description?: string | null; is_self_made?: boolean | null };
   translations: AnyRow[];
 }
 
@@ -68,7 +68,6 @@ const BASIC_INFO_FIELDS: [string, string][] = [
   ["simple_introduction", "한줄 소개"],
   ["pay_description", "수업료 안내"],
   ["subject_description", "과목 설명"],
-  ["class_description", "수업 방식"],
   ["differentiation", "차별점"],
   ["demo_class_description", "시범수업 안내"],
   ["online_class_description", "온라인 수업 안내"],
@@ -81,8 +80,6 @@ const BASIC_INFO_FIELDS: [string, string][] = [
   ["extra_service_qna", "질의응답"],
   ["extra_service_coaching", "코칭"],
   ["extra_service_consulting", "컨설팅"],
-  ["extra_service_assessment", "수행평가"],
-  ["extra_service_detail_speciality", "세특/생기부"],
   ["extra_service_etc", "기타 서비스"],
   ["tutor_tip_concern", "선생님 팁 - 학생 고민"],
   ["tutor_tip_study_method", "공부법"],
@@ -119,11 +116,12 @@ function ChangedBadge() {
   );
 }
 
-function FieldRow({ label, original, aiValue, isChanged }: {
+function FieldRow({ label, original, aiValue, isChanged, showOriginal }: {
   label: string;
   original: string | null | undefined;
   aiValue: string | null | undefined;
   isChanged: boolean;
+  showOriginal?: boolean;
 }) {
   if (!aiValue && !original) return null;
   return (
@@ -132,6 +130,11 @@ function FieldRow({ label, original, aiValue, isChanged }: {
         <span style={{ fontSize: 12, fontWeight: 700, color: "#4a5568" }}>{label}</span>
         {isChanged && <ChangedBadge />}
       </div>
+      {showOriginal && original && (
+        <div style={{ fontSize: 11, color: "#718096", background: "#fff", border: "1px solid #e2e8f0", padding: "4px 8px", borderRadius: 4, marginBottom: 4, whiteSpace: "pre-wrap", lineHeight: 1.5 }}>
+          <span style={{ fontSize: 10, fontWeight: 700, color: "#a0aec0", marginRight: 4 }}>원본</span>{original}
+        </div>
+      )}
       {aiValue ? (
         <div style={{ fontSize: 12, color: "#2d3748", background: "#f7fafc", padding: "6px 10px", borderRadius: 6, lineHeight: 1.6, whiteSpace: "pre-wrap" }}>
           {aiValue}
@@ -139,7 +142,7 @@ function FieldRow({ label, original, aiValue, isChanged }: {
       ) : (
         <div style={{ fontSize: 12, color: "#a0aec0", fontStyle: "italic" }}>미번역</div>
       )}
-      {isChanged && original && (
+      {!showOriginal && isChanged && original && (
         <div style={{ marginTop: 4 }}>
           <span style={{ fontSize: 10, color: "#718096" }}>AI원본: </span>
           <span style={{ fontSize: 11, color: "#718096", fontStyle: "italic" }}>{original}</span>
@@ -235,9 +238,12 @@ function TextBookView({ items }: { items: TextBookEntry[] }) {
               border: selectedIdx === i ? "2px solid #805ad5" : "1px solid #e2e8f0",
               background: selectedIdx === i ? "#faf5ff" : "#fff",
               color: selectedIdx === i ? "#553c9a" : "#4a5568",
-              maxWidth: 200, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap",
+              display: "flex", alignItems: "center", gap: 4,
             }}>
             {b.text_book.book_name}
+            {b.text_book.is_self_made && (
+              <span style={{ fontSize: 9, fontWeight: 700, padding: "1px 5px", borderRadius: 6, background: "#fefcbf", border: "1px solid #f6e05e", color: "#744210" }}>자체교재</span>
+            )}
           </button>
         ))}
       </div>
@@ -247,8 +253,8 @@ function TextBookView({ items }: { items: TextBookEntry[] }) {
 
       {row ? (
         <>
-          <FieldRow label="교재명" original={row.book_name as string} aiValue={row.ai_book_name as string} isChanged={row.is_changed_book_name === true} />
-          <FieldRow label="교재 설명" original={row.book_description as string} aiValue={row.ai_book_description as string} isChanged={row.is_changed_book_description === true} />
+          <FieldRow label="교재명" original={row.book_name as string} aiValue={row.ai_book_name as string} isChanged={row.is_changed_book_name === true} showOriginal />
+          <FieldRow label="교재 설명" original={row.book_description as string} aiValue={row.ai_book_description as string} isChanged={row.is_changed_book_description === true} showOriginal />
         </>
       ) : (
         <p style={{ fontSize: 12, color: "#a0aec0" }}>해당 언어 번역 없음</p>
@@ -371,12 +377,12 @@ function ExperienceView({ items }: { items: ExperienceEntry[] }) {
             </p>
             {isType7 && (
               <>
-                <FieldRow label="제목" original={exp.etc_title ?? null} aiValue={(exp[`etc_title${suffix}` as keyof ExperienceEntry] as string) ?? null} isChanged={false} />
-                <FieldRow label="설명" original={exp.etc_description ?? null} aiValue={(exp[`etc_description${suffix}` as keyof ExperienceEntry] as string) ?? null} isChanged={false} />
+                <FieldRow label="제목" original={exp.etc_title ?? null} aiValue={(exp[`etc_title${suffix}` as keyof ExperienceEntry] as string) ?? null} isChanged={false} showOriginal />
+                <FieldRow label="설명" original={exp.etc_description ?? null} aiValue={(exp[`etc_description${suffix}` as keyof ExperienceEntry] as string) ?? null} isChanged={false} showOriginal />
               </>
             )}
             {isType5 && (
-              <FieldRow label="사용자 정의" original={exp.user_custom_define ?? null} aiValue={(exp[`user_custom_define${suffix}` as keyof ExperienceEntry] as string) ?? null} isChanged={false} />
+              <FieldRow label="사용자 정의" original={exp.user_custom_define ?? null} aiValue={(exp[`user_custom_define${suffix}` as keyof ExperienceEntry] as string) ?? null} isChanged={false} showOriginal />
             )}
           </div>
         );
@@ -459,10 +465,10 @@ function CareerView({ items }: { items: CareerEntry[] }) {
                   <div key={o.id} style={{ marginTop: 4, padding: "6px 10px", background: "#f0fff4", borderRadius: 6 }}>
                     <p style={{ fontSize: 10, color: "#718096", margin: "0 0 2px" }}>성과 #{o.id}</p>
                     {(outTitleTr || o.title) && (
-                      <FieldRow label="성과 제목" original={o.title ?? null} aiValue={outTitleTr ?? null} isChanged={false} />
+                      <FieldRow label="성과 제목" original={o.title ?? null} aiValue={outTitleTr ?? null} isChanged={false} showOriginal />
                     )}
                     {(descKo || descTr) && (
-                      <FieldRow label="설명" original={descKo ?? null} aiValue={descTr ?? null} isChanged={false} />
+                      <FieldRow label="설명" original={descKo ?? null} aiValue={descTr ?? null} isChanged={false} showOriginal />
                     )}
                   </div>
                 );
