@@ -458,6 +458,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'abroad:getTutorTranslation',
+    path: /^\/admin\/test\/abroad\/get\/tutor\/translation$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'abroad:rebuildLanguageTutor',
     path: /^\/admin\/test\/rebuild\/language\/tutor$/,
     method: 'GET',
