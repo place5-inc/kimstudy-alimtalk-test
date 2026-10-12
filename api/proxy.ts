@@ -96,12 +96,22 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   }
 
   let body: string | null = null;
+  let rawContentType: string | undefined;
   if (method === 'POST' || method === 'PATCH') {
-    body = typeof req.body === 'string' ? req.body : JSON.stringify(req.body ?? {});
+    const parsed = req.body as Record<string, unknown> | string | null | undefined;
+    if (parsed && typeof parsed === 'object' && typeof (parsed as Record<string, unknown>)._raw === 'string') {
+      // _raw envelope: forward the value as plain text (e.g. HTML body)
+      const { _raw, ...rest } = parsed as Record<string, unknown>;
+      void rest; // remaining fields unused
+      body = _raw as string;
+      rawContentType = 'text/plain; charset=utf-8';
+    } else {
+      body = typeof parsed === 'string' ? parsed : JSON.stringify(parsed ?? {});
+    }
   }
 
   try {
-    const upstream = await callBackend(method, path, query, body, env, entry.baseUrl, entry.extraHeaders);
+    const upstream = await callBackend(method, path, query, body, env, entry.baseUrl, entry.extraHeaders, rawContentType);
     res.setHeader('Content-Type', upstream.contentType);
     res.setHeader('Cache-Control', 'no-store');
     res.status(upstream.status).send(upstream.body);

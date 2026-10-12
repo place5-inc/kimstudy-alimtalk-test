@@ -77,12 +77,16 @@ export async function callProxy(
 export async function callProxyPost(
   backendPath: string,
   body: Record<string, unknown>,
-  options: { env?: string } = {},
+  options: { env?: string; rawBody?: string } = {},
 ): Promise<ProxyCallResult> {
   const baseParams: Record<string, string> = { _p: backendPath };
   if (options.env) baseParams._env = options.env;
   const search = new URLSearchParams(baseParams);
   const url = `/api/proxy?${search.toString()}`;
+
+  const payload = options.rawBody !== undefined
+    ? JSON.stringify({ ...body, _raw: options.rawBody })
+    : JSON.stringify(body);
 
   const res = await fetch(url, {
     method: 'POST',
@@ -91,7 +95,7 @@ export async function callProxyPost(
       Accept: 'text/plain, application/json, */*',
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify(body),
+    body: payload,
   });
   if (res.status === 401) throw new UnauthenticatedError();
   const text = await readBodyText(res);
