@@ -551,12 +551,6 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
-  {
-    action: 'abroad:sendRawEmail',
-    path: /^\/admin\/test\/abroad\/send\/raw\/email$/,
-    method: 'POST',
-    dangerous: false,
-  },
 ];
 
 export function matchAllowlist(
