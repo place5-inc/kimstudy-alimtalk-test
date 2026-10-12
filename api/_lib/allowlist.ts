@@ -551,6 +551,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'popup:removeStandardRegulations',
+    path: /^\/admin\/test\/remove\/standardregulations$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
