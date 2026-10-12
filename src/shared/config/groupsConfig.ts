@@ -38,6 +38,7 @@ import { MultiProfileResetTab } from '../../features/patch-2608/MultiProfileRese
 import { MultiLanguageTab } from '../../features/patch-2608/MultiLanguageTab';
 import { BannerStatusTab } from '../../features/banner-status/BannerStatusTab';
 import { AlimtalkTab } from '../../features/alimtalk/AlimtalkTab';
+import { AccessTokenTab } from '../../features/alimtalk/AccessTokenTab';
 import { CheckinAlimtalkTab } from '../../features/checkin-alimtalk/CheckinAlimtalkTab';
 import { AlimtalkButtonUrlTab } from '../../features/alimtalk-button-url/AlimtalkButtonUrlTab';
 import { MatchingTab } from '../../features/matching/MatchingTab';
@@ -174,6 +175,7 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'demo', label: '시범전환', component: DemoTab },
       { id: 'tutor-return', label: '선생님복귀 알림톡', component: TutorReturnAlimtalkTab },
       { id: 'noti99_v2', label: 'noti99_v2 알림톡', component: Noti99V2AlimtalkTab },
+      { id: 'access-token', label: '액세스토큰', component: AccessTokenTab, badge: 'new' },
     ],
   },
   {

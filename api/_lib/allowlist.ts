@@ -545,6 +545,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     baseUrl: 'https://suhaengkim-api-h3dsabcvhcbxeefj.koreacentral-01.azurewebsites.net',
     extraHeaders: { 'x-internal-key': 'aabb1122!' },
   },
+  {
+    action: 'alimtalk:getAccessToken',
+    path: /^\/admin\/test\/getAccessToken$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
