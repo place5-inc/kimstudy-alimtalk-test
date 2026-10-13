@@ -552,6 +552,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'abroad:sendCustomEmail',
+    path: /^\/admin\/test\/abroad\/send\/custom\/email$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'popup:removeStandardRegulations',
     path: /^\/admin\/test\/remove\/standardregulations$/,
     method: 'GET',
