@@ -63,12 +63,17 @@ interface ButtonUrlResponse {
 }
 
 // ── 우측: 버튼 URL 확인 패널 ───────────────────────────────
-function UrlCheckerPanel({ onPaste }: { onPaste: (url: string) => void }) {
-  const [templateCode, setTemplateCode] = useState("");
-  const [nickname, setNickname]         = useState("");
-  const [busy, setBusy]                 = useState(false);
-  const [data, setData]                 = useState<ButtonUrlResponse | null>(null);
-  const [result, setResult]             = useState<ResultState | null>(null);
+function UrlCheckerPanel({
+  templateCode,
+  onPaste,
+}: {
+  templateCode: string;
+  onPaste: (url: string) => void;
+}) {
+  const [nickname, setNickname] = useState("");
+  const [busy, setBusy]         = useState(false);
+  const [data, setData]         = useState<ButtonUrlResponse | null>(null);
+  const [result, setResult]     = useState<ResultState | null>(null);
 
   const { logout } = useAuth();
   const { env }    = useEnv();
@@ -76,16 +81,18 @@ function UrlCheckerPanel({ onPaste }: { onPaste: (url: string) => void }) {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!templateCode.trim()) { setResult({ ok: false, message: "templateCode를 입력해주세요." }); return; }
-      if (!nickname.trim())    { setResult({ ok: false, message: "nickname을 입력해주세요." }); return; }
+      if (!templateCode.trim()) { setResult({ ok: false, message: "위에서 템플릿을 선택해주세요." }); return; }
+      if (!nickname.trim())     { setResult({ ok: false, message: "nickname을 입력해주세요." }); return; }
 
       setBusy(true);
       setData(null);
       setResult(null);
       try {
-        const params: Record<string, string> = { templateCode: templateCode.trim(), nickname: nickname.trim() };
+        const r = await callProxy("/admin/test/abroad/make/email/button/url", {
+          templateCode: templateCode.trim(),
+          nickname: nickname.trim(),
+        }, { env });
 
-        const r = await callProxy("/admin/test/abroad/make/email/button/url", params, { env });
         const json = JSON.parse(r.body) as ButtonUrlResponse;
         setData(json);
         if (r.ok && json.isSuccess) {
@@ -112,21 +119,6 @@ function UrlCheckerPanel({ onPaste }: { onPaste: (url: string) => void }) {
         </p>
 
         <div className="field">
-          <label htmlFor="uc_templateCode">
-            templateCode <span className="required">*</span>
-          </label>
-          <input
-            id="uc_templateCode"
-            type="text"
-            placeholder="msg_stpr_02_01_v2"
-            autoComplete="off"
-            value={templateCode}
-            onChange={(e) => setTemplateCode(e.target.value)}
-            style={{ fontFamily: "monospace", fontSize: 12 }}
-          />
-        </div>
-
-        <div className="field">
           <label htmlFor="uc_nickname">
             nickname <span className="required">*</span>
           </label>
@@ -151,7 +143,6 @@ function UrlCheckerPanel({ onPaste }: { onPaste: (url: string) => void }) {
         <div className="section" style={{ marginTop: 12 }}>
           <p className="section-title">확인 결과</p>
 
-          {/* URL */}
           {data.url && (
             <div style={{ marginBottom: 12 }}>
               <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 600, color: "#2d3748" }}>생성된 URL</p>
@@ -176,7 +167,6 @@ function UrlCheckerPanel({ onPaste }: { onPaste: (url: string) => void }) {
             </div>
           )}
 
-          {/* guides */}
           {data.guides.length > 0 && (
             <div style={{ marginBottom: 10 }}>
               <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 600, color: "#744210" }}>URL 생성 전 필요 작업</p>
@@ -191,7 +181,6 @@ function UrlCheckerPanel({ onPaste }: { onPaste: (url: string) => void }) {
             </div>
           )}
 
-          {/* warnings */}
           {data.warnings.length > 0 && (
             <div style={{ marginBottom: 10 }}>
               <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 600, color: "#c53030" }}>주의사항</p>
@@ -206,7 +195,6 @@ function UrlCheckerPanel({ onPaste }: { onPaste: (url: string) => void }) {
             </div>
           )}
 
-          {/* detail */}
           {data.detail && (
             <div>
               <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 600, color: "#2d3748" }}>상세 정보</p>
@@ -233,8 +221,8 @@ function UrlCheckerPanel({ onPaste }: { onPaste: (url: string) => void }) {
 
 // ── 메인 탭 ──────────────────────────────────────────────────
 export function OverseasSendCustomEmailTab() {
-  const [toEmail, setToEmail]           = useState("");
   const [templateCode, setTemplateCode] = useState<TemplateCode | "">("");
+  const [toEmail, setToEmail]           = useState("");
   const [receiverType, setReceiverType] = useState<"korean" | "foreigner">("foreigner");
   const [languageCode, setLanguageCode] = useState("en");
   const [url, setUrl]                   = useState("");
@@ -248,8 +236,7 @@ export function OverseasSendCustomEmailTab() {
   const isKoreanOnly      = KOREAN_ONLY.has(templateCode);
   const effectiveReceiver = isKoreanOnly ? "korean" : receiverType;
   const effectiveLang     = effectiveReceiver === "korean" ? "ko" : languageCode;
-
-  const selectedTemplate = TEMPLATES.find((t) => t.code === templateCode);
+  const selectedTemplate  = TEMPLATES.find((t) => t.code === templateCode);
 
   const handleTemplateChange = (code: string) => {
     setTemplateCode(code as TemplateCode | "");
@@ -267,9 +254,9 @@ export function OverseasSendCustomEmailTab() {
   const handleSubmit = useCallback(
     async (e: React.FormEvent) => {
       e.preventDefault();
-      if (!toEmail.trim())    { setResult({ ok: false, message: "이메일을 입력해주세요." }); return; }
-      if (!templateCode)      { setResult({ ok: false, message: "템플릿을 선택해주세요." }); return; }
-      if (!url.trim())        { setResult({ ok: false, message: "버튼 URL을 입력해주세요." }); return; }
+      if (!toEmail.trim()) { setResult({ ok: false, message: "이메일을 입력해주세요." }); return; }
+      if (!templateCode)   { setResult({ ok: false, message: "템플릿을 선택해주세요." }); return; }
+      if (!url.trim())     { setResult({ ok: false, message: "버튼 URL을 입력해주세요." }); return; }
 
       setBusy(true);
       setResult(null);
@@ -305,6 +292,55 @@ export function OverseasSendCustomEmailTab() {
       <p className="page-title">이메일 발송 (버튼 URL)</p>
       <p className="page-subtitle">버튼 URL을 직접 지정해 테스트 이메일을 발송합니다. 우측에서 URL을 먼저 확인하세요.</p>
 
+      {/* ── 공통: 템플릿 선택 ──────────────────────────────── */}
+      <div className="section">
+        <p className="section-title">템플릿 선택 <span className="required">*</span></p>
+        <select
+          value={templateCode}
+          onChange={(e) => handleTemplateChange(e.target.value)}
+          style={{
+            width: "100%", padding: "9px 12px",
+            border: "1px solid #e2e8f0", borderRadius: 6,
+            fontSize: 13, background: "#fff", color: templateCode ? "#1a202c" : "#a0aec0",
+          }}
+        >
+          <option value="">— 템플릿을 선택하세요 —</option>
+          {TEMPLATES.map(({ code, desc }) => (
+            <option key={code} value={code}>
+              {desc}{KOREAN_ONLY.has(code) ? " ★" : ""}　　{code}
+            </option>
+          ))}
+        </select>
+        {selectedTemplate && (
+          <div style={{
+            marginTop: 8, padding: "10px 14px",
+            background: "#f0f9ff", border: "1px solid #bee3f8", borderRadius: 8,
+            display: "flex", alignItems: "center", gap: 10,
+          }}>
+            <span style={{ fontSize: 18 }}>📧</span>
+            <div>
+              <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1a202c" }}>
+                {selectedTemplate.desc}
+                {isKoreanOnly && (
+                  <span style={{ marginLeft: 8, fontSize: 11, color: "#c53030", background: "#fff5f5", border: "1px solid #fed7d7", borderRadius: 4, padding: "1px 6px" }}>
+                    해외거주 한국인 전용
+                  </span>
+                )}
+              </p>
+              <p style={{ margin: "2px 0 0", fontSize: 11, color: "#718096", fontFamily: "monospace" }}>
+                {templateCode}
+              </p>
+            </div>
+          </div>
+        )}
+        {!templateCode && (
+          <p style={{ margin: "6px 0 0", fontSize: 11, color: "#a0aec0" }}>
+            ★ 표시 템플릿은 해외거주 한국인 전용입니다.
+          </p>
+        )}
+      </div>
+
+      {/* ── 좌우 분할 ──────────────────────────────────────── */}
       <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
 
         {/* ── 좌측: 발송 폼 ─────────────────────────────────── */}
@@ -333,56 +369,6 @@ export function OverseasSendCustomEmailTab() {
                   style={{ paddingLeft: 36, width: "100%", boxSizing: "border-box" }}
                 />
               </div>
-            </div>
-
-            <div className="field">
-              <label htmlFor="ce_templateCode">
-                템플릿 <span className="required">*</span>
-              </label>
-              <select
-                id="ce_templateCode"
-                value={templateCode}
-                onChange={(e) => handleTemplateChange(e.target.value)}
-                style={{
-                  width: "100%", padding: "9px 12px",
-                  border: "1px solid #e2e8f0", borderRadius: 6,
-                  fontSize: 13, background: "#fff", color: templateCode ? "#1a202c" : "#a0aec0",
-                }}
-              >
-                <option value="">— 템플릿을 선택하세요 —</option>
-                {TEMPLATES.map(({ code, desc }) => (
-                  <option key={code} value={code}>
-                    {desc}{KOREAN_ONLY.has(code) ? " ★" : ""}　　{code}
-                  </option>
-                ))}
-              </select>
-              {selectedTemplate && (
-                <div style={{
-                  marginTop: 8, padding: "10px 14px",
-                  background: "#f0f9ff", border: "1px solid #bee3f8", borderRadius: 8,
-                  display: "flex", alignItems: "center", gap: 10,
-                }}>
-                  <span style={{ fontSize: 18 }}>📧</span>
-                  <div>
-                    <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1a202c" }}>
-                      {selectedTemplate.desc}
-                      {KOREAN_ONLY.has(templateCode) && (
-                        <span style={{ marginLeft: 8, fontSize: 11, color: "#c53030", background: "#fff5f5", border: "1px solid #fed7d7", borderRadius: 4, padding: "1px 6px" }}>
-                          해외거주 한국인 전용
-                        </span>
-                      )}
-                    </p>
-                    <p style={{ margin: "2px 0 0", fontSize: 11, color: "#718096", fontFamily: "monospace" }}>
-                      {templateCode}
-                    </p>
-                  </div>
-                </div>
-              )}
-              {!templateCode && (
-                <p style={{ margin: "6px 0 0", fontSize: 11, color: "#a0aec0" }}>
-                  ★ 표시 템플릿은 해외거주 한국인 전용입니다.
-                </p>
-              )}
             </div>
 
             <div className="field">
@@ -487,7 +473,7 @@ export function OverseasSendCustomEmailTab() {
               <button
                 type="submit"
                 className="btn btn-send"
-                disabled={busy || !url.trim()}
+                disabled={busy || !toEmail.trim() || !url.trim()}
                 style={{ minWidth: 120 }}
               >
                 {busy ? "발송 중..." : "📧 발송"}
@@ -499,7 +485,7 @@ export function OverseasSendCustomEmailTab() {
         </div>
 
         {/* ── 우측: URL 확인 패널 ───────────────────────────── */}
-        <UrlCheckerPanel onPaste={(pastedUrl) => setUrl(pastedUrl)} />
+        <UrlCheckerPanel templateCode={templateCode} onPaste={(pastedUrl) => setUrl(pastedUrl)} />
       </div>
     </div>
   );
