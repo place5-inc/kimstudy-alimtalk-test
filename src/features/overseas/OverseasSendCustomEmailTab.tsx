@@ -47,6 +47,7 @@ const RECEIVER_OPTIONS = [
 interface ButtonUrlResponse {
   isSuccess: boolean;
   systemMessage: string | null;
+  receiverEmail?: string | null;
   url: string | null;
   isSchedulerTarget: boolean;
   guides: string[];
@@ -62,13 +63,15 @@ interface ButtonUrlResponse {
   } | null;
 }
 
-// ── 우측: 버튼 URL 확인 패널 ───────────────────────────────
+// ── 좌측: 버튼 URL 확인 패널 ───────────────────────────────
 function UrlCheckerPanel({
   templateCode,
   onPaste,
+  onPasteEmail,
 }: {
   templateCode: string;
   onPaste: (url: string) => void;
+  onPasteEmail: (email: string) => void;
 }) {
   const [nickname, setNickname] = useState("");
   const [busy, setBusy]         = useState(false);
@@ -143,6 +146,30 @@ function UrlCheckerPanel({
         <div className="section" style={{ marginTop: 12 }}>
           <p className="section-title">확인 결과</p>
 
+          {data.receiverEmail && (
+            <div style={{ marginBottom: 12 }}>
+              <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 600, color: "#2d3748" }}>수신자 이메일</p>
+              <div style={{
+                padding: "10px 12px", background: "#f0f9ff", border: "1px solid #bee3f8",
+                borderRadius: 6, fontSize: 12, fontFamily: "monospace",
+                color: "#1a365d", marginBottom: 8,
+              }}>
+                {data.receiverEmail}
+              </div>
+              <button
+                type="button"
+                onClick={() => onPasteEmail(data.receiverEmail!)}
+                style={{
+                  padding: "6px 14px", fontSize: 12, fontWeight: 600,
+                  background: "#3182ce", color: "#fff", border: "none",
+                  borderRadius: 6, cursor: "pointer",
+                }}
+              >
+                → 발송 탭 이메일에 붙여넣기
+              </button>
+            </div>
+          )}
+
           {data.url && (
             <div style={{ marginBottom: 12 }}>
               <p style={{ margin: "0 0 6px", fontSize: 12, fontWeight: 600, color: "#2d3748" }}>생성된 URL</p>
@@ -162,7 +189,7 @@ function UrlCheckerPanel({
                   borderRadius: 6, cursor: "pointer",
                 }}
               >
-                ← 발송 탭 URL에 붙여넣기
+                → 발송 탭 URL에 붙여넣기
               </button>
             </div>
           )}
@@ -290,7 +317,7 @@ export function OverseasSendCustomEmailTab() {
   return (
     <div>
       <p className="page-title">이메일 발송 (버튼 URL)</p>
-      <p className="page-subtitle">버튼 URL을 직접 지정해 테스트 이메일을 발송합니다. 우측에서 URL을 먼저 확인하세요.</p>
+      <p className="page-subtitle">버튼 URL을 직접 지정해 테스트 이메일을 발송합니다. 좌측에서 URL을 먼저 확인하세요.</p>
 
       {/* ── 공통: 템플릿 선택 ──────────────────────────────── */}
       <div className="section">
@@ -343,7 +370,14 @@ export function OverseasSendCustomEmailTab() {
       {/* ── 좌우 분할 ──────────────────────────────────────── */}
       <div style={{ display: "flex", gap: 20, alignItems: "flex-start" }}>
 
-        {/* ── 좌측: 발송 폼 ─────────────────────────────────── */}
+        {/* ── 좌측: URL 확인 패널 ───────────────────────────── */}
+        <UrlCheckerPanel
+          templateCode={templateCode}
+          onPaste={(pastedUrl) => setUrl(pastedUrl)}
+          onPasteEmail={(email) => setToEmail(email)}
+        />
+
+        {/* ── 우측: 발송 폼 ─────────────────────────────────── */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <form className="section" onSubmit={(e) => void handleSubmit(e)} noValidate>
             <p className="section-title">발송 정보 입력</p>
@@ -464,7 +498,7 @@ export function OverseasSendCustomEmailTab() {
               />
               {!url.trim() && (
                 <p style={{ margin: "4px 0 0", fontSize: 11, color: "#c53030" }}>
-                  우측에서 URL을 확인하고 붙여넣은 후 발송하세요.
+                  좌측에서 URL을 확인하고 붙여넣은 후 발송하세요.
                 </p>
               )}
             </div>
@@ -484,8 +518,6 @@ export function OverseasSendCustomEmailTab() {
           </form>
         </div>
 
-        {/* ── 우측: URL 확인 패널 ───────────────────────────── */}
-        <UrlCheckerPanel templateCode={templateCode} onPaste={(pastedUrl) => setUrl(pastedUrl)} />
       </div>
     </div>
   );
