@@ -20,8 +20,6 @@ const TEMPLATES = [
   { code: "bizp_2026041510444512312855998",    desc: "휴면 전환 안내" },
   { code: "bizp_2026060214373715156144015",    desc: "현금영수증 발급" },
   { code: "pay_cont_all_03_v2",               desc: "학습자료실 캐시 구매" },
-  { code: "pmt_rqst_usr_1st_v1",              desc: "수업료 납부 요청서 (최초)" },
-  { code: "pmt_rqst_usr_2nd_v1",              desc: "수업료 납부 요청" },
 ] as const;
 
 type TemplateCode = (typeof TEMPLATES)[number]["code"];
