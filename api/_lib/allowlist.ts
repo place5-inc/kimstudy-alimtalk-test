@@ -417,7 +417,7 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
   },
   {
     action: 'abroad:authReset',
-    path: /^\/admin\/test\/abroad\/auth\/rest$/,
+    path: /^\/admin\/test\/abroad\/auth\/reset$/,
     method: 'GET',
     dangerous: false,
   },

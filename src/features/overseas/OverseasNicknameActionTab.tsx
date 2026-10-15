@@ -51,7 +51,7 @@ export function OverseasIdentityResetTab() {
       title="신원인증 초기화"
       subtitle="해외 사용자의 신원인증 정보(생년월일·국적·인증일시)를 초기화합니다."
       sectionTitle="신원인증 초기화"
-      backendPath="/admin/test/abroad/auth/rest"
+      backendPath="/admin/test/abroad/auth/reset"
       action="abroad:authReset"
     />
   );
