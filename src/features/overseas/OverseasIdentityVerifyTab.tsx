@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from "react";
-import { callProxy, callProxyPost, UnauthenticatedError } from "../../shared/api/client";
+import { callProxy, UnauthenticatedError } from "../../shared/api/client";
 import { useAuth } from "../../shared/auth/AuthProvider";
 import { useEnv } from "../../shared/config/EnvContext";
 import { useToast } from "../../shared/ui/Toast";
@@ -91,11 +91,12 @@ export function OverseasIdentityVerifyTab() {
       setBusyReject(true);
       setResultReject(null);
       try {
-        const r = await callProxyPost("/admin/test/abroad/auth/reject", {
+        const r = await callProxy("/admin/test/abroad/auth/reject", {
           nickname: rejectNickname.trim(),
           rejectMent: rejectMent.trim(),
         }, { env });
 
+        if (!r.body.trim()) { setResultReject({ ok: false, message: `빈 응답 (${r.status})` }); return; }
         const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage: string | null };
         if (r.ok && json.isSuccess) {
           showToast("반려처리 완료");

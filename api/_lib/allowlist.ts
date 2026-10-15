@@ -448,7 +448,7 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
   {
     action: 'abroad:authReject',
     path: /^\/admin\/test\/abroad\/auth\/reject$/,
-    method: 'POST',
+    method: 'GET',
     dangerous: false,
   },
   {
