@@ -428,6 +428,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'abroad:changeSetting',
+    path: /^\/admin\/test\/abroad\/change\/setting$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'abroad:sendEmail',
     path: /^\/admin\/test\/abroad\/send\/email$/,
     method: 'GET',
