@@ -148,11 +148,17 @@ export function OverseasIdentityVerifyTab() {
             placeholder="yyyy-MM-dd (예: 1995-03-22)"
             autoComplete="off"
             value={birth}
-            onChange={(e) => setBirth(e.target.value)}
+            onChange={(e) => {
+              const digits = e.target.value.replace(/\D/g, "").slice(0, 8);
+              let formatted = digits;
+              if (digits.length > 4) formatted = digits.slice(0, 4) + "-" + digits.slice(4);
+              if (digits.length > 6) formatted = digits.slice(0, 4) + "-" + digits.slice(4, 6) + "-" + digits.slice(6);
+              setBirth(formatted);
+            }}
             style={{ fontFamily: "monospace" }}
           />
           <p style={{ margin: "4px 0 0", fontSize: 11, color: "#718096" }}>
-            yyyy-MM-dd 형식으로 입력해주세요.
+            숫자만 입력해도 자동으로 yyyy-MM-dd 형식이 됩니다.
           </p>
         </div>
 
