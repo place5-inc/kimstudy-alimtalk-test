@@ -108,16 +108,16 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'keyword-pool', label: '키워드검색용풀확인', component: AbroadKeywordPoolTab },
     ],
   },
-  {
-    id: 'bizgo',
-    label: '알림톡(비즈고)',
-    badge: 'new',
-    features: [
-      { id: 'send-test', label: '알림톡(비즈고)교체', component: AlimtalkBizgoReplaceTab },
-      { id: 'add-template', label: '비즈고DB추가', component: BizgoAddTemplateTab },
-      { id: 'template-active', label: '비즈고 템플릿 활성화', component: BizgoTemplateActiveTab },
-    ],
-  },
+  // {
+  //   id: 'bizgo',
+  //   label: '알림톡(비즈고)',
+  //   badge: 'new',
+  //   features: [
+  //     { id: 'send-test', label: '알림톡(비즈고)교체', component: AlimtalkBizgoReplaceTab },
+  //     { id: 'add-template', label: '비즈고DB추가', component: BizgoAddTemplateTab },
+  //     { id: 'template-active', label: '비즈고 템플릿 활성화', component: BizgoTemplateActiveTab },
+  //   ],
+  // },
   {
     id: 'account',
     label: '계정 상태 관리',
