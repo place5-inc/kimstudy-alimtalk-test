@@ -1,6 +1,5 @@
 import type { ComponentType } from 'react';
 import { OverseasIdentityVerifyTab } from '../../features/overseas/OverseasIdentityVerifyTab';
-import { OverseasIdentityResetTab } from '../../features/overseas/OverseasNicknameActionTab';
 import { OverseasNationalityChangeTab } from '../../features/overseas/OverseasNationalityChangeTab';
 import { OverseasChangeSettingTab } from '../../features/overseas/OverseasChangeSettingTab';
 import { OverseasSendEmailTab } from '../../features/overseas/OverseasSendEmailTab';
@@ -97,8 +96,7 @@ export const GROUPS: readonly GroupConfig[] = [
     badge: 'new',
     features: [
       { id: 'auth-phone', label: '인증번호 확인', component: OverseasAuthPhoneTab },
-      { id: 'auth-user', label: '신원인증처리', component: OverseasIdentityVerifyTab },
-      { id: 'auth-reset', label: '신원인증초기화', component: OverseasIdentityResetTab },
+      { id: 'auth-user', label: '신원인증', component: OverseasIdentityVerifyTab },
       { id: 'nationality', label: '국적변경', component: OverseasNationalityChangeTab },
       { id: 'change-setting', label: '한국인/외국인 변경', component: OverseasChangeSettingTab },
       { id: 'send-email', label: '이메일발송', component: OverseasSendEmailTab },

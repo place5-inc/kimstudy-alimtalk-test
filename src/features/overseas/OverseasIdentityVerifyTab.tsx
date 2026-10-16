@@ -1,5 +1,7 @@
 import { useState, useCallback, useEffect } from "react";
 import { callProxy, UnauthenticatedError } from "../../shared/api/client";
+import { z } from "zod";
+import { requiredText, ActionForm } from "../../shared/ui/ActionForm";
 import { useAuth } from "../../shared/auth/AuthProvider";
 import { useEnv } from "../../shared/config/EnvContext";
 import { useToast } from "../../shared/ui/Toast";
@@ -118,8 +120,8 @@ export function OverseasIdentityVerifyTab() {
 
   return (
     <div>
-      <p className="page-title">신원인증처리</p>
-      <p className="page-subtitle">해외 사용자의 신원인증을 완료 또는 반려 처리합니다.</p>
+      <p className="page-title">신원인증</p>
+      <p className="page-subtitle">해외 사용자의 신원인증을 완료, 반려, 또는 초기화 처리합니다.</p>
 
       {/* 완료처리 */}
       <form className="section" onSubmit={(e) => void handleComplete(e)} noValidate>
@@ -254,6 +256,35 @@ export function OverseasIdentityVerifyTab() {
 
         <ResultBox result={resultReject} />
       </form>
+
+      {/* 신원인증 초기화 */}
+      <div className="section">
+        <ActionForm
+          title="신원인증 초기화"
+          buttonLabel="초기화"
+          variant="reset"
+          schema={z.object({ nickname: requiredText })}
+          backendPath="/admin/test/abroad/auth/reset"
+          buildParams={(v) => ({ nickname: v.nickname })}
+          action="abroad:authReset"
+          dangerous={false}
+        >
+          {({ register }) => (
+            <div className="field">
+              <label htmlFor="reset_nickname">
+                nickname <span className="required">*</span>
+              </label>
+              <input
+                id="reset_nickname"
+                type="text"
+                placeholder="닉네임 입력"
+                autoComplete="off"
+                {...register("nickname")}
+              />
+            </div>
+          )}
+        </ActionForm>
+      </div>
     </div>
   );
 }
