@@ -565,7 +565,7 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
   },
   {
     action: 'abroad:getTemplateCode',
-    path: /^\/admin\/test\/abroad\/get\/tamplateCode$/,
+    path: /^\/admin\/test\/abroad\/get\/templateCode$/,
     method: 'GET',
     dangerous: false,
   },

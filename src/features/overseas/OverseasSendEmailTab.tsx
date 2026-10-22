@@ -46,14 +46,14 @@ export function OverseasSendEmailTab() {
 
   useEffect(() => {
     setTLoading(true);
-    callProxy("/admin/test/abroad/get/tamplateCode", {}, { env })
+    callProxy("/admin/test/abroad/get/templateCode", {}, { env })
       .then((r) => {
-        if (!r.body.trim()) { setTError("템플릿 목록 로드 실패"); return; }
-        const json = JSON.parse(r.body) as { isSuccess: boolean; list?: TemplateItem[] };
+        if (!r.body.trim()) { setTError(`템플릿 목록 로드 실패 (${r.status})`); return; }
+        const json = JSON.parse(r.body) as { isSuccess: boolean; systemMessage?: string | null; list?: TemplateItem[] };
         if (json.isSuccess && json.list) setTemplates(json.list);
-        else setTError("템플릿 목록 로드 실패");
+        else setTError(`템플릿 목록 로드 실패: ${json.systemMessage ?? "알 수 없는 오류"}`);
       })
-      .catch(() => setTError("템플릿 목록 로드 실패"))
+      .catch((e: unknown) => setTError(`템플릿 목록 로드 실패: ${e instanceof Error ? e.message : String(e)}`))
       .finally(() => setTLoading(false));
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
