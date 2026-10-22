@@ -36,23 +36,20 @@ interface BannerLogResponse {
 
 function OsBar({ osCount }: { osCount: OsCount }) {
   const items = [
-    { key: "web",     label: "웹",     color: "#3182ce" },
-    { key: "android", label: "AOS",    color: "#38a169" },
-    { key: "ios",     label: "iOS",    color: "#805ad5" },
-    { key: "etc",     label: "기타",   color: "#a0aec0" },
+    { key: "web",     label: "웹",   color: "#3182ce" },
+    { key: "android", label: "AOS",  color: "#38a169" },
+    { key: "ios",     label: "iOS",  color: "#805ad5" },
+    { key: "etc",     label: "기타", color: "#a0aec0" },
   ] as const;
   return (
-    <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
+    <div style={{ display: "flex", gap: 10 }}>
       {items.map(({ key, label, color }) => {
         const val = osCount[key] ?? 0;
-        if (val === 0) return null;
         return (
-          <span key={key} style={{
-            fontSize: 11, padding: "2px 7px", borderRadius: 10,
-            background: color + "20", color, fontWeight: 600, border: `1px solid ${color}40`,
-          }}>
-            {label} {val.toLocaleString()}
-          </span>
+          <div key={key} style={{ display: "flex", flexDirection: "column", alignItems: "center", minWidth: 36, opacity: val === 0 ? 0.3 : 1 }}>
+            <span style={{ fontSize: 10, color: "#718096", marginBottom: 2 }}>{label}</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color }}>{val.toLocaleString()}</span>
+          </div>
         );
       })}
     </div>
