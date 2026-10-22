@@ -1,33 +1,19 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { callProxy, UnauthenticatedError } from "../../shared/api/client";
 import { useAuth } from "../../shared/auth/AuthProvider";
 import { useEnv } from "../../shared/config/EnvContext";
 import { useToast } from "../../shared/ui/Toast";
 import { ResultBox, type ResultState } from "../../shared/ui/ResultBox";
 
-const TEMPLATES = [
-  { code: "join_stpr_01_01_v2",               desc: "가입 환영" },
-  { code: "msg_pt_of_sc_00",                  desc: "새 과외문의" },
-  { code: "cus_stpr_01_v2",                   desc: "N건 제안 요약" },
-  { code: "msg_stpr_02_01_v2",                desc: "선생님 답장" },
-  { code: "msg_stpr_02_04_v2",                desc: "선생님 답장 (답변 유도)" },
-  { code: "bizp_2026040708573825806856732",    desc: "수업 시작 알림 요청" },
-  { code: "bizp_2026040709050112312208609",    desc: "정규 전환 알림 요청" },
-  { code: "crbt_mch_prt_wth_sbjt_v1",         desc: "과외 성사 축하" },
-  { code: "rqst_rv_1st_v1_new",               desc: "후기 요청 (2주)" },
-  { code: "rqst_rv_2nd_v1",                   desc: "후기 재요청" },
-  { code: "noti_cs_center_v1",                desc: "고객센터 메시지" },
-  { code: "bizp_2026041510444512312855998",    desc: "휴면 전환 안내" },
-  { code: "bizp_2026060214373715156144015",    desc: "현금영수증 발급" },
-  { code: "pay_cont_all_03_v2",               desc: "학습자료실 캐시 구매" },
-] as const;
+interface TemplateItem {
+  templateCode: string;
+  description: string;
+  receiverTypes: string[];
+}
 
-type TemplateCode = (typeof TEMPLATES)[number]["code"];
-
-const KOREAN_ONLY = new Set<string>([
-  "bizp_2026060214373715156144015",
-  "pay_cont_all_03_v2",
-]);
+function isKoreanOnly(t: TemplateItem) {
+  return t.receiverTypes.length === 1 && t.receiverTypes[0] === "korean";
+}
 
 const LANG_OPTIONS = [
   { value: "ko", label: "한국어" },
@@ -246,7 +232,11 @@ function UrlCheckerPanel({
 
 // ── 메인 탭 ──────────────────────────────────────────────────
 export function OverseasSendCustomEmailTab() {
-  const [templateCode, setTemplateCode] = useState<TemplateCode | "">("");
+  const [templates, setTemplates]       = useState<TemplateItem[]>([]);
+  const [templatesLoading, setTLoading] = useState(false);
+  const [templatesError, setTError]     = useState<string | null>(null);
+
+  const [templateCode, setTemplateCode] = useState("");
   const [toEmail, setToEmail]           = useState("");
   const [receiverType, setReceiverType] = useState<"korean" | "foreigner">("foreigner");
   const [languageCode, setLanguageCode] = useState("en");
@@ -258,14 +248,29 @@ export function OverseasSendCustomEmailTab() {
   const { env }              = useEnv();
   const { show: showToast }  = useToast();
 
-  const isKoreanOnly      = KOREAN_ONLY.has(templateCode);
-  const effectiveReceiver = isKoreanOnly ? "korean" : receiverType;
+  useEffect(() => {
+    setTLoading(true);
+    callProxy("/admin/test/abroad/get/tamplateCode", {}, { env })
+      .then((r) => {
+        if (!r.body.trim()) { setTError("템플릿 목록 로드 실패"); return; }
+        const json = JSON.parse(r.body) as { isSuccess: boolean; list?: TemplateItem[] };
+        if (json.isSuccess && json.list) setTemplates(json.list);
+        else setTError("템플릿 목록 로드 실패");
+      })
+      .catch(() => setTError("템플릿 목록 로드 실패"))
+      .finally(() => setTLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const selectedTemplate = templates.find((t) => t.templateCode === templateCode);
+  const koreanOnly        = selectedTemplate ? isKoreanOnly(selectedTemplate) : false;
+  const effectiveReceiver = koreanOnly ? "korean" : receiverType;
   const effectiveLang     = effectiveReceiver === "korean" ? "ko" : languageCode;
-  const selectedTemplate  = TEMPLATES.find((t) => t.code === templateCode);
 
   const handleTemplateChange = (code: string) => {
-    setTemplateCode(code as TemplateCode | "");
-    if (KOREAN_ONLY.has(code)) {
+    setTemplateCode(code);
+    const t = templates.find((x) => x.templateCode === code);
+    if (t && isKoreanOnly(t)) {
       setReceiverType("korean");
       setLanguageCode("ko");
     }
@@ -320,48 +325,60 @@ export function OverseasSendCustomEmailTab() {
       {/* ── 공통: 템플릿 선택 ──────────────────────────────── */}
       <div className="section">
         <p className="section-title">템플릿 선택 <span className="required">*</span></p>
-        <select
-          value={templateCode}
-          onChange={(e) => handleTemplateChange(e.target.value)}
-          style={{
-            width: "100%", padding: "9px 12px",
-            border: "1px solid #e2e8f0", borderRadius: 6,
-            fontSize: 13, background: "#fff", color: templateCode ? "#1a202c" : "#a0aec0",
-          }}
-        >
-          <option value="">— 템플릿을 선택하세요 —</option>
-          {TEMPLATES.map(({ code, desc }) => (
-            <option key={code} value={code}>
-              {desc}{KOREAN_ONLY.has(code) ? " ★" : ""}　　{code}
-            </option>
-          ))}
-        </select>
-        {selectedTemplate && (
-          <div style={{
-            marginTop: 8, padding: "10px 14px",
-            background: "#f0f9ff", border: "1px solid #bee3f8", borderRadius: 8,
-            display: "flex", alignItems: "center", gap: 10,
-          }}>
-            <span style={{ fontSize: 18 }}>📧</span>
-            <div>
-              <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1a202c" }}>
-                {selectedTemplate.desc}
-                {isKoreanOnly && (
-                  <span style={{ marginLeft: 8, fontSize: 11, color: "#c53030", background: "#fff5f5", border: "1px solid #fed7d7", borderRadius: 4, padding: "1px 6px" }}>
-                    해외거주 한국인 전용
-                  </span>
-                )}
-              </p>
-              <p style={{ margin: "2px 0 0", fontSize: 11, color: "#718096", fontFamily: "monospace" }}>
-                {templateCode}
-              </p>
-            </div>
+        {templatesLoading ? (
+          <div style={{ padding: "10px 12px", background: "#f7fafc", border: "1px solid #e2e8f0", borderRadius: 6, fontSize: 13, color: "#a0aec0" }}>
+            템플릿 목록 로딩 중...
           </div>
-        )}
-        {!templateCode && (
-          <p style={{ margin: "6px 0 0", fontSize: 11, color: "#a0aec0" }}>
-            ★ 표시 템플릿은 해외거주 한국인 전용입니다.
-          </p>
+        ) : templatesError ? (
+          <div style={{ padding: "10px 12px", background: "#fff5f5", border: "1px solid #fed7d7", borderRadius: 6, fontSize: 13, color: "#c53030" }}>
+            {templatesError}
+          </div>
+        ) : (
+          <>
+            <select
+              value={templateCode}
+              onChange={(e) => handleTemplateChange(e.target.value)}
+              style={{
+                width: "100%", padding: "9px 12px",
+                border: "1px solid #e2e8f0", borderRadius: 6,
+                fontSize: 13, background: "#fff", color: templateCode ? "#1a202c" : "#a0aec0",
+              }}
+            >
+              <option value="">— 템플릿을 선택하세요 —</option>
+              {templates.map((t) => (
+                <option key={t.templateCode} value={t.templateCode}>
+                  {t.description}{isKoreanOnly(t) ? " ★" : ""}　　{t.templateCode}
+                </option>
+              ))}
+            </select>
+            {selectedTemplate && (
+              <div style={{
+                marginTop: 8, padding: "10px 14px",
+                background: "#f0f9ff", border: "1px solid #bee3f8", borderRadius: 8,
+                display: "flex", alignItems: "center", gap: 10,
+              }}>
+                <span style={{ fontSize: 18 }}>📧</span>
+                <div>
+                  <p style={{ margin: 0, fontSize: 13, fontWeight: 700, color: "#1a202c" }}>
+                    {selectedTemplate.description}
+                    {koreanOnly && (
+                      <span style={{ marginLeft: 8, fontSize: 11, color: "#c53030", background: "#fff5f5", border: "1px solid #fed7d7", borderRadius: 4, padding: "1px 6px" }}>
+                        해외거주 한국인 전용
+                      </span>
+                    )}
+                  </p>
+                  <p style={{ margin: "2px 0 0", fontSize: 11, color: "#718096", fontFamily: "monospace" }}>
+                    {templateCode}
+                  </p>
+                </div>
+              </div>
+            )}
+            {!templateCode && (
+              <p style={{ margin: "6px 0 0", fontSize: 11, color: "#a0aec0" }}>
+                ★ 표시 템플릿은 해외거주 한국인 전용입니다.
+              </p>
+            )}
+          </>
         )}
       </div>
 
@@ -409,7 +426,7 @@ export function OverseasSendCustomEmailTab() {
               </label>
               <div style={{ display: "flex", gap: 10 }}>
                 {RECEIVER_OPTIONS.map(({ value, label, desc }) => {
-                  const disabled = isKoreanOnly && value === "foreigner";
+                  const disabled = koreanOnly && value === "foreigner";
                   const selected = effectiveReceiver === value;
                   return (
                     <button
@@ -434,7 +451,7 @@ export function OverseasSendCustomEmailTab() {
                   );
                 })}
               </div>
-              {isKoreanOnly && (
+              {koreanOnly && (
                 <p style={{ margin: "6px 0 0", fontSize: 11, color: "#c53030" }}>
                   ⚠️ 선택한 템플릿은 해외거주 한국인 전용이라 수신자 유형이 고정됩니다.
                 </p>
