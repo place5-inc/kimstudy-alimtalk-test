@@ -39,6 +39,7 @@ import { IntroCompleteQueueTab } from '../../features/patch-2608/IntroCompleteQu
 import { MultiProfileResetTab } from '../../features/patch-2608/MultiProfileResetTab';
 import { MultiLanguageTab } from '../../features/patch-2608/MultiLanguageTab';
 import { BannerStatusTab } from '../../features/banner-status/BannerStatusTab';
+import { BannerClickLogTab } from '../../features/banner-status/BannerClickLogTab';
 import { AlimtalkTab } from '../../features/alimtalk/AlimtalkTab';
 import { AccessTokenTab } from '../../features/alimtalk/AccessTokenTab';
 import { CheckinAlimtalkTab } from '../../features/checkin-alimtalk/CheckinAlimtalkTab';
@@ -166,6 +167,7 @@ export const GROUPS: readonly GroupConfig[] = [
     label: '배너 노출현황',
     features: [
       { id: 'banner-status', label: '배너 노출현황', component: BannerStatusTab },
+      { id: 'banner-click-log', label: '배너 클릭 로그', component: BannerClickLogTab },
     ],
   },
   {
