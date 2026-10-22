@@ -21,6 +21,7 @@ interface BannerSource {
 interface BannerItem {
   name: string;
   nameLabel: string;
+  exposedRoles: string[];
   totalCount: number;
   osCount: OsCount;
   sources: BannerSource[];
@@ -32,6 +33,31 @@ interface BannerLogResponse {
   totalCount?: number;
   osCount?: OsCount;
   list?: BannerItem[];
+}
+
+const ROLE_META: Record<string, { label: string; color: string }> = {
+  tutor:  { label: "선생님", color: "#3182ce" },
+  tutee:  { label: "학생",   color: "#38a169" },
+  parent: { label: "학부모", color: "#d69e2e" },
+};
+
+function RoleBadges({ roles }: { roles: string[] }) {
+  if (!roles.length) return <span style={{ fontSize: 11, color: "#a0aec0" }}>-</span>;
+  return (
+    <div style={{ display: "flex", gap: 4, flexWrap: "wrap" }}>
+      {roles.map((r) => {
+        const meta = ROLE_META[r] ?? { label: r, color: "#718096" };
+        return (
+          <span key={r} style={{
+            fontSize: 11, padding: "2px 8px", borderRadius: 4, fontWeight: 600,
+            background: meta.color + "18", color: meta.color, border: `1px solid ${meta.color}40`,
+          }}>
+            {meta.label}
+          </span>
+        );
+      })}
+    </div>
+  );
 }
 
 function OsBar({ osCount }: { osCount: OsCount }) {
@@ -161,6 +187,7 @@ export function BannerClickLogTab() {
             <thead>
               <tr style={{ background: "#f7fafc" }}>
                 <th style={thStyle}>배너</th>
+                <th style={thStyle}>노출 대상</th>
                 <th style={{ ...thStyle, textAlign: "right" }}>총 클릭</th>
                 <th style={thStyle}>OS별</th>
                 <th style={{ ...thStyle, width: 60, textAlign: "center" }}>상세</th>
@@ -178,6 +205,9 @@ export function BannerClickLogTab() {
                       <div style={{ fontWeight: 700, color: "#1a202c" }}>{item.nameLabel}</div>
                       <div style={{ fontSize: 11, color: "#a0aec0", fontFamily: "monospace" }}>{item.name}</div>
                     </td>
+                    <td style={tdStyle}>
+                      <RoleBadges roles={item.exposedRoles} />
+                    </td>
                     <td style={{ ...tdStyle, textAlign: "right", fontWeight: 700, fontSize: 15, color: "#2b6cb0" }}>
                       {item.totalCount.toLocaleString()}
                     </td>
@@ -194,6 +224,7 @@ export function BannerClickLogTab() {
                         <div style={{ color: "#2c5282" }}>{src.sourceLabel}</div>
                         <div style={{ fontSize: 11, color: "#90cdf4", fontFamily: "monospace" }}>{src.source}</div>
                       </td>
+                      <td style={tdStyle} />
                       <td style={{ ...tdStyle, textAlign: "right", fontWeight: 600, color: "#2c5282" }}>
                         {src.count.toLocaleString()}
                       </td>
