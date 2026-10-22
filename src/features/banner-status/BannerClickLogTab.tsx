@@ -81,7 +81,7 @@ export function BannerClickLogTab() {
         if (startDate) params.startDate = startDate;
         if (endDate)   params.endDate   = endDate;
 
-        const r = await callProxy("/admin/test/banner/log", params, { env });
+        const r = await callProxy("/admin/test/get/banner/log", params, { env });
         if (!r.body.trim()) { setResult({ ok: false, message: `빈 응답 (${r.status})` }); return; }
         const json = JSON.parse(r.body) as BannerLogResponse;
         if (json.isSuccess) {

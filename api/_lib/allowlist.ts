@@ -285,7 +285,7 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
   },
   {
     action: 'banner:clickLog',
-    path: /^\/admin\/test\/banner\/log$/,
+    path: /^\/admin\/test\/get\/banner\/log$/,
     method: 'GET',
     dangerous: false,
   },
