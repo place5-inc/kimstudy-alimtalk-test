@@ -162,6 +162,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'sincerityDemotion:setParentAge',
+    path: /^\/admin\/test\/update\/age\/antiDegradeBlack$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'kimInstructor:joinHistoryReset',
     path: /^\/admin\/academy\/consulting\/reset\/kimacademy\/phoneNumber$/,
     method: 'GET',

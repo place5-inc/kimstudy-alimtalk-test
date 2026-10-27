@@ -124,6 +124,40 @@ export function SincerityDemotionTab() {
           </div>
         )}
       </ActionForm>
+      <ActionForm
+        title="5. 학부모 - 성실등급강등되지 않는 나이로 세팅"
+        buttonLabel="세팅"
+        variant="pending"
+        schema={nicknameSchema}
+        backendPath="/admin/test/update/age/antiDegradeBlack"
+        buildParams={(v) => ({ nickname: v.nickname })}
+        action="sincerityDemotion:setParentAge"
+        dangerous={false}
+      >
+        {({ register }) => (
+          <div className="field">
+            <label htmlFor="sd_parent_age_nick">
+              nickname <span className="required">*</span>
+            </label>
+            <input
+              id="sd_parent_age_nick"
+              type="text"
+              placeholder="닉네임 입력"
+              autoComplete="off"
+              {...register("nickname")}
+            />
+            <div className="guide-box guide-box--reset">
+              <p className="guide-title">실행 전 확인사항</p>
+              <ul className="guide-list">
+                <li><b>학부모</b> 계정 유형만 세팅 가능합니다.</li>
+                <li>성별 정보가 있어야 합니다. (남성 만 46세, 여성 만 44세 기준으로 생년월일 변경)</li>
+                <li>신원인증이 먼저 승인처리 되어 있어야 합니다.</li>
+                <li>이미 성실등급강등 상태인 경우, 자동으로 강등 해제 후 나이 세팅됩니다.</li>
+              </ul>
+            </div>
+          </div>
+        )}
+      </ActionForm>
     </div>
   );
 }
