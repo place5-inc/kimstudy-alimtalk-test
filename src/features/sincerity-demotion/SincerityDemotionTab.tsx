@@ -147,7 +147,11 @@ export function SincerityDemotionTab() {
               {...register("nickname")}
             />
             <div className="guide-box guide-box--reset">
-              <p className="guide-title">실행 전 확인사항</p>
+              <p className="guide-title">기능 안내</p>
+              <ul className="guide-list">
+                <li>공고를 생성·수정하더라도 <b>「자녀 학년과 학부모 나이차 이상」 사유로 성실등급강등되지 않도록</b> 생년월일을 변경합니다.</li>
+              </ul>
+              <p className="guide-title" style={{ marginTop: 10 }}>실행 전 확인사항</p>
               <ul className="guide-list">
                 <li><b>학부모</b> 계정 유형만 세팅 가능합니다.</li>
                 <li>성별 정보가 있어야 합니다. (남성 만 46세, 여성 만 44세 기준으로 생년월일 변경)</li>
