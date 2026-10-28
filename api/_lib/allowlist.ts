@@ -404,6 +404,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'profile:resetSubjectDescription',
+    path: /^\/admin\/test\/reset\/subject\/description$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'patch2608:signupFunnelLog',
     path: /^\/admin\/test\/get\/signup\/funnel\/log$/,
     method: 'GET',

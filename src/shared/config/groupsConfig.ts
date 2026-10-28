@@ -38,6 +38,7 @@ import { ChildBonusResetTab } from '../../features/patch-2608/ChildBonusResetTab
 import { IntroCompleteQueueTab } from '../../features/patch-2608/IntroCompleteQueueTab';
 import { MultiProfileResetTab } from '../../features/patch-2608/MultiProfileResetTab';
 import { MultiLanguageTab } from '../../features/patch-2608/MultiLanguageTab';
+import { SubjectDescriptionResetTab } from '../../features/patch-2608/SubjectDescriptionResetTab';
 import { BannerStatusTab } from '../../features/banner-status/BannerStatusTab';
 import { BannerClickLogTab } from '../../features/banner-status/BannerClickLogTab';
 import { AlimtalkTab } from '../../features/alimtalk/AlimtalkTab';
@@ -160,6 +161,7 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'completion-queue', label: '소개서 완성 큐', component: IntroCompleteQueueTab },
       { id: 'multi-profile-reset', label: '멀티소개서 초기화', component: MultiProfileResetTab },
       { id: 'multi-language', label: '다국어번역', component: MultiLanguageTab },
+      { id: 'subject-description-reset', label: '소개서 - 과목별수업내용초기화', component: SubjectDescriptionResetTab },
     ],
   },
   {
