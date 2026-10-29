@@ -410,6 +410,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     dangerous: false,
   },
   {
+    action: 'profile:checkCompletion',
+    path: /^\/admin\/test\/check\/completion$/,
+    method: 'GET',
+    dangerous: false,
+  },
+  {
     action: 'patch2608:signupFunnelLog',
     path: /^\/admin\/test\/get\/signup\/funnel\/log$/,
     method: 'GET',
