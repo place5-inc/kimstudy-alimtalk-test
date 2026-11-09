@@ -72,6 +72,11 @@ export function AlimtalkButtonUrlTab() {
   const [error, setError]             = useState<string | null>(null);
   const [results, setResults]         = useState<ButtonUrlResult[] | null>(null);
 
+  const [email, setEmail]             = useState("");
+  const [emailBusy, setEmailBusy]     = useState(false);
+  const [emailError, setEmailError]   = useState<string | null>(null);
+  const [emailUrl, setEmailUrl]       = useState<string | null>(null);
+
   const { logout } = useAuth();
   const { env }    = useEnv();
 
@@ -109,6 +114,47 @@ export function AlimtalkButtonUrlTab() {
       }
     },
     [phoneNumber, env, logout],
+  );
+
+  const handleEmailSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!email.trim()) { setEmailError("이메일 주소를 입력해주세요."); return; }
+
+      setEmailBusy(true);
+      setEmailError(null);
+      setEmailUrl(null);
+
+      try {
+        const r = await callProxy(
+          "/admin/test/get/button/email/url",
+          { email: email.trim() },
+          { env },
+        );
+
+        if (r.ok) {
+          try {
+            const json = JSON.parse(r.body) as { isSuccess?: boolean; data?: string; result?: string };
+            const url = json.data ?? json.result ?? null;
+            if (url) {
+              setEmailUrl(url);
+            } else {
+              setEmailError(`조회된 URL이 없습니다. (${r.body})`);
+            }
+          } catch {
+            setEmailError(`응답 파싱 실패: ${r.body}`);
+          }
+        } else {
+          setEmailError(`실패 (${r.status}) ${r.body}`);
+        }
+      } catch (e) {
+        if (e instanceof UnauthenticatedError) { await logout(); return; }
+        setEmailError(`오류: ${e instanceof Error ? e.message : String(e)}`);
+      } finally {
+        setEmailBusy(false);
+      }
+    },
+    [email, env, logout],
   );
 
   return (
@@ -180,6 +226,37 @@ export function AlimtalkButtonUrlTab() {
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* 해외용 이메일 버튼 URL 확인 */}
+      <form className="section" onSubmit={(e) => void handleEmailSubmit(e)} noValidate style={{ marginTop: 16 }}>
+        <p className="section-title">해외용 이메일 버튼 URL 확인</p>
+        <div className="field">
+          <label htmlFor="alimtalk_email">
+            이메일 주소 <span className="required">*</span>
+          </label>
+          <input
+            id="alimtalk_email"
+            type="email"
+            placeholder="이메일 주소 입력"
+            autoComplete="off"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+        </div>
+        <button type="submit" className="btn btn-send" disabled={emailBusy}>
+          {emailBusy ? "조회 중..." : "조회하기"}
+        </button>
+      </form>
+
+      {emailError && (
+        <div className="result-box result-error" role="status" aria-live="polite">{emailError}</div>
+      )}
+      {emailUrl && (
+        <div className="section" style={{ marginTop: 8 }}>
+          <p style={{ fontSize: 12, color: "#718096", marginBottom: 6 }}>버튼 URL</p>
+          <UrlRow url={emailUrl} />
         </div>
       )}
     </div>

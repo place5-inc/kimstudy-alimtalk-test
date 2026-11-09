@@ -605,6 +605,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'alimtalk:emailButtonUrl',
+    path: /^\/admin\/test\/get\/button\/email\/url$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
