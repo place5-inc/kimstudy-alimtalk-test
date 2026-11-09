@@ -9,6 +9,18 @@ interface ButtonUrlResult {
   button_url: string;
 }
 
+interface EmailLogItem {
+  key: number;
+  created_at: string;
+  user_id: string;
+  to_email: string;
+  receiver_type: string;
+  template_code: string;
+  language: string;
+  title: string;
+  button: { text: string; url: string } | null;
+}
+
 function SendTypeBadge({ type }: { type: "bizppurio" | "bizgo" }) {
   const map = {
     bizppurio: { label: "비즈뿌리오 발송", bg: "#ebf8ff", border: "#90cdf4", color: "#2b6cb0" },
@@ -75,7 +87,7 @@ export function AlimtalkButtonUrlTab() {
   const [email, setEmail]             = useState("");
   const [emailBusy, setEmailBusy]     = useState(false);
   const [emailError, setEmailError]   = useState<string | null>(null);
-  const [emailUrl, setEmailUrl]       = useState<string | null>(null);
+  const [emailLogs, setEmailLogs]     = useState<EmailLogItem[] | null>(null);
 
   const { logout } = useAuth();
   const { env }    = useEnv();
@@ -123,7 +135,7 @@ export function AlimtalkButtonUrlTab() {
 
       setEmailBusy(true);
       setEmailError(null);
-      setEmailUrl(null);
+      setEmailLogs(null);
 
       try {
         const r = await callProxy(
@@ -134,12 +146,11 @@ export function AlimtalkButtonUrlTab() {
 
         if (r.ok) {
           try {
-            const json = JSON.parse(r.body) as { isSuccess?: boolean; data?: string; result?: string };
-            const url = json.data ?? json.result ?? null;
-            if (url) {
-              setEmailUrl(url);
+            const json = JSON.parse(r.body) as { isSuccess?: boolean; result?: EmailLogItem[] };
+            if (json.isSuccess) {
+              setEmailLogs(json.result ?? []);
             } else {
-              setEmailError(`조회된 URL이 없습니다. (${r.body})`);
+              setEmailError(`실패: ${r.body}`);
             }
           } catch {
             setEmailError(`응답 파싱 실패: ${r.body}`);
@@ -253,10 +264,64 @@ export function AlimtalkButtonUrlTab() {
       {emailError && (
         <div className="result-box result-error" role="status" aria-live="polite">{emailError}</div>
       )}
-      {emailUrl && (
-        <div className="section" style={{ marginTop: 8 }}>
-          <p style={{ fontSize: 12, color: "#718096", marginBottom: 6 }}>버튼 URL</p>
-          <UrlRow url={emailUrl} />
+      {emailLogs !== null && emailLogs.length === 0 && (
+        <div className="result-box result-error" role="status" aria-live="polite">조회된 이메일 발송 로그가 없습니다.</div>
+      )}
+      {emailLogs && emailLogs.length > 0 && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 8 }}>
+          {emailLogs.map((item, index) => {
+            const langLabel: Record<string, string> = { en: "영어", ja: "일본어", zh: "중국어", vi: "베트남어" };
+            const receiverLabel = item.receiver_type === "korean" ? "해외거주한국인" : item.receiver_type === "foreigner" ? "외국인" : item.receiver_type;
+            const dt = new Date(item.created_at);
+            const dateStr = `${dt.getFullYear()}.${String(dt.getMonth()+1).padStart(2,"0")}.${String(dt.getDate()).padStart(2,"0")} ${String(dt.getHours()).padStart(2,"0")}:${String(dt.getMinutes()).padStart(2,"0")}:${String(dt.getSeconds()).padStart(2,"0")}`;
+            return (
+              <div key={item.key} style={{ border: "1px solid #e2e8f0", borderRadius: 10, overflow: "hidden" }}>
+                {/* 헤더 */}
+                <div style={{
+                  background: "#f7fafc", borderBottom: "1px solid #e2e8f0",
+                  padding: "8px 14px", display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap",
+                }}>
+                  <span style={{ fontSize: 12, color: "#718096", fontWeight: 600 }}>#{index + 1}</span>
+                  <span style={{
+                    fontSize: 11, fontWeight: 700, padding: "2px 8px", borderRadius: 10,
+                    background: "#ebf8ff", border: "1px solid #90cdf4", color: "#2b6cb0",
+                  }}>
+                    {langLabel[item.language] ?? item.language}
+                  </span>
+                  <span style={{
+                    fontSize: 11, fontWeight: 600, padding: "2px 8px", borderRadius: 10,
+                    background: "#f0fff4", border: "1px solid #9ae6b4", color: "#276749",
+                  }}>
+                    {receiverLabel}
+                  </span>
+                  <span style={{ fontSize: 11, color: "#a0aec0", fontFamily: "monospace" }}>
+                    {item.template_code}
+                  </span>
+                  <span style={{ marginLeft: "auto", fontSize: 11, color: "#a0aec0" }}>
+                    {dateStr}
+                  </span>
+                </div>
+
+                {/* 본문 */}
+                <div style={{ padding: "12px 14px", display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div>
+                    <p style={{ fontSize: 11, color: "#718096", margin: "0 0 3px" }}>제목</p>
+                    <p style={{ fontSize: 13, fontWeight: 600, color: "#2d3748", margin: 0 }}>{item.title}</p>
+                  </div>
+                  {item.button ? (
+                    <div>
+                      <p style={{ fontSize: 11, color: "#718096", margin: "0 0 4px" }}>
+                        버튼 텍스트: <span style={{ fontWeight: 600, color: "#2d3748" }}>{item.button.text}</span>
+                      </p>
+                      <UrlRow url={item.button.url} />
+                    </div>
+                  ) : (
+                    <p style={{ fontSize: 12, color: "#a0aec0", margin: 0 }}>버튼 없음</p>
+                  )}
+                </div>
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
