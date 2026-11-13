@@ -18,6 +18,7 @@ import { SuhaengPaymentResetTab } from '../../features/suhaeng/SuhaengPaymentRes
 import { AbroadKeywordPoolTab } from '../../features/overseas/AbroadKeywordPoolTab';
 import { AbroadTutorTranslateTab } from '../../features/overseas/AbroadTutorTranslateTab';
 import { PassResetTab } from '../../features/pass-reset/PassResetTab';
+import { SafetyNumberTab } from '../../features/account/SafetyNumberTab';
 import { SincerityDemotionTab } from '../../features/sincerity-demotion/SincerityDemotionTab';
 import { AuthPhoneTab } from '../../features/auth-phone/authPhoneTab';
 import { DormantTab } from '../../features/dormant/DormantTab';
@@ -130,6 +131,7 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'membership-level', label: '멤버십 레벨', component: MembershipLevelTab },
       { id: 'gender-change', label: '성별 변경', component: GenderChangeTab },
       { id: 'signup-funnel-log', label: '가입이탈기록로그', component: SignupFunnelLogTab },
+      { id: 'safety-number', label: '안심번호', component: SafetyNumberTab, badge: 'new' },
     ],
   },
   {

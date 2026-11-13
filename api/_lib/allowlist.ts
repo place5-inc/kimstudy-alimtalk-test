@@ -611,6 +611,12 @@ export const ALLOWLIST: readonly AllowlistEntry[] = [
     method: 'GET',
     dangerous: false,
   },
+  {
+    action: 'account:safetyNumber',
+    path: /^\/admin\/test\/change\/safetyNumber\/issueDay$/,
+    method: 'GET',
+    dangerous: false,
+  },
 ];
 
 export function matchAllowlist(
