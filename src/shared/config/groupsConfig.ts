@@ -131,7 +131,7 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'membership-level', label: '멤버십 레벨', component: MembershipLevelTab },
       { id: 'gender-change', label: '성별 변경', component: GenderChangeTab },
       { id: 'signup-funnel-log', label: '가입이탈기록로그', component: SignupFunnelLogTab },
-      { id: 'safety-number', label: '안심번호', component: SafetyNumberTab, badge: 'new' },
+      { id: 'safety-number', label: '안심번호', component: SafetyNumberTab },
     ],
   },
   {
@@ -187,7 +187,7 @@ export const GROUPS: readonly GroupConfig[] = [
       { id: 'demo', label: '시범전환', component: DemoTab },
       { id: 'tutor-return', label: '선생님복귀 알림톡', component: TutorReturnAlimtalkTab },
       { id: 'noti99_v2', label: 'noti99_v2 알림톡', component: Noti99V2AlimtalkTab },
-      { id: 'access-token', label: '액세스토큰', component: AccessTokenTab, badge: 'new' },
+      { id: 'access-token', label: '액세스토큰', component: AccessTokenTab },
     ],
   },
   {
